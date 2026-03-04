@@ -29,6 +29,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    buildFeatures {
+        dataBinding = true
+
+        viewBinding = true
+
+    }
 }
 
 dependencies {
@@ -40,4 +47,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation ("com.airbnb.android:lottie:5.2.0")
+    implementation ("io.github.chaosleung:pinview:1.4.4")
+    implementation ("com.github.Foysalofficial:NafisBottomNav:5.0")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61")
 }
