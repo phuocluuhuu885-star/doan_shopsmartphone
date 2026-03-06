@@ -42,19 +42,19 @@
                 android:textColor="@color/black"
                 android:textSize="24sp" />
 
-            <!--            <TextView-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_gravity="center"-->
-            <!--                android:text="Sửa"-->
-            <!--                android:textColor="@color/black"-->
-            <!--                android:textSize="24sp" />-->
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:text="Sửa"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="24sp" />-->
 
-            <!--            <ImageView-->
-            <!--                android:layout_width="30dp"-->
-            <!--                android:layout_height="30dp"-->
-            <!--                android:layout_marginHorizontal="10dp"-->
-            <!--                android:src="@drawable/messg" />-->
+<!--            <ImageView-->
+<!--                android:layout_width="30dp"-->
+<!--                android:layout_height="30dp"-->
+<!--                android:layout_marginHorizontal="10dp"-->
+<!--                android:src="@drawable/messg" />-->
         </LinearLayout>
 
 
