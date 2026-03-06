@@ -25,7 +25,7 @@ public class OderSuccessActivity extends AppCompatActivity {
         binding.btnSuccess.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(OrderSuccessActivity.this, MainActivity.class);
+                Intent intent = new Intent(OderSuccessActivity.this, MainActivity.class);
                 startActivity(intent);
                 finishAffinity();
             }

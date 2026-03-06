@@ -64,7 +64,7 @@ public class UpdateAddressActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 setResult(RESULT_OK, intent);
                 finish();
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+                overridePendingTransition(0,0);
             }
         });
 
@@ -72,7 +72,7 @@ public class UpdateAddressActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+                overridePendingTransition(0,0);
             }
         });
     }
@@ -80,6 +80,6 @@ public class UpdateAddressActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+        overridePendingTransition(0,0);
     }
 }

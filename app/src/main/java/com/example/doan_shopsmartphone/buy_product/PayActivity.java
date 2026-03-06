@@ -15,17 +15,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.text.DecimalFormat;
 
 import com.example.doan_shopsmartphone.R;
-import com.example.doan_shopsmartphone.adapter.CartPayAdapter;
 import com.example.doan_shopsmartphone.databinding.ActivityPayBinding;
-import com.example.doan_shopsmartphone.model.Info;
-import com.example.doan_shopsmartphone.ultil.CartUtil;
-import com.example.doan_shopsmartphone.view.success_screen.OrderSuccessActivity;
+import com.example.doan_shopsmartphone.success_screen.OderSuccessActivity;
 
 public class PayActivity extends AppCompatActivity {
 
     private ActivityPayBinding binding;
-    private CartPayAdapter cartPayAdapter;
-    private Info info;
 
     private int paymentMethods;
     private int totalPrice;
@@ -54,8 +49,6 @@ public class PayActivity extends AppCompatActivity {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         binding.rcvProduct.setLayoutManager(linearLayoutManager);
-        cartPayAdapter = new CartPayAdapter(this, CartUtil.listCartCheck);
-        binding.rcvProduct.setAdapter(cartPayAdapter);
     }
 
     private void initController() {
@@ -64,7 +57,7 @@ public class PayActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(PayActivity.this, AddressActivity.class);
                 mActivityResultLauncher.launch(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                overridePendingTransition(0,0);
             }
         });
 
@@ -74,7 +67,7 @@ public class PayActivity extends AppCompatActivity {
                 if (paymentMethods == 0) {
                     Toast.makeText(PayActivity.this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
                 } else {
-                    Intent intent = new Intent(PayActivity.this, OrderSuccessActivity.class);
+                    Intent intent = new Intent(PayActivity.this, OderSuccessActivity.class);
                     startActivity(intent);
                     finishAffinity();
                 }
@@ -85,7 +78,7 @@ public class PayActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+                overridePendingTransition(0,0);
             }
         });
     }
@@ -101,10 +94,6 @@ public class PayActivity extends AppCompatActivity {
                             Bundle bundle = intent.getExtras();
                             if (bundle != null && bundle.containsKey("object_info")) {
                                 Object objectInfo = bundle.get("object_info");
-                                if (objectInfo instanceof Info) {
-                                    info = (Info) objectInfo;
-                                    binding.tvInfoUser.setText(info.getName() + " | " + info.getPhoneNumber() + " | " + info.getAddress());
-                                }
                             }
                         }
                     }
@@ -114,6 +103,6 @@ public class PayActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+        overridePendingTransition(0,0);
     }
 }
