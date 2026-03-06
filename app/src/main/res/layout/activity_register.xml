@@ -7,7 +7,7 @@
     android:paddingHorizontal="22dp"
     android:layout_height="match_parent"
     android:id="@+id/register"
-    tools:context=".screens.login.Register">
+    tools:context=".view.login.Register">
 
 
     <ImageView

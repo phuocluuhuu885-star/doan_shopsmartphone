@@ -15,7 +15,6 @@ import kotlin.jvm.functions.Function1;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.databinding.ActivityMainBinding;
 import com.example.doan_shopsmartphone.fragment.FragmentHome;
-import com.example.doan_shopsmartphone.fragment.FragmentNotification;
 import com.example.doan_shopsmartphone.fragment.FragmentProduct;
 import com.example.doan_shopsmartphone.fragment.FragmentProfile;
 public class MainActivity extends AppCompatActivity {

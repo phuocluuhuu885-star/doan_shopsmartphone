@@ -1,5 +1,14 @@
 <resources>
-    <string name="app_name">Doan_ShopSmartphone</string>
+    <string name="app_name">GeoTechApplication</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="channe">channe</string>
+    <string name="parameter_text">%s</string>
+    <string name="web_client_id">161307400704-5pbf0f8kn18reht5d27db93su205rsb5.apps.googleusercontent.com</string>
+    <!--    <string name="web_client_id">107421999820-v65vr2n2hkd2of5lfovnvn9md2ouvg17.apps.googleusercontent.com</string>-->
+    <string name="android_client_id">161307400704-4shpupsefdo8d1q3se1nf2gad9d11t8d.apps.googleusercontent.com</string>
+    <string name="title_logout">Bạn có muốn đăng xuất khỏi ứng dụng ?</string>
+    <string name="navigation_open">navigation_open</string>
+    <string name="navigation_close">navigation_close</string>
+
 </resources>

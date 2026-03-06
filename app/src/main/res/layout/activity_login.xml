@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textSize="18sp"
-                    android:text="quyen2k386@gmail.com"
+                    android:text="phuoc@gmail.com"
                     android:hint="Email" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView

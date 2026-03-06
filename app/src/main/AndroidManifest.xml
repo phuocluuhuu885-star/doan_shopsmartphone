@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <application
         android:allowBackup="true"
@@ -10,10 +10,25 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Doan_ShopSmartphone">
+        android:theme="@style/Theme.Doan_ShopSmartphone" >
         <activity
-            android:name=".screens.login.Splash"
-            android:exported="true">
+            android:name=".view.product_screen.CommentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.product_screen.DetailProduct"
+            android:exported="false" />
+        <activity
+            android:name=".view.find_product.FindProduct"
+            android:exported="false" />
+        <activity
+            android:name=".view.danh_gia.DanhGiaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.chat_message.ChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.login.Splash"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,25 +36,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".screens.login.Verify"
+            android:name=".view.login.Verify"
             android:exported="false" />
         <activity
-            android:name=".screens.login.ForgotPassword"
+            android:name=".view.login.ForgotPass"
             android:exported="false" />
         <activity
-            android:name=".screens.login.ResetPassSuccess"
+            android:name=".view.login.ResetPassSuccess"
             android:exported="false" />
         <activity
-            android:name=".screens.login.ResetPassword"
+            android:name=".view.login.ResetPassword"
             android:exported="false" />
         <activity
-            android:name=".screens.login.RegisterSuccess"
+            android:name=".view.login.RegisterSuccess"
             android:exported="false" />
         <activity
-            android:name=".screens.login.Login"
+            android:name=".view.login.Login"
             android:exported="false" />
         <activity
-            android:name=".screens.login.Register"
+            android:name=".view.login.Register"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
