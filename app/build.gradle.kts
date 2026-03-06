@@ -51,4 +51,8 @@ dependencies {
     implementation ("io.github.chaosleung:pinview:1.4.4")
     implementation ("com.github.Foysalofficial:NafisBottomNav:5.0")
     implementation ("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61")
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+    implementation ("com.github.denzcoskun:ImageSlideshow:0.1.2")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 }

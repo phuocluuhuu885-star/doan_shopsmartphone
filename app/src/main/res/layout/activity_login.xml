@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textSize="18sp"
-                    android:text="quyen2k386@gmail.com"
+                    android:text="phuoc64434@gmail.com"
                     android:hint="Email" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView
@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:layout_gravity="center"
-                    android:text="Quyen2003"
+                    android:text="12345678"
                     android:hint="Mật khẩu" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView
