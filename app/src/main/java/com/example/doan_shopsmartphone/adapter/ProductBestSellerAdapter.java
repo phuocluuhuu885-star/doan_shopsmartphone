@@ -2,7 +2,6 @@ package com.example.doan_shopsmartphone.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.doan_shopsmartphone.databinding.LayoutItemProductBinding;
+import com.example.doan_shopsmartphone.databinding.LayoutItemProductBestsellerBinding;
 import com.example.doan_shopsmartphone.model.Product;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
 
@@ -18,20 +17,20 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder>{
 
+public class ProductBestSellerAdapter extends RecyclerView.Adapter<ProductBestSellerAdapter.ProductViewHolder> {
     private Context context;
     private List<Product> productList;
     private List<Product> filteredItems;
     private ObjectUtil objectUtil;
 
-    public ProductAdapter(Context context, List<Product> productList, ObjectUtil objectUtil) {
+    public ProductBestSellerAdapter(Context context, List<Product> productList, ObjectUtil objectUtil) {
         this.context = context;
         this.productList = productList;
         this.objectUtil = objectUtil;
     }
 
-    public void setProductList(List<Product> productList) {
+    public void setListProductBestSeller(List<Product> productList) {
         this.productList = productList;
         this.filteredItems = new ArrayList<>(productList);
         notifyDataSetChanged();
@@ -40,7 +39,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutItemProductBinding binding = LayoutItemProductBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
+        LayoutItemProductBestsellerBinding binding = LayoutItemProductBestsellerBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
         return new ProductViewHolder(binding);
     }
 
@@ -55,26 +54,27 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.binding.item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("checkfind ", "onClick: ");
+                objectUtil.onclickObject(product);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        if(productList != null) {
+        if(productList!= null) {
             return productList.size();
         }
         return 0;
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder{
-        private LayoutItemProductBinding binding;
-        public ProductViewHolder(LayoutItemProductBinding binding) {
+        private LayoutItemProductBestsellerBinding   binding;
+        public ProductViewHolder(LayoutItemProductBestsellerBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
     }
+
     @SuppressLint("NotifyDataSetChanged")
     public void filterItem(String query) {
 

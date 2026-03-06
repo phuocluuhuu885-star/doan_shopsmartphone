@@ -1,17 +1,14 @@
 package com.example.doan_shopsmartphone.model;
 
-import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class User implements Serializable {
-    @SerializedName("_id")
     private String id;
     private String email;
     private String password;
     private String avatar;
     private String username;
-    @SerializedName("name")
     private String fullname;
     private String phone;
     private String address;

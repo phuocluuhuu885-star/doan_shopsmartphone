@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b3732574-abc5-449e-9bbc-293f75d8ea83" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/adapter/FavouriteProductAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/adapter/NotificationAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/adapter/ProductBestSellerAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/adapter/ProductByCategoryAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/adapter/ProductSaleAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/adapter/ViewPageHomeAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/fragment/FragmentFavourite.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/fragment/tab/FragmentPageDiscount.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/fragment/tab/FragmentPageOutStanding.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/fragment/tab/FragmentPageSelling.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/model/ProductByCategory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/activity_cart.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/activity_profile_user_screen.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/activity_show_all_product_by_category.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/fragment_favourite.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/fragment_page_discount.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/fragment_page_out_standing.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/fragment_page_selling.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/item_product_by_category.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/layout_dialig_option_product.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/res/layout/layout_iteam_option_product.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/adapter/ProductAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/adapter/ProductAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/fragment/FragmentHome.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/fragment/FragmentHome.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/fragment/FragmentNotifycation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/fragment/FragmentNotifycation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/model/Notifi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/model/Notifi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/model/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/model/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/doan_shopsmartphone/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/activity_detail_product.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/activity_detail_product.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/activity_login.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/activity_login.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/fragment_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/fragment_home.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/fragment_notifycation.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/fragment_notifycation.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/layout_item_cart.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/layout_item_cart.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/values/themes.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/values/themes.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="3Aa3sUGC5rYu6uFb421hOFu7A9L" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "android.gradle.sync.needed": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "Merging main",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b3732574-abc5-449e-9bbc-293f75d8ea83" name="Changes" comment="" />
+      <created>1772817061448</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1772817061448</updated>
+    </task>
+    <servers />
+  </component>
+</project>

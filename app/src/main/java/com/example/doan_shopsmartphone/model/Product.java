@@ -1,12 +1,10 @@
 package com.example.doan_shopsmartphone.model;
 
-import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class Product implements Serializable {
 
-    @SerializedName("_id")
     private String id;
     private String name;
     private boolean discounted;
