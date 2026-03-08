@@ -32,10 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,14 +44,6 @@ public class FragmentNotification extends Fragment {
     private List<Notifi> notifiList;
 
     SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-
-    // socket để thao tác
-    private Socket mSocket;
-    {
-       // try {
-         //   mSocket = IO.socket("http://" + BaseApi.LOCALHOT +":3000");
-     //   } catch (URISyntaxException e) {}
-    }
 
 
     public FragmentNotification() {
@@ -103,30 +91,9 @@ public class FragmentNotification extends Fragment {
     }
 
     private void initSocket() {
-        mSocket.connect();
-        mSocket.on("new_notification", onNewNotification);
-    }
-    private Emitter.Listener onNewNotification = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if(getActivity() == null) {
-                return;
-            }
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        JSONObject data = (JSONObject) args[0];
-                        String content = data.getString("content");
-                        NotificationUtil.sendNotification(getActivity(),content);
 
-                    } catch (JSONException e) {
-                        throw  new RuntimeException(e);
-                    }
-                }
-            });
-        }
-    };
+    }
+
 
     private void getListNotify() {
         String token = AccountUltil.BEARER + AccountUltil.getToken(requireContext());

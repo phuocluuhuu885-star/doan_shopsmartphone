@@ -47,7 +47,7 @@ public class Register extends AppCompatActivity {
         binding.tvDangNhap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Register.this,Login.class);
+                Intent intent = new Intent(Register.this,LoginApp.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
             }
