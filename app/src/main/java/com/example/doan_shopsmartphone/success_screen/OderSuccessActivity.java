@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.doan_shopsmartphone.MainActivity;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.databinding.ActivityOrderSuccessMainBinding;
-import com.example.doan_shopsmartphone.fragment.homescreen.MainActivity;
 
 public class OderSuccessActivity extends AppCompatActivity {
     ActivityOrderSuccessMainBinding binding;
