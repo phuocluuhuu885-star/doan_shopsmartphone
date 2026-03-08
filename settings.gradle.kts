@@ -22,4 +22,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Doan_ShopSmartphone"
 include(":app")
- 

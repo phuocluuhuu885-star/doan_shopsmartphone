@@ -31,6 +31,7 @@ import com.example.doan_shopsmartphone.model.Banner;
 import com.example.doan_shopsmartphone.model.Product;
 import com.example.doan_shopsmartphone.ultil.CartUtil;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
+import com.example.doan_shopsmartphone.view.Cart.CartActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -194,8 +195,8 @@ public class FragmentProduct extends Fragment  implements ObjectUtil {
         binding.imgCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), CartActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), CartActivity.class);
+                startActivity(intent);
             }
         });
 

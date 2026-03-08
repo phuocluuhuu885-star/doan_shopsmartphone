@@ -1,4 +1,4 @@
-package com.example.doan_shopsmartphone.buy_product;
+package com.example.doan_shopsmartphone.view.buy_product;
 
 import android.content.Intent;
 import android.os.Bundle;

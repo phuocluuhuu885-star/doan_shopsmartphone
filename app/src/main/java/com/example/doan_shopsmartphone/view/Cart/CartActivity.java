@@ -17,11 +17,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.doan_shopsmartphone.MainActivity;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.adapter.CartAdapter;
+import com.example.doan_shopsmartphone.api.BaseApi;
+import com.example.doan_shopsmartphone.model.OptionOfListCart;
+import com.example.doan_shopsmartphone.model.Product;
+import com.example.doan_shopsmartphone.view.buy_product.PayActivity;
 import com.example.doan_shopsmartphone.databinding.ActivityCartBinding;
 import com.example.doan_shopsmartphone.model.OptionAndQuantity;
+import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
+import com.example.doan_shopsmartphone.ultil.ApiUtil;
 import com.example.doan_shopsmartphone.ultil.CartInterface;
 import com.example.doan_shopsmartphone.ultil.CartUtil;
+import com.example.doan_shopsmartphone.ultil.TAG;
 import com.example.doan_shopsmartphone.ultil.swipe.ItemTouchHelperListener;
 import com.example.doan_shopsmartphone.ultil.swipe.RecycleViewItemTouchHelper;
 import com.example.doan_shopsmartphone.view.voucher.VoucherScreen;
@@ -56,7 +63,61 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
         initView();
         initController();
         // Hàm này có sẵn ở đâu cx gọi đc
-       // ApiUtil.getAllCart(this, cartAdapter);
+        ApiUtil.getAllCart(this, cartAdapter);
+
+
+//
+//        //test
+//        if (CartUtil.listCart.size() == 0) {
+//
+//            String[] names = {"iPhone 15", "Samsung S24", "Xiaomi 14", "Oppo Find X5", "Vivo X100"};
+//            int[] prices = {20000000, 18000000, 15000000, 17000000, 16000000};
+//
+//            for (int i = 0; i < 5; i++) {
+//
+//                Product product = new Product();
+//                product.setId("product_" + i);
+//                product.setName(names[i]);
+//
+//                OptionOfListCart option = new OptionOfListCart();
+//                option.setId("option_" + i);
+//                option.setPrice(prices[i]);
+//                option.setDiscountValue(10);
+//                option.setImage("https://via.placeholder.com/150");
+//                option.setProduct(product);
+//
+//                OptionAndQuantity cartItem = new OptionAndQuantity();
+//                cartItem.setId("cart_" + i);
+//                cartItem.setOptionProduct(option);
+//                cartItem.setQuantity(1);
+//
+//                CartUtil.listCart.add(cartItem);
+//
+//            }
+//
+//            cartAdapter.notifyDataSetChanged();
+//        }
+//
+//        //test
+//
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         if(CartUtil.listCart.size() == 0) {
             binding.tvDrum.setVisibility(View.VISIBLE);
         } else {
@@ -69,7 +130,7 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
             @Override
             public void onClick(View v) {
                 onBackActivity();
-               // updateCart();
+                // updateCart();
             }
         });
 
@@ -85,8 +146,10 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
         binding.listThanhToan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ChangePaymentMethodsActivity.class);
                 intent.putExtra("paymentMethods", paymentMethods);
+
+
                 startActivityForResult(intent, REQUEST_CODE_CHANGE_PAYMENT_METHODS);
             }
         });
@@ -195,7 +258,47 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
         String cartId = cart.getId();
 
         binding.progressBar.setVisibility(View.VISIBLE);
+        BaseApi.API.deleteCartItem(token,cartId).enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                if(response.isSuccessful()){ // chỉ nhận đầu status 200
+                    ServerResponse serverResponse = response.body();
+                    assert serverResponse != null;
+                    Log.d(TAG.toString, "onResponse-deleteCartItem: " + serverResponse.toString());
+                    if(serverResponse.getCode() == 200) {
+                        cartAdapter.removeItem(indexDelete);
+                        CartUtil.listCartCheck.remove(cart);
+                        setTotalPrice();
+                        if(CartUtil.listCart.size() == 0) {
+                            binding.tvDrum.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.tvDrum.setVisibility(View.GONE);
+                        }
+                    }
+                } else { // nhận các đầu status #200
+                    try {
+                        assert response.errorBody() != null;
+                        String errorBody = response.errorBody().string();
+                        JSONObject errorJson = new JSONObject(errorBody);
+                        String errorMessage = errorJson.getString("message");
+                        Log.d(TAG.toString, "onResponse-deleteCartItem: " + errorMessage);
+                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                binding.progressBar.setVisibility(View.GONE);
+            }
 
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                Toast.makeText(CartActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG.toString, "onFailure-deleteCartItem: " + t.toString());
+                binding.progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -224,7 +327,43 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
         int quantity = cart.getQuantity();
 
 
+        BaseApi.API.updateQuantityCartItem(token,cartId,quantity).enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                if(response.isSuccessful()){ // chỉ nhận đầu status 200
+                    ServerResponse serverResponse = response.body();
+                    assert serverResponse != null;
+                    Log.d("Server cart trả về", "onResponse: " + serverResponse.getCode());
+                    Log.d(TAG.toString, "onResponse-updateQuantityCartItem: " + serverResponse.toString());
+                    if(serverResponse.getCode() == 200) {
+                        Log.d(TAG.toString, "onResponse: " + serverResponse.getCode());
+                        Intent intent = new Intent(CartActivity.this, PayActivity.class);
+                        intent.putExtra("totalPrice" , totalPrice);
+                        intent.putExtra("paymentMethods", paymentMethods);
+                        startActivity(intent);
+                    }
+                } else { // nhận các đầu status #200
+                    try {
+                        assert response.errorBody() != null;
+                        String errorBody = response.errorBody().string();
+                        JSONObject errorJson = new JSONObject(errorBody);
+                        String errorMessage = errorJson.getString("message");
+                        Log.d(TAG.toString, "onResponse-updateQuantityCartItem: " + errorMessage);
+                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                Toast.makeText(CartActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG.toString, "onFailure-updateQuantityCartItem: " + t.toString());
+            }
+        });
     }
     private void onBackActivity() {
         // Đoạn này chưa hiểu lắm nhưng kể cả truyền cho màn hình nào thì tất cả

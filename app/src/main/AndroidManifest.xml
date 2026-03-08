@@ -15,38 +15,111 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
+
+        <activity
+            android:name=".view.success_screen.OrderSuccessActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.Cart.ChangePaymentMethodsActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
         <activity
             android:name=".view.login.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".view.danh_gia.DanhGiaActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.chat_message.ChatActivity" />
+
+        <activity
+            android:name=".view.buy_product.UpdateAddressActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.buy_product.AddAddressActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.buy_product.AddressActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.voucher.VoucherScreen"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.product_screen.CommentActivity"
+            android:exported="false" />
+
         <activity
             android:name=".view.login.Verify"
             android:exported="false" />
+
         <activity
             android:name=".view.login.ForgotPass"
             android:exported="false" />
+
         <activity
             android:name=".view.login.ResetPassSuccess"
             android:exported="false" />
+
         <activity
             android:name=".view.login.ResetPassword"
             android:exported="false" />
+
         <activity
             android:name=".view.login.RegisterSuccess"
             android:exported="false" />
+
         <activity
             android:name=".view.login.LoginApp"
             android:exported="false" />
+
         <activity
             android:name=".view.login.Register"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.Cart.CartActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.buy_product.PayActivity"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="merchant-deeplink"
+                    android:host="app" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".view.product_screen.DetailProduct"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.find_product.FindProduct"
+            android:exported="false" />
+
+        <activity
+            android:name=".fragment.homescreen.MainActivity"
             android:exported="false" />
 
     </application>

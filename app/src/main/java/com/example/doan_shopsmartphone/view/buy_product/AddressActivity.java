@@ -1,20 +1,13 @@
-package com.example.doan_shopsmartphone.buy_product;
+package com.example.doan_shopsmartphone.view.buy_product;
 
 import android.content.Intent;
 import android.os.Bundle;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.databinding.ActivityAddressBinding;
-import com.example.doan_shopsmartphone.ultil.InfoInterface;
 
 
 public class AddressActivity extends AppCompatActivity {

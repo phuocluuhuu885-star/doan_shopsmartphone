@@ -56,6 +56,31 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             return;
         }
         holder.tvName.setText(cart.getOptionProduct().getProduct().getName());
+
+
+
+
+
+
+
+
+
+
+
+//        // test
+//        if(cart.getOptionProduct().getProduct() != null){
+//            holder.tvName.setText(cart.getOptionProduct().getProduct().getName());
+//        }else{
+//            holder.tvName.setText("Test Product");
+//        }
+//        // test
+
+
+
+
+
+
+
         DecimalFormat df = new DecimalFormat("###,###,###");
         Double checkgia = (double)(100-cart.getOptionProduct().getDiscountValue())/100;
         Double gia = cart.getOptionProduct().getPrice() *checkgia;

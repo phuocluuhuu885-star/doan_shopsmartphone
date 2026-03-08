@@ -1,4 +1,4 @@
-package com.example.doan_shopsmartphone.buy_product;
+package com.example.doan_shopsmartphone.view.buy_product;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -11,7 +11,6 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.databinding.ActivityUpdateAddressBinding;
 import com.example.doan_shopsmartphone.databinding.DialogDeleteAddressBinding;
 public class UpdateAddressActivity extends AppCompatActivity {
