@@ -9,8 +9,8 @@
     tools:context=".fragment.FragmentHome">
 
     <LinearLayout
-        android:background="@color/color_chudao"
-        android:paddingHorizontal="12dp"
+        android:background="@drawable/custom_border_header"
+        android:paddingHorizontal="6dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -21,13 +21,13 @@
             android:layout_width="match_parent"
             android:layout_height="65dp">
             <ImageView
-                android:src="@drawable/logo3"
+                android:src="@drawable/logofm"
                 android:layout_width="30dp"
                 android:layout_height="30dp"/>
             <TextView
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
-                android:text="Geotech"
+                android:text="FMobile"
                 android:textSize="30dp"
                 android:textColor="@color/white"
                 android:textStyle="bold"
@@ -61,7 +61,7 @@
                     android:id="@+id/imgCart"
                     android:src="@drawable/giohang"
                     android:background="@drawable/custom_bg_icon"
-                    android:padding="7dp"
+                    android:padding="5dp"
                     android:scaleType="centerCrop"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
@@ -101,7 +101,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:paddingHorizontal="12dp"
+        android:paddingHorizontal="6dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"

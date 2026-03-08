@@ -7,7 +7,7 @@
     android:paddingHorizontal="22dp"
     android:layout_height="match_parent"
     tools:ignore="MissingClass"
-    tools:context=".screens.login.Verify">
+    tools:context=".view.login.Verify">
     <ImageView
         android:id="@+id/backVerify"
         android:layout_width="35dp"

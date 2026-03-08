@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:usesCleartextTraffic="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:usesCleartextTraffic="true">
         <activity
-            android:name=".screens.login.Splash"
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.login.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,29 +28,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".screens.login.Verify"
+            android:name=".view.login.Verify"
             android:exported="false" />
         <activity
-            android:name=".screens.login.ForgotPassword"
+            android:name=".view.login.ForgotPass"
             android:exported="false" />
         <activity
-            android:name=".screens.login.ResetPassSuccess"
+            android:name=".view.login.ResetPassSuccess"
             android:exported="false" />
         <activity
-            android:name=".screens.login.ResetPassword"
+            android:name=".view.login.ResetPassword"
             android:exported="false" />
         <activity
-            android:name=".screens.login.RegisterSuccess"
+            android:name=".view.login.RegisterSuccess"
             android:exported="false" />
         <activity
-            android:name=".screens.login.Login"
+            android:name=".view.login.LoginApp"
             android:exported="false" />
         <activity
-            android:name=".screens.login.Register"
+            android:name=".view.login.Register"
             android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+
     </application>
 
 </manifest>
