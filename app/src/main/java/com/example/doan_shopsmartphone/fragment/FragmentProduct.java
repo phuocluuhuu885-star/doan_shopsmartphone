@@ -1,5 +1,7 @@
 package com.example.doan_shopsmartphone.fragment;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -14,12 +16,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.adapter.ProductAdapter;
+import com.example.doan_shopsmartphone.api.BaseApi;
+import com.example.doan_shopsmartphone.api.response.BannerReponse;
+import com.example.doan_shopsmartphone.api.response.ProductResponse;
 import com.example.doan_shopsmartphone.databinding.FragmentProductBinding;
 import com.example.doan_shopsmartphone.model.Banner;
 import com.example.doan_shopsmartphone.model.Product;
@@ -33,12 +39,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class FragmentProduct extends Fragment  implements ObjectUtil {
     private List<Product> listProdcut;
     private ProductAdapter productAdapter;
     private FragmentProductBinding binding;
-
+    EditText edtSearch;
 
     public FragmentProduct() {
         // Required empty public constructor
@@ -73,12 +83,63 @@ public class FragmentProduct extends Fragment  implements ObjectUtil {
         callApiBanner();
         callApiGetListAllProducts();
         setNumberCart();
+
+        Log.d("apib", "onResponse-getListBanner: ");
+        // handle call api banner product
+        BaseApi.API.getListBanner().enqueue(new Callback<BannerReponse>() {
+            @Override
+            public void onResponse(Call<BannerReponse> call, Response<BannerReponse> response) {
+                if(response.isSuccessful()){ // chỉ nhận đầu status 200
+                    BannerReponse reponse = response.body();
+                    if(reponse.getCode() == 200) {
+                        setDataBanner(reponse.getData());
+                        Log.d("apibbaneron", "onResponse-getListBanner: " + response.body());
+                    }
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+                        JSONObject errorJson = new JSONObject(errorBody);
+                        String errorMessage = errorJson.getString("message");
+                        Log.d("apibanner", "onResponse-getListBanner: " + errorMessage);
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BannerReponse> call, Throwable t) {
+                Toast.makeText(getActivity(), t.toString(), Toast.LENGTH_SHORT).show();
+                Log.d("apibannerfail", "onResponse-getListBanner: " + t.getMessage());
+            }
+        });
     }
 
     public void callApiGetListAllProducts() {
         binding.progressBar.setVisibility(View.VISIBLE);
 
         //handle call api get list product
+        BaseApi.API.getListAllProduct().enqueue(new Callback<ProductResponse>() {
+            @Override
+            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
+                if (response.isSuccessful()) {
+                    ProductResponse productResponse = response.body();
+                    productAdapter.setProductList(productResponse.getResult());
+                    binding.recycleProduct.setAdapter(productAdapter);
+                } else {
+                    Toast.makeText(getActivity(), "call list all products err", Toast.LENGTH_SHORT).show();
+                }
+                binding.progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ProductResponse> call, Throwable t) {
+                Log.d("checkbuggg", "onFailure: "+t);
+                binding.progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void setNumberCart() {
@@ -87,15 +148,44 @@ public class FragmentProduct extends Fragment  implements ObjectUtil {
     }
 
     private void callApiBanner() {
+        Log.d("apibbaner", "onResponse-getListBanner: ");
         // handle call api banner product
+        BaseApi.API.getListBanner().enqueue(new Callback<BannerReponse>() {
+            @Override
+            public void onResponse(Call<BannerReponse> call, Response<BannerReponse> response) {
+                if(response.isSuccessful()){ // chỉ nhận đầu status 200
+                    BannerReponse reponse = response.body();
+                    if(reponse.getCode() == 200) {
+                        setDataBanner(reponse.getData());
+                        Log.d("apibbaner", "onResponse-getListBanner: " + response.body());
+                    }
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+                        JSONObject errorJson = new JSONObject(errorBody);
+                        String errorMessage = errorJson.getString("message");
+                        Log.d("apibanner", "onResponse-getListBanner: " + errorMessage);
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BannerReponse> call, Throwable t) {
+                Toast.makeText(getActivity(), t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setDataBanner(List<Banner> data) {
         ArrayList<SlideModel> list  = new ArrayList<>();
-        List<String> tabTitles = new ArrayList<>();
+
         for (Banner banner: data) {
             list.add(new SlideModel(banner.getImage() , ScaleTypes.FIT));
-            tabTitles.add(banner.getNote());
+
         }
         binding.sliderProduct.setImageList(list, ScaleTypes.FIT);
     }
@@ -109,10 +199,9 @@ public class FragmentProduct extends Fragment  implements ObjectUtil {
             }
         });
 
-        TextWatcher textWatcher = new TextWatcher() {
+        binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -125,10 +214,8 @@ public class FragmentProduct extends Fragment  implements ObjectUtil {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        };
+            public void afterTextChanged(Editable s) {}
+        });
 
         binding.find.setOnClickListener(new View.OnClickListener() {
             @Override

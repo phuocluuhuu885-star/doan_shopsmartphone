@@ -43,15 +43,15 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"/>
 
-                    <TextView
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:hint="Tìm kiếm..."
-                        android:background="@color/transparent"
+                    <EditText
+                        android:id="@+id/edtSearch"
                         android:layout_width="match_parent"
-                        android:layout_marginLeft="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:hint="Tìm kiếm sản phẩm..."
                         android:textSize="16sp"
-                        android:layout_height="30dp"/>
+                        android:background="@null"
+                        android:singleLine="true"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
             <androidx.constraintlayout.widget.ConstraintLayout

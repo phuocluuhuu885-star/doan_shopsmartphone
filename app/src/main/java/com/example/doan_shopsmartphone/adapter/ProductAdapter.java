@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.databinding.LayoutItemProductBinding;
 import com.example.doan_shopsmartphone.model.Product;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
@@ -47,11 +49,22 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productList.get(position);
-        holder.binding.tvName.setText(product.getName());
         DecimalFormat df = new DecimalFormat("###,###,###");
+
+        holder.binding.tvName.setText(product.getName());
         holder.binding.tvPrice.setText(df.format(product.getMinPrice()) + " đ");
-
-
+        holder.binding.tvstatus.setText(product.getStatus());
+        Glide.with(context)
+                .load(product.getImage())
+                .placeholder(com.example.doan_shopsmartphone.R.drawable.loading)
+                .error(R.drawable.error)
+                .into(holder.binding.imgProduct);
+        holder.binding.ratingBar.setRating((float) product.getAverageRate());
+        try {
+            holder.binding.tvReview.setText("Đã bán "+product.getSoldQuantity());
+        } catch (Exception ex) {
+            holder.binding.tvReview.setText("Đã bán "+0);
+        }
         holder.binding.item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +90,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
     @SuppressLint("NotifyDataSetChanged")
     public void filterItem(String query) {
-
+        productList.clear();
+        if(query.isEmpty()) {
+            productList.addAll(filteredItems);
+        } else {
+            for (Product item : filteredItems) {
+                if (item.getName().toLowerCase().contains(query.toLowerCase())){
+                    productList.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 }
