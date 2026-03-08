@@ -44,6 +44,14 @@
             android:text="Tên sản phẩm"
             android:textColor="@color/black"
             android:textSize="@dimen/font_size_text_mini" />
+        <TextView
+            android:id="@+id/tvstatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:text="Status"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/font_size_text_mini" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

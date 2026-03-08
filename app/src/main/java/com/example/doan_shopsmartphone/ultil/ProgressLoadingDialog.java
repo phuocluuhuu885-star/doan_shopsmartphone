@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 
 import com.example.doan_shopsmartphone.databinding.LayoutLoadingBinding;
 
-
 public class ProgressLoadingDialog extends Dialog {
     private LayoutLoadingBinding binding;
 

@@ -1,34 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
-
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:usesCleartextTraffic="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Doan_ShopSmartphone" >
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".view.product_screen.CommentActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.product_screen.DetailProduct"
-            android:exported="false" />
-        <activity
-            android:name=".view.find_product.FindProduct"
-            android:exported="false" />
-        <activity
-            android:name=".view.danh_gia.DanhGiaActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.chat_message.ChatActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.login.Splash"
-            android:exported="true" >
+            android:name=".screens.login.Splash"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,25 +23,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.login.Verify"
+            android:name=".screens.login.Verify"
             android:exported="false" />
         <activity
-            android:name=".view.login.ForgotPass"
+            android:name=".screens.login.ForgotPassword"
             android:exported="false" />
         <activity
-            android:name=".view.login.ResetPassSuccess"
+            android:name=".screens.login.ResetPassSuccess"
             android:exported="false" />
         <activity
-            android:name=".view.login.ResetPassword"
+            android:name=".screens.login.ResetPassword"
             android:exported="false" />
         <activity
-            android:name=".view.login.RegisterSuccess"
+            android:name=".screens.login.RegisterSuccess"
             android:exported="false" />
         <activity
-            android:name=".view.login.Login"
+            android:name=".screens.login.Login"
             android:exported="false" />
         <activity
-            android:name=".view.login.Register"
+            android:name=".screens.login.Register"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

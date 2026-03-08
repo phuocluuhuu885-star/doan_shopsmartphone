@@ -61,7 +61,6 @@ public class FavouriteProductAdapter extends RecyclerView.Adapter<FavouriteProdu
                 .into(holder.binding.imgProduct);
         holder.binding.ratingBar.setRating((float) product.getAverageRate());
 
-
         try {
             holder.binding.tvReview.setText("Đã bán "+product.getSoldQuantity());
         } catch (Exception ex) {

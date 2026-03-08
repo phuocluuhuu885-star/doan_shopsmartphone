@@ -7,6 +7,7 @@ public class Product implements Serializable {
 
     private String id;
     private String name;
+    private String status;
     private boolean discounted;
     private String image;
     private double minPrice;
@@ -15,9 +16,12 @@ public class Product implements Serializable {
     private int soldQuantity;
     private int reviewCount;
 
-    public Product(String id, String name, boolean discounted, String image, double minPrice, double averageRate, int review, int soldQuantity, int reviewcount) {
+
+
+    public Product(String id, String name, String status, boolean discounted, String image, double minPrice, double averageRate, int review, int soldQuantity, int reviewcount) {
         this.id = id;
         this.name = name;
+        this.status = status;
         this.discounted = discounted;
         this.image = image;
         this.minPrice = minPrice;
@@ -38,9 +42,10 @@ public class Product implements Serializable {
     public Product() {
     }
 
-    public Product(String id, String name, boolean discounted, String image, int minPrice, double averageRate, int review, int soldQuantity) {
+    public Product(String id, String name,String status, boolean discounted, String image, int minPrice, double averageRate, int review, int soldQuantity) {
         this.id = id;
         this.name = name;
+        this.status = status;
         this.discounted = discounted;
         this.image = image;
         this.minPrice = minPrice;
@@ -54,6 +59,7 @@ public class Product implements Serializable {
         return "Product{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", status='" + status + '\'' +
                 ", discounted=" + discounted +
                 ", image='" + image + '\'' +
                 ", minPrice=" + minPrice +
@@ -63,6 +69,7 @@ public class Product implements Serializable {
                 ", soldQuantity=" + soldQuantity +
                 '}';
     }
+
 
     public String getId() {
         return id;
@@ -80,6 +87,13 @@ public class Product implements Serializable {
         this.name = name;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
     public boolean isDiscounted() {
         return discounted;
     }

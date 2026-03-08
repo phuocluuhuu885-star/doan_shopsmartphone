@@ -5,8 +5,6 @@ import com.example.doan_shopsmartphone.model.OptionAndQuantity;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class CartUtil {
     // listCartTemp
     public static List<OptionAndQuantity> listCart = new ArrayList<>();

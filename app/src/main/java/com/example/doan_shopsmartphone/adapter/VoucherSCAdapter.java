@@ -9,12 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.doan_shopsmartphone.R;
-import com.example.doan_shopsmartphone.model.Voucher;
-
 import java.util.List;
 
-
+import com.example.doan_shopsmartphone.R;
+import com.example.doan_shopsmartphone.model.Voucher;
 
 public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.VoucherViewHolder>{
     private Context context;

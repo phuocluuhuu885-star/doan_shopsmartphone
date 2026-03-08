@@ -1,24 +1,40 @@
-package com.example.doan_shopsmartphone.view.login;
+package com.example.doan_shopsmartphone.screens.login;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.doan_shopsmartphone.MainActivity;
+import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.databinding.ActivityLoginBinding;
+import com.example.doan_shopsmartphone.databinding.ActivitySplashBinding;
+import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;
+import com.example.doan_shopsmartphone.ultil.Validator;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class Login extends AppCompatActivity {
     private ActivityLoginBinding binding;
+    private ProgressLoadingDialog loadingDialog;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         initController();
-
+        initView();
     }
 
     private void initController() {
@@ -33,7 +49,7 @@ public class Login extends AppCompatActivity {
         binding.txtfogotpass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(Login.this, ForgotPass.class);
+                Intent intent1 = new Intent(Login.this, ForgotPassword.class);
                 startActivity(intent1);
 
             }
@@ -61,7 +77,32 @@ public class Login extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void initView() {
+        loadingDialog = new ProgressLoadingDialog(this);
+    }
+
     private void loginAccount(String email,String pass) {
-        screenSwitch(Login.this, MainActivity.class);
+        if(validateLogin(email,pass)) {
+            screenSwitch(Login.this, MainActivity.class);
+            finish();
+        }
+
+    }
+
+    private boolean validateLogin(String email,String pass) {
+        if(areEditTextsEmpty(binding.edtEmail,binding.edtPass)) {
+            Toast.makeText(Login.this,"Vui lòng nhập đủ thông tin !",Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(!Validator.isValidEmail(email)) {
+            Toast.makeText(Login.this,"Nhập đúng định dạng email",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean areEditTextsEmpty(EditText editText1, EditText editText2) {
+        String text1  = editText1.getText().toString().trim();
+        String text2 = editText2.getText().toString().trim();
+        return TextUtils.isEmpty(text1) || TextUtils.isEmpty(text2);
     }
 }
