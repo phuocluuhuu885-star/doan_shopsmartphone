@@ -1,12 +1,12 @@
 package com.example.doan_shopsmartphone.api;
 
-import com.example.doan_shopsmartphone.api.response.BannerReponse;
-import com.example.doan_shopsmartphone.api.response.DetailUserReponse;
-import com.example.doan_shopsmartphone.api.response.ProductResponse;
 import com.example.doan_shopsmartphone.model.OrderResponse;
 import com.example.doan_shopsmartphone.model.body.PurchaseBody;
+import com.example.doan_shopsmartphone.model.response.BannerReponse;
 import com.example.doan_shopsmartphone.model.response.CartReponse;
+import com.example.doan_shopsmartphone.model.response.DetailUserReponse;
 import com.example.doan_shopsmartphone.model.response.InfoResponse;
+import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -71,5 +71,11 @@ public interface BaseApi {
                                            @Path("idOrder") String idOrder,
                                            @Field("status") String status);
 
+    @FormUrlEncoded
+    @POST("register")
+    Call<ServerResponse> register(@Field("email") String email,
+                                  @Field("password") String password);
 
+    @GET("verify/{idCode}")
+    Call<ServerResponse> verify(@Path("idCode") String idCode);
 }

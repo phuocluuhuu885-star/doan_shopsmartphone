@@ -7,8 +7,9 @@ import android.widget.Toast;
 
 import com.example.doan_shopsmartphone.adapter.CartAdapter;
 import com.example.doan_shopsmartphone.api.BaseApi;
-import com.example.doan_shopsmartphone.api.response.DetailUserReponse;
+
 import com.example.doan_shopsmartphone.model.response.CartReponse;
+import com.example.doan_shopsmartphone.model.response.DetailUserReponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -1,4 +1,4 @@
-package com.example.doan_shopsmartphone.api.response;
+package com.example.doan_shopsmartphone.model.response;
 
 
 import com.example.doan_shopsmartphone.model.User;

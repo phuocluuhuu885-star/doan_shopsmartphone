@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.api.BaseApi;
-import com.example.doan_shopsmartphone.api.response.ServerResponse;
+import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.databinding.ActivityRegisterBinding;
 import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;
 import com.example.doan_shopsmartphone.ultil.TAG;

@@ -13,9 +13,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.doan_shopsmartphone.R;
-import com.example.doan_shopsmartphone.api.response.ServerResponse;
+
 import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.ActivityVerifyBinding;
+import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;
 import com.example.doan_shopsmartphone.ultil.TAG;
 import retrofit2.Call;

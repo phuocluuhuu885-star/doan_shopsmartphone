@@ -24,11 +24,12 @@ import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.adapter.ProductAdapter;
 import com.example.doan_shopsmartphone.api.BaseApi;
-import com.example.doan_shopsmartphone.api.response.BannerReponse;
-import com.example.doan_shopsmartphone.api.response.ProductResponse;
+
 import com.example.doan_shopsmartphone.databinding.FragmentProductBinding;
 import com.example.doan_shopsmartphone.model.Banner;
 import com.example.doan_shopsmartphone.model.Product;
+import com.example.doan_shopsmartphone.model.response.BannerReponse;
+import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.example.doan_shopsmartphone.ultil.CartUtil;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
 import com.example.doan_shopsmartphone.view.Cart.CartActivity;
