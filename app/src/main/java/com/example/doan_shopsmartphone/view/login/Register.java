@@ -3,14 +3,29 @@ package com.example.doan_shopsmartphone.view.login;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.doan_shopsmartphone.R;
+import com.example.doan_shopsmartphone.api.BaseApi;
+import com.example.doan_shopsmartphone.api.response.ServerResponse;
 import com.example.doan_shopsmartphone.databinding.ActivityRegisterBinding;
 import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;
+import com.example.doan_shopsmartphone.ultil.TAG;
 import com.example.doan_shopsmartphone.ultil.Validator;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 
 public class Register extends AppCompatActivity {
@@ -57,7 +72,41 @@ public class Register extends AppCompatActivity {
     private void registerAccount(String email,String pass,String repass) {
         if(checkRegister(email,pass,repass)) {
             loadingDialog.show();
+            BaseApi.API.register(email,pass).enqueue(new Callback<ServerResponse>() {
+                @Override
+                public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                    if(response.isSuccessful()){ // chỉ nhận đầu status 200
+                        ServerResponse serverResponse = response.body();
+                        Log.d(TAG.toString, "onResponse-register: " + serverResponse.toString());
+                        if(serverResponse.getCode() == 200) {
+                            Intent intent = new Intent(Register.this, Verify.class);
+                            intent.putExtra("email", email);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                        }
+                    } else { // nhận các đầu status #200
+                        try {
+                            String errorBody = response.errorBody().string();
+                            JSONObject errorJson = new JSONObject(errorBody);
+                            String errorMessage = errorJson.getString("message");
+                            Log.d(TAG.toString, "onResponse-register: " + errorMessage);
+                            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    loadingDialog.dismiss();
+                }
 
+                @Override
+                public void onFailure(Call<ServerResponse> call, Throwable t) {
+                    Toast.makeText(Register.this, t.toString(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG.toString, "onFailure-register: " + t.toString());
+                    loadingDialog.dismiss();
+                }
+            });
         }
     }
     private boolean checkRegister(String email,String pass,String repass) {
@@ -91,6 +140,12 @@ public class Register extends AppCompatActivity {
     }
     private void initView() {
         loadingDialog = new ProgressLoadingDialog(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
     }
 
 

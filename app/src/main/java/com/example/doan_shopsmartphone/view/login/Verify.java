@@ -13,8 +13,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.doan_shopsmartphone.R;
+import com.example.doan_shopsmartphone.api.response.ServerResponse;
+import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.ActivityVerifyBinding;
 import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;
+import com.example.doan_shopsmartphone.ultil.TAG;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,7 +65,44 @@ public class Verify extends AppCompatActivity {
 
     private void sendCode(String strCode) {
         loadingDialog.show();
-        //handle gửi mã cho đổi mật khẩu
+        BaseApi.API.verify(strCode).enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                try {
+                    if(response.isSuccessful()) {
+                        ServerResponse serverResponse = response.body();
+                        Log.d(TAG.toString,"OnResponse-Verify:"+serverResponse.toString());
+                        if(serverResponse.getCode()== 200) {
+                            Intent intent = new Intent(Verify.this, RegisterSuccess.class);
+                            startActivity(intent);
+                            finishAffinity();
+                        }
+                    } else {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            JSONObject errorJson = new JSONObject(errorBody);
+                            String errorMessage = errorJson.getString("message");
+                            Log.d(TAG.toString, "onResponse-verify: " + errorMessage);
+                            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    loadingDialog.dismiss();
+                } catch (Exception e) {
+                    Log.d(TAG.toString,"onResponse:" +e);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                Toast.makeText(Verify.this, t.toString(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG.toString, "onFailure-verify: " + t);
+                loadingDialog.dismiss();
+            }
+        });
     }
 
     private void resendCode() {
