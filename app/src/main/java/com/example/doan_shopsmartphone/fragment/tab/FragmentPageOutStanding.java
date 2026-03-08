@@ -33,7 +33,6 @@ public class FragmentPageOutStanding extends Fragment implements ObjectUtil {
     public FragmentPageOutStanding() {
     }
 
-    // TODO: Rename and change types and number of parameters
     public static FragmentPageOutStanding newInstance(String param1, String param2) {
         FragmentPageOutStanding fragment = new FragmentPageOutStanding();
         return fragment;

@@ -1,6 +1,7 @@
 package com.example.doan_shopsmartphone.screens.login;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,5 +19,12 @@ public class ResetPassSuccess extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityResetPasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        binding.backResetpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }

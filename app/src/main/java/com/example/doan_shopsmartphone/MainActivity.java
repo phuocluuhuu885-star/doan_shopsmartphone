@@ -2,16 +2,11 @@ package com.example.doan_shopsmartphone;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.doan_shopsmartphone.databinding.ActivityMainBinding;
-import com.example.doan_shopsmartphone.databinding.ActivitySplashBinding;
 import com.example.doan_shopsmartphone.fragment.FragmentHome;
 import com.example.doan_shopsmartphone.fragment.FragmentNotifycation;
 import com.example.doan_shopsmartphone.fragment.FragmentProduct;
