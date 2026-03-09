@@ -11,6 +11,7 @@ import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -20,8 +21,10 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -78,4 +81,20 @@ public interface BaseApi {
 
     @GET("verify/{idCode}")
     Call<ServerResponse> verify(@Path("idCode") String idCode);
+
+    @Multipart
+    @POST("user/upload-avatar/{id}") // Thay đường dẫn đúng với Server của bạn
+    Call<ServerResponse> uploadAvatar(
+            @Header("Authorization") String token,
+            @Path("id") String idUser,
+            @Part MultipartBody.Part avatar);
+
+    @FormUrlEncoded
+    @PUT("user/edit-profile/{id}") // Thay đường dẫn đúng với Server của bạn
+    Call<ServerResponse> editProfile(
+            @Header("Authorization") String token,
+            @Path("id") String idUser,
+            @Field("username") String username,
+            @Field("birthday") String birthday
+    );
 }
