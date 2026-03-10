@@ -63,4 +63,10 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.squareup.picasso:picasso:2.8")
+    implementation(fileTree(mapOf("dir" to "D:\\zalopay", "include" to listOf("*.aar", "*.jar"), "exclude" to listOf<String>())))
+    implementation("commons-codec:commons-codec:1.14")
+// OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation ("com.github.dhaval2404:imagepicker:2.1")
 }
