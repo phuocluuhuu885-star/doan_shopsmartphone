@@ -1,0 +1,11 @@
+Index: app/src/main/java/com/example/doan_shopsmartphone/view/profile_screen/s.java
+===================================================================
+diff --git a/app/src/main/java/com/example/doan_shopsmartphone/view/profile_screen/s.java b/app/src/main/java/com/example/doan_shopsmartphone/view/profile_screen/s.java
+deleted file mode 100644
+--- a/app/src/main/java/com/example/doan_shopsmartphone/view/profile_screen/s.java	(revision c8425bb0159faabf9ab4ca87b047eea2c777c316)
++++ /dev/null	(revision c8425bb0159faabf9ab4ca87b047eea2c777c316)
+@@ -1,4 +0,0 @@
+-package com.example.doan_shopsmartphone.view.profile_screen;
+-
+-public class s {
+-}
