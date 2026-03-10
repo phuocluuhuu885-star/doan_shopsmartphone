@@ -30,9 +30,11 @@ import com.example.doan_shopsmartphone.model.Banner;
 import com.example.doan_shopsmartphone.model.Product;
 import com.example.doan_shopsmartphone.model.response.BannerReponse;
 import com.example.doan_shopsmartphone.model.response.ProductResponse;
+import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.CartUtil;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
 import com.example.doan_shopsmartphone.view.Cart.CartActivity;
+import com.example.doan_shopsmartphone.view.product_screen.DetailProduct;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,7 +125,7 @@ public class FragmentProduct extends Fragment  implements ObjectUtil {
         binding.progressBar.setVisibility(View.VISIBLE);
 
         //handle call api get list product
-        BaseApi.API.getListAllProduct().enqueue(new Callback<ProductResponse>() {
+        BaseApi.API.getListAllProduct(true, AccountUltil.TOKEN).enqueue(new Callback<ProductResponse>() {
             @Override
             public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
                 if (response.isSuccessful()) {
@@ -244,14 +246,14 @@ public class FragmentProduct extends Fragment  implements ObjectUtil {
         String sellproduct = String.valueOf(product.getSoldQuantity());
         String reviewcount = String.valueOf(product.getReviewCount());
         Double minPrice = (product.getMinPrice());
-//        Intent intent = new Intent(getActivity(), DetailProduct.class);
-//        intent.putExtra("id_product", id);
-//        intent.putExtra("sold_quantity",sellproduct);
-//        intent.putExtra("rating_start",averageRate);
-//        intent.putExtra("review_count",reviewcount);
-//        intent.putExtra("minPrice",minPrice);
-//        Log.d("rating_start", "onclickObject: "+averageRate);
-//        getActivity().startActivity(intent);
+        Intent intent = new Intent(getActivity(), DetailProduct.class);
+        intent.putExtra("id_product", id);
+        intent.putExtra("sold_quantity",sellproduct);
+        intent.putExtra("rating_start",averageRate);
+        intent.putExtra("review_count",reviewcount);
+        intent.putExtra("minPrice",minPrice);
+        Log.d("rating_start", "onclickObject: "+averageRate);
+        getActivity().startActivity(intent);
     }
 
 }

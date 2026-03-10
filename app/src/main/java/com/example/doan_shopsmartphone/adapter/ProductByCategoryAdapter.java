@@ -2,6 +2,8 @@ package com.example.doan_shopsmartphone.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.doan_shopsmartphone.databinding.ItemProductByCategoryBinding;
+import com.example.doan_shopsmartphone.fragment.ShowAllProductByCategoryActivity;
 import com.example.doan_shopsmartphone.model.Product;
 import com.example.doan_shopsmartphone.model.ProductByCategory;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
@@ -52,12 +55,17 @@ public class ProductByCategoryAdapter extends RecyclerView.Adapter<ProductByCate
         if(productByCategory == null) {
             return;
         }
-        holder.binding.titleType.setText(productByCategory.getNameCategory());
 
+        setDataRcvProduct(productByCategory.getProduct(), holder.binding);
+        holder.binding.titleType.setText(productByCategory.getNameCategory());
         holder.binding.tvXemTatCa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String categoryId = productByCategory.getId();
+                Log.d("categoryId", "onBindViewHolder: " + categoryId);
+                Intent intent = new Intent(context, ShowAllProductByCategoryActivity.class);
+                intent.putExtra("categoryId", productByCategory);
+                context.startActivity(intent);
             }
         });
     }

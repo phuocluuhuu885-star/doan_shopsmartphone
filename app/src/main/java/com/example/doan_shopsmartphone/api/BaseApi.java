@@ -1,5 +1,6 @@
 package com.example.doan_shopsmartphone.api;
 
+import com.example.doan_shopsmartphone.model.OrderResponse;
 import com.example.doan_shopsmartphone.model.body.PurchaseBody;
 import com.example.doan_shopsmartphone.model.body.YeuthichRequestBody;
 import com.example.doan_shopsmartphone.model.response.BannerReponse;
@@ -8,11 +9,12 @@ import com.example.doan_shopsmartphone.model.response.DetailProductResponse;
 import com.example.doan_shopsmartphone.model.response.DetailUserReponse;
 import com.example.doan_shopsmartphone.model.response.InfoResponse;
 import com.example.doan_shopsmartphone.model.response.ListCommentResponse;
-import com.example.doan_shopsmartphone.model.response.LoginResponse;
-import com.example.doan_shopsmartphone.model.response.OrderResponse;
+import com.example.doan_shopsmartphone.model.response.ProductByCategoryReponse;
 import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.example.doan_shopsmartphone.model.response.ServerResponse;
-
+import com.example.doan_shopsmartphone.model.response.BannerReponse;
+import com.example.doan_shopsmartphone.api.response.LoginResponse;
+import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -38,9 +40,9 @@ import retrofit2.http.Part;
 public interface BaseApi {
     Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
 
-    String LOCALHOT = "192.168.1.101";
+    String LOCALHOT = "192.168.1.21";
     BaseApi API = new Retrofit.Builder()
-            .baseUrl("http://192.168.1.101:3000/api/")
+            .baseUrl("http://192.168.1.21:3000/api/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(BaseApi.class);
@@ -50,8 +52,6 @@ public interface BaseApi {
 
     @GET("products/all-product")
     Call<ProductResponse> getListAllProduct();
-    @GET("products/all-product")
-    Call<ProductResponse> getListAllProducts(@Query("isActive") boolean isActive, @Query("token") String token);
 
     @FormUrlEncoded
     @POST("login")
@@ -145,5 +145,8 @@ public interface BaseApi {
             @Header("Authorization") String authorization,
             @Field("option_id") String optionId,
             @Field("quantity") int quantity);
-
+    @GET("products/all-product-by-category")
+    Call<ProductByCategoryReponse> getListProductByCategory(@Query("token") String token);
+    @GET("products/all-product")
+    Call<ProductResponse> getListAllProducts(@Query("isActive") boolean isActive, @Query("token") String token);
 }

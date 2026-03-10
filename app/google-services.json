@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "828696200514",
+    "project_id": "doan-fmobile-aa04d",
+    "storage_bucket": "doan-fmobile-aa04d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:828696200514:android:d4d8ba7275b6a5432374db",
+        "android_client_info": {
+          "package_name": "com.example.doan_shopsmartphone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTd9QiOGquM_-r-lWviDzljszSHVua9tI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

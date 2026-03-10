@@ -225,6 +225,7 @@ public class LoginApp extends AppCompatActivity {
                                 AccountUltil.saveToken(LoginApp.this, token);
 
                                 AccountUltil.TOKEN = token;
+                                Log.d("GOOGLE_ID_TOKEN", idToken);
 
                                 Log.d("JWT", "Saved GG token = " + token);
 
@@ -240,6 +241,7 @@ public class LoginApp extends AppCompatActivity {
                                 String errorBody = response.errorBody().string();
                                 JSONObject erJson = new JSONObject(errorBody);
                                 String errorMessage = erJson.getString("message");
+                                Log.d("GOOGLE_ID_TOKEN", idToken);
                                 Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_SHORT).show();
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -252,7 +254,7 @@ public class LoginApp extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<LoginResponse> call, Throwable t) {
-
+                        Log.d("GOOGLE_ID_TOKEN", idToken);
                     }
                 });
             } else  {
@@ -260,6 +262,7 @@ public class LoginApp extends AppCompatActivity {
                 Log.e("Token","Token is null");
             }
         } catch (ApiException e) {
+            Log.d("GOOGLE_ID_TOKEN", e.toString());
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w("ApiException", "signInResult:failed code=" + e.getStatusCode());
             Toast.makeText(this, "Đăng nhập bằng google thất bại!", Toast.LENGTH_SHORT).show();

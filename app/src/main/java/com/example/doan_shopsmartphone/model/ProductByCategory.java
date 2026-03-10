@@ -1,9 +1,12 @@
 package com.example.doan_shopsmartphone.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class ProductByCategory implements Serializable {
+    @SerializedName("_id")
     private String id;
     private String nameCategory;
     private List<Product> product;
