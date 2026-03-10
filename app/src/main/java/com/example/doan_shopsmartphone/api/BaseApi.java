@@ -97,7 +97,8 @@ public interface BaseApi {
     @POST("register")
     Call<ServerResponse> register(@Field("email") String email,
                                   @Field("password") String password);
-
+    @GET("logout")
+    Call<ServerResponse> logout(@Header("Authorization") String authorization);
     @GET("verify/{idCode}")
     Call<ServerResponse> verify(@Path("idCode") String idCode);
 
