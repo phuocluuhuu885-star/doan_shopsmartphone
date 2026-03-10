@@ -7,24 +7,19 @@ import android.widget.Toast;
 
 import com.example.doan_shopsmartphone.adapter.CartAdapter;
 import com.example.doan_shopsmartphone.api.BaseApi;
-
-import com.example.doan_shopsmartphone.model.response.CartReponse;
-import com.example.doan_shopsmartphone.model.response.DetailUserReponse;
+import com.example.doan_shopsmartphone.api.response.CartReponse;
+import com.example.doan_shopsmartphone.api.response.DetailUserReponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ApiUtil {
-
-
-
     public static void getDetailUser(Context context,ProgressLoadingDialog loadingDialog) {
         String token = AccountUltil.BEARER + AccountUltil.getToken(context);
         String idUser = JWTUltil.decoded(AccountUltil.TOKEN).getUserId();

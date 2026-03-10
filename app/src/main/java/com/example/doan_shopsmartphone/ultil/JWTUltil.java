@@ -3,11 +3,10 @@ package com.example.doan_shopsmartphone.ultil;
 import android.util.Base64;
 import android.util.Log;
 
-import com.example.doan_shopsmartphone.model.DataToken;
+import com.example.doan_shopsmartphone.api.response.DataToken;
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
-
 
 
 public class JWTUltil {

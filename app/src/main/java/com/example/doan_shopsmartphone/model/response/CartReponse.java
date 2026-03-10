@@ -1,8 +1,7 @@
-package com.example.doan_shopsmartphone.model.response;
+package com.example.doan_shopsmartphone.api.response;
 import com.example.doan_shopsmartphone.model.OptionAndQuantity;
 
 import java.util.List;
-
 
 
 public class CartReponse {
