@@ -64,60 +64,6 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
         initController();
         // Hàm này có sẵn ở đâu cx gọi đc
         ApiUtil.getAllCart(this, cartAdapter);
-
-
-//
-//        //test
-//        if (CartUtil.listCart.size() == 0) {
-//
-//            String[] names = {"iPhone 15", "Samsung S24", "Xiaomi 14", "Oppo Find X5", "Vivo X100"};
-//            int[] prices = {20000000, 18000000, 15000000, 17000000, 16000000};
-//
-//            for (int i = 0; i < 5; i++) {
-//
-//                Product product = new Product();
-//                product.setId("product_" + i);
-//                product.setName(names[i]);
-//
-//                OptionOfListCart option = new OptionOfListCart();
-//                option.setId("option_" + i);
-//                option.setPrice(prices[i]);
-//                option.setDiscountValue(10);
-//                option.setImage("https://via.placeholder.com/150");
-//                option.setProduct(product);
-//
-//                OptionAndQuantity cartItem = new OptionAndQuantity();
-//                cartItem.setId("cart_" + i);
-//                cartItem.setOptionProduct(option);
-//                cartItem.setQuantity(1);
-//
-//                CartUtil.listCart.add(cartItem);
-//
-//            }
-//
-//            cartAdapter.notifyDataSetChanged();
-//        }
-//
-//        //test
-//
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         if(CartUtil.listCart.size() == 0) {
             binding.tvDrum.setVisibility(View.VISIBLE);
         } else {
@@ -148,8 +94,6 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ChangePaymentMethodsActivity.class);
                 intent.putExtra("paymentMethods", paymentMethods);
-
-
                 startActivityForResult(intent, REQUEST_CODE_CHANGE_PAYMENT_METHODS);
             }
         });

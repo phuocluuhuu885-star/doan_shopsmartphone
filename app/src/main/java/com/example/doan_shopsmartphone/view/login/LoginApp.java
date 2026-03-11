@@ -17,8 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.doan_shopsmartphone.MainActivity;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.api.BaseApi;
-import com.example.doan_shopsmartphone.api.response.LoginResponse;
+
 import com.example.doan_shopsmartphone.databinding.ActivityLoginBinding;
+import com.example.doan_shopsmartphone.model.response.LoginResponse;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.ApiUtil;
 import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;

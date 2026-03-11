@@ -10,15 +10,18 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.adapter.ProductAdapter;
+import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.FindProductBinding;
 import com.example.doan_shopsmartphone.model.Product;
+import com.example.doan_shopsmartphone.model.response.ProductResponse;
+import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
 import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;
 import com.example.doan_shopsmartphone.ultil.TAG;
@@ -28,8 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FindProduct extends AppCompatActivity implements ObjectUtil {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
+
+public class FindProduct extends AppCompatActivity implements ObjectUtil {
     private FindProductBinding binding;
     private ProgressLoadingDialog loadingDialog;
     private ProductAdapter productAdapter;
@@ -45,6 +52,7 @@ public class FindProduct extends AppCompatActivity implements ObjectUtil {
         initController();
 
     }
+
     private void initController() {
 
         //icon deleteText
@@ -131,7 +139,24 @@ public class FindProduct extends AppCompatActivity implements ObjectUtil {
 
 
     public void callApiGetListAllProducts(){
-
+//        loadingDialog.show();
+        BaseApi.API.getListAllProducts(true, AccountUltil.getToken(this)).enqueue(new Callback<ProductResponse>() {
+            @Override
+            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
+                if (response.isSuccessful()) {
+                    ProductResponse productResponse = response.body();
+                    productAdapter.setProductList(productResponse.getResult());
+                    binding.recycleView.setAdapter(productAdapter);
+                } else {
+                    Toast.makeText(getApplicationContext(), "call list all products err", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ProductResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Err", Toast.LENGTH_SHORT).show();
+//                loadingDialog.dismiss();
+            }
+        });
     }
 
     @Override

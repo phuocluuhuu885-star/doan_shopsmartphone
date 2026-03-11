@@ -15,9 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.bumptech.glide.Glide;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.adapter.CommentAdapter;
+import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.ActivityCommentBinding;
 import com.example.doan_shopsmartphone.model.Comment;
 import com.example.doan_shopsmartphone.model.ProductDetail;
+import com.example.doan_shopsmartphone.model.response.ListCommentResponse;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.TAG;
 
@@ -32,6 +34,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -61,14 +64,102 @@ public class CommentActivity extends AppCompatActivity {
         });
     }
 
-
+//    private void createComment() {
+//        String token = AccountUltil.BEARER + AccountUltil.TOKEN;
+//        String content = binding.edComment.getText().toString().trim();
+//        binding.edComment.setText("");
+//        BaseApi.API.createComment(token, productDetail.getId(), productDetail.getId(), AccountUltil.USER.getId(), content, 5).enqueue(new Callback<ServerResponse>() {
+//            @Override
+//            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+//                if(response.isSuccessful()){ // chỉ nhận đầu status 200
+//                    ServerResponse serverResponse = response.body();
+//                    Log.d(TAG.toString, "onResponse-createComment: " + serverResponse.toString());
+//                    if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
+//                        String userId = AccountUltil.USER.getId();
+//                        String username = AccountUltil.USER.getUsername();
+//                        String avatar = AccountUltil.USER.getAvatar();
+//                        String datetime = sdf.format(new Date());
+//
+//                        User user = new User(avatar, username);
+//                        Comment comment = new Comment(user, content, 5, datetime);
+//                        commentList.add(comment);
+//                        commentAdapter.notifyItemRangeInserted(commentList.size(), commentList.size());
+//                        binding.rcvComment.smoothScrollToPosition(commentList.size() - 1);
+//
+//                        if(commentList.size() == 0) {
+//                            binding.layoutDrum.setVisibility(View.VISIBLE);
+//                        } else {
+//                            binding.layoutDrum.setVisibility(View.GONE);
+//                        }
+//                    }
+//                } else { // nhận các đầu status #200
+//                    try {
+//                        String errorBody = response.errorBody().string();
+//                        JSONObject errorJson = new JSONObject(errorBody);
+//                        String errorMessage = errorJson.getString("message");
+//                        Log.d(TAG.toString, "onResponse-createComment: " + errorMessage);
+//                        Toast.makeText(CommentActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+//                    }catch (IOException e){
+//                        e.printStackTrace();
+//                    } catch (JSONException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ServerResponse> call, Throwable t) {
+//                Toast.makeText(CommentActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+//                Log.d(TAG.toString, "onFailure-createComment: " + t.toString());
+//            }
+//        });
+//    }
 
     private void getListComment() {
 //        String token = AccountUltil.BEARER + AccountUltil.TOKEN;
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
 
         binding.progressBar.setVisibility(View.VISIBLE);
+        BaseApi.API.getListComment(token, productDetail.getId()).enqueue(new Callback<ListCommentResponse>() {
+            @Override
+            public void onResponse(Call<ListCommentResponse> call, Response<ListCommentResponse> response) {
+                if(response.isSuccessful()){ // chỉ nhận đầu status 200
+                    ListCommentResponse listCommentResponse = response.body();
+                    Log.d(TAG.toString, "onResponse-getListComment: " + listCommentResponse.toString());
+                    if(listCommentResponse.getCode() == 200) {
+                        commentList = listCommentResponse.getData();
+                        commentAdapter.setCommentList(commentList);
+                        binding.rcvComment.smoothScrollToPosition(commentList.size());
 
+                        if(commentList.size() == 0) {
+                            binding.layoutDrum.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.layoutDrum.setVisibility(View.GONE);
+                        }
+                    }
+                } else { // nhận các đầu status #200
+                    try {
+                        String errorBody = response.errorBody().string();
+                        JSONObject errorJson = new JSONObject(errorBody);
+                        String errorMessage = errorJson.getString("message");
+                        Log.d(TAG.toString, "onResponse-getListComment: " + errorMessage);
+                        Toast.makeText(CommentActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                binding.progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ListCommentResponse> call, Throwable t) {
+                Toast.makeText(CommentActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG.toString, "onFailure-getListComment: " + t.toString());
+                binding.progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void initView() {
@@ -92,10 +183,9 @@ public class CommentActivity extends AppCompatActivity {
                 .into(binding.imgAvartar);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
-//    }
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+    }
 }

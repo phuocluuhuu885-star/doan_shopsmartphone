@@ -1,5 +1,7 @@
-package com.example.doan_shopsmartphone.model;
+package com.example.doan_shopsmartphone.model.response;
 
+
+import com.example.doan_shopsmartphone.model.Order;
 
 import java.util.List;
 

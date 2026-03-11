@@ -17,7 +17,7 @@ import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.FragmentWaitConfirmBinding;
 import com.example.doan_shopsmartphone.model.OptionAndQuantity;
 import com.example.doan_shopsmartphone.model.Order;
-import com.example.doan_shopsmartphone.model.OrderResponse;
+import com.example.doan_shopsmartphone.model.response.OrderResponse;
 import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;

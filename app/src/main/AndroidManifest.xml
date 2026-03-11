@@ -103,6 +103,9 @@
         <activity
             android:name=".fragment.homescreen.MainActivity"
             android:exported="false" />
+        <activity
+            android:name=".view.profile_screen.OrderProductScreen"
+            android:exported="false" />
     </application>
 
 </manifest>

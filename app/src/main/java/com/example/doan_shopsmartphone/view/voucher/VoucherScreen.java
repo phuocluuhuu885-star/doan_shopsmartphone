@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class VoucherScreen extends AppCompatActivity {
     ActivityVoucherScreenBinding binding;
     List<Voucher> list;

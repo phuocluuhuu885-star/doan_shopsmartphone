@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.doan_shopsmartphone.adapter.OrderAdapter;
 import com.example.doan_shopsmartphone.api.BaseApi;
-import com.example.doan_shopsmartphone.databinding.FragmentPageWaitingDeliveryBinding;
+import com.example.doan_shopsmartphone.databinding.FragmentPageDeliveriedBinding;
 import com.example.doan_shopsmartphone.model.Order;
 import com.example.doan_shopsmartphone.model.response.OrderResponse;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
@@ -34,21 +34,22 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class FragmentPageWaitingDelivery extends Fragment implements ObjectUtil {
+public class FragmentPageDelivering extends Fragment implements ObjectUtil {
 
-    private FragmentPageWaitingDeliveryBinding binding;
+    private FragmentPageDeliveriedBinding binding;
     private List<Order> orderList;
     private OrderAdapter orderAdapter;
 
 
-    public FragmentPageWaitingDelivery() {
+
+    public FragmentPageDelivering() {
         // Required empty public constructor
     }
 
 
     // TODO: Rename and change types and number of parameters
-    public static FragmentPageWaitingDelivery newInstance() {
-        FragmentPageWaitingDelivery fragment = new FragmentPageWaitingDelivery();
+    public static FragmentPageDelivering newInstance() {
+        FragmentPageDelivering fragment = new FragmentPageDelivering();
         return fragment;
     }
 
@@ -60,21 +61,20 @@ public class FragmentPageWaitingDelivery extends Fragment implements ObjectUtil 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentPageWaitingDeliveryBinding.inflate(inflater,container,false);
+        binding = FragmentPageDeliveriedBinding.inflate(inflater,container,false);
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         initView();
         urlListOrder();
-    }
 
+    }
     private void initView() {
         orderList = new ArrayList<>();
-        orderAdapter = new OrderAdapter(getActivity(), orderList, this, 1);
+        orderAdapter = new OrderAdapter(getActivity(), orderList, this, 2);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         binding.rcvOrder.setLayoutManager(layoutManager);
         binding.rcvOrder.setAdapter(orderAdapter);
@@ -85,7 +85,7 @@ public class FragmentPageWaitingDelivery extends Fragment implements ObjectUtil 
         String token = AccountUltil.BEARER + AccountUltil.getToken(requireContext());
 
         binding.progressBar.setVisibility(View.VISIBLE);
-        BaseApi.API.getListOrder(token, TAG.WAIT_DELIVERY).enqueue(new Callback<OrderResponse>() {
+        BaseApi.API.getListOrder(token, TAG.DELIVERING).enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(@NonNull Call<OrderResponse> call, @NonNull Response<OrderResponse> response) {
                 if(response.isSuccessful()){ // chỉ nhận đầu status 200

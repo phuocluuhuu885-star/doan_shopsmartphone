@@ -32,14 +32,11 @@ android {
 
     buildFeatures {
         dataBinding = true
-
         viewBinding = true
-
     }
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -47,27 +44,32 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation ("com.airbnb.android:lottie:5.2.0")
-    implementation ("io.github.chaosleung:pinview:1.4.4")
-    implementation ("com.github.Foysalofficial:NafisBottomNav:5.0")
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61")
-    implementation ("de.hdodenhof:circleimageview:3.1.0")
-    implementation ("com.github.denzcoskun:ImageSlideshow:0.1.2")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    implementation ("com.google.code.gson:gson:-2.10.1")
-    implementation ("com.google.code.gson:gson:2.10.1")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
-    //retrofit
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.airbnb.android:lottie:5.2.0")
+    implementation("io.github.chaosleung:pinview:1.4.4")
+    implementation("com.github.Foysalofficial:NafisBottomNav:5.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    
+    // GSON
+    implementation("com.google.code.gson:gson:2.10.1")
+    
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Google Services
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation("com.squareup.picasso:picasso:2.8")
+
+    // ZaloPay
     implementation(fileTree(mapOf("dir" to "D:\\zalopay", "include" to listOf("*.aar", "*.jar"), "exclude" to listOf<String>())))
     implementation("commons-codec:commons-codec:1.14")
-// OkHttp
+
+    // OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation ("com.github.dhaval2404:imagepicker:2.1")
+    implementation("com.github.dhaval2404:imagepicker:2.1")
 }
