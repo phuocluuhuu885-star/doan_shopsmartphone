@@ -51,7 +51,7 @@ public interface BaseApi {
     Call<BannerReponse> getListBanner();
 
     @GET("products/all-product")
-    Call<ProductResponse> getListAllProduct();
+    Call<ProductResponse> getListAllProduct(@Query("isActive") boolean isActive, @Query("token") String token);
 
     @FormUrlEncoded
     @POST("login")
@@ -60,10 +60,16 @@ public interface BaseApi {
     @GET("user/detail-profile/{idUser}")
     Call<DetailUserReponse> detailProfile(@Header("Authorization") String authorization,
                                           @Path("idUser") String idUser);
-
+    @FormUrlEncoded
+    @PUT("user/change-password/{idUser}")
+    Call<ServerResponse> changePassword(@Header("Authorization") String authorization,
+                                        @Path("idUser") String idUser,
+                                        @Field("oldPassword") String oldPassword,
+                                        @Field("newPassword") String newPassword);
     @GET("cart/all-cart-user")
     Call<CartReponse> allCartUser(@Header("Authorization") String authorization);
-
+    @GET("products/all-product")
+    Call<ProductResponse> getAllProductDiscouted(@Query("discounted") boolean discounted,@Query("token") String token);
     @FormUrlEncoded
     @POST("login-with-google")
     Call<LoginResponse> loginGoogle(@Field("idToken") String tokenGG);
