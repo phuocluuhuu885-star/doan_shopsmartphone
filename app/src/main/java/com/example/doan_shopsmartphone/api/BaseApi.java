@@ -1,6 +1,6 @@
 package com.example.doan_shopsmartphone.api;
 
-import com.example.doan_shopsmartphone.model.OrderResponse;
+
 import com.example.doan_shopsmartphone.model.body.PurchaseBody;
 import com.example.doan_shopsmartphone.model.body.YeuthichRequestBody;
 import com.example.doan_shopsmartphone.model.response.BannerReponse;
@@ -9,11 +9,12 @@ import com.example.doan_shopsmartphone.model.response.DetailProductResponse;
 import com.example.doan_shopsmartphone.model.response.DetailUserReponse;
 import com.example.doan_shopsmartphone.model.response.InfoResponse;
 import com.example.doan_shopsmartphone.model.response.ListCommentResponse;
+import com.example.doan_shopsmartphone.model.response.LoginResponse;
+import com.example.doan_shopsmartphone.model.response.OrderResponse;
 import com.example.doan_shopsmartphone.model.response.ProductByCategoryReponse;
 import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.model.response.BannerReponse;
-import com.example.doan_shopsmartphone.api.response.LoginResponse;
 import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -155,4 +156,8 @@ public interface BaseApi {
     Call<ProductByCategoryReponse> getListProductByCategory(@Query("token") String token);
     @GET("products/all-product")
     Call<ProductResponse> getListAllProducts(@Query("isActive") boolean isActive, @Query("token") String token);
+    @FormUrlEncoded
+    @POST("forgot-password")
+    Call<ServerResponse> forgotPassword(@Field("email") String email);
+
 }
