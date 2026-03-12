@@ -63,7 +63,9 @@ public class FragmentProfile extends Fragment {
     private float userRate = 0;
 
     public FragmentProfile() {
+        // Required empty public constructor
     }
+
 
     public static FragmentProfile newInstance() {
         FragmentProfile fragment = new FragmentProfile();
@@ -76,7 +78,9 @@ public class FragmentProfile extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(getLayoutInflater());
         return binding.getRoot();
     }
@@ -109,8 +113,12 @@ public class FragmentProfile extends Fragment {
     }
 
     private GoogleSignInClient createGoogleSignInClient() {
+        // Initialize GoogleSignInOptions with the appropriate configuration
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                // Add any additional options as needed
                 .build();
+
+        // Initialize the GoogleSignInClient
         return GoogleSignIn.getClient(requireContext(), gso);
     }
 
@@ -118,42 +126,36 @@ public class FragmentProfile extends Fragment {
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == getActivity().RESULT_OK) {
+                    if(result.getResultCode() == getActivity().RESULT_OK) {
                         setData();
                     }
                 }
             });
 
     private void setData() {
-        if (AccountUltil.USER != null) {
-            binding.tvUserName.setText(AccountUltil.USER.getEmail());
-
-            Glide.with(requireActivity())
-                    .load(AccountUltil.USER.getAvatar())
-                    .placeholder(R.drawable.loading)
-                    .error(R.drawable.avatar1)
-                    .into(binding.imgAvartar);
-
-            if(TextUtils.isEmpty(AccountUltil.USER.getPhone())) {
-                binding.tvPhone.setText("099.999.999");
-            } else {
-                binding.tvPhone.setText(AccountUltil.USER.getPhone());
-            }
-        } else {
-            binding.tvUserName.setText("Chưa có thông tin");
+        binding.tvUserName.setText(AccountUltil.USER.getEmail());
+        Glide.with(requireActivity())
+                .load(AccountUltil.USER.getAvatar())
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.avatar1)
+                .into(binding.imgAvartar);
+        if(TextUtils.isEmpty(AccountUltil.USER.getPhone())) {
             binding.tvPhone.setText("099.999.999");
+        } else {
+            binding.tvPhone.setText(AccountUltil.USER.getPhone());
         }
     }
 
     private void initController() {
-        HistoryDon();
-        phanHoiKhieuNai();
+        HistoryDon();//theo dõi đơn hàng
+        phanHoiKhieuNai();//phan hoi khieu nai
         resetPass();
         profile();
+//        myStore();
         yeuThich();
-        logOut();
-    }
+        logOut();//đăng xuất
 
+    }
     private void profile() {
         binding.layoutProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,7 +166,6 @@ public class FragmentProfile extends Fragment {
             }
         });
     }
-
     private void resetPass() {
         binding.layoutResetPass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,7 +185,6 @@ public class FragmentProfile extends Fragment {
             }
         });
     }
-
     private void yeuThich() {
         binding.layoutFavourite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,7 +193,7 @@ public class FragmentProfile extends Fragment {
                 FragmentManager fragmentManager = getParentFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.framelayout, favourite)
-                        .addToBackStack(null)
+                        .addToBackStack(null)  // Add this line if you want to add the fragment to the back stack
                         .commit();
             }
         });
@@ -245,15 +245,21 @@ public class FragmentProfile extends Fragment {
                 dialog.show();
             }
         });
-    }
 
+//        binding.layoutPhanhoi.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getActivity(), DanhGiaActivity.class));
+//                requireActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+//            }
+//        });
+    }
     private void animateImage(ImageView ratingImage)  {
         ScaleAnimation scaleAnimation = new ScaleAnimation(0,1f,0,1f, Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
         scaleAnimation.setFillAfter(true);
         scaleAnimation.setDuration(200);
         ratingImage.startAnimation(scaleAnimation);
     }
-
     private void logOut() {
         sharedPreferences = getActivity().getSharedPreferences("USER_FILE", Context.MODE_PRIVATE);
         String tokenGG = sharedPreferences.getString("TOKENGG",null);
@@ -289,28 +295,31 @@ public class FragmentProfile extends Fragment {
             }
         });
     }
-
     private void logoutAccount() {
         loadingDialog.show();
         BaseApi.API.logout(AccountUltil.BEARER + AccountUltil.TOKEN).enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(@NonNull Call<ServerResponse> call, @NonNull Response<ServerResponse> response) {
-                if(response.isSuccessful()){
+                if(response.isSuccessful()){ // chỉ nhận đầu status 200
                     ServerResponse serverResponse = response.body();
                     assert serverResponse != null;
+                    Log.d(TAG.toString, "onResponse-logout: " + serverResponse.toString());
                     if(serverResponse.getCode() == 200) {
                         startActivity(new Intent(getActivity(), LoginApp.class));
                         requireActivity().finishAffinity();
                     }
-                } else {
+                } else { // nhận các đầu status #200
                     try {
                         assert response.errorBody() != null;
                         String errorBody = response.errorBody().string();
                         JSONObject errorJson = new JSONObject(errorBody);
                         String errorMessage = errorJson.getString("message");
+                        Log.d(TAG.toString, "onResponse-logout: " + errorMessage);
                         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
-                    }catch (IOException | JSONException e){
+                    }catch (IOException e){
                         e.printStackTrace();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
                     }
                 }
                 loadingDialog.dismiss();
@@ -319,6 +328,7 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onFailure(@NonNull Call<ServerResponse> call, Throwable t) {
                 Toast.makeText(getActivity(), t.toString(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG.toString, "onFailure-logout: " + t.toString());
                 loadingDialog.dismiss();
             }
         });
