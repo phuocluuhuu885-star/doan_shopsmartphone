@@ -3,26 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
 
     <LinearLayout
         android:id="@+id/linearLayout"
+        android:background="@drawable/custom_border_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
         android:paddingHorizontal="12dp"
         android:paddingVertical="15dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        >
+        app:layout_constraintStart_toStartOf="parent">
         <ImageView
             android:id="@+id/imgBack"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:background="@drawable/custom_bg_shopping_cart_white"
             android:padding="5dp"
             android:src="@drawable/back"
-            app:tint="@color/primary" />
+            app:tint="@color/white" />
 
         <TextView
             android:layout_weight="1"
@@ -108,7 +108,7 @@
                     android:layout_marginTop="35dp"
                     android:textSize="@dimen/font_size_text_title_medium"
                     android:textStyle="bold"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/color_chudao"
                     />
 
                 <LinearLayout
@@ -136,7 +136,7 @@
                     android:layout_marginTop="20dp"
                     android:textSize="@dimen/font_size_text_title_medium"
                     android:textStyle="bold"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/color_chudao"
                     />
 
                 <LinearLayout
@@ -173,7 +173,7 @@
                     android:layout_marginTop="35dp"
                     android:textSize="@dimen/font_size_text_title_medium"
                     android:textStyle="bold"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/color_chudao"
                     />
 
                 <LinearLayout
@@ -202,7 +202,7 @@
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     android:height="40dp"
-                    android:background="@drawable/custom_button"
+                    android:background="@drawable/custom_btn_muaangay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>

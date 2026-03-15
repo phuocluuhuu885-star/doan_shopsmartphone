@@ -4,21 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/gray_ground"
     >
     <LinearLayout
         android:id="@+id/toolbar"
-        android:padding="20dp"
+        android:background="@drawable/custom_border_header"
+        android:paddingHorizontal="6dp"
+        android:orientation="horizontal"
+        android:paddingVertical="15dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/white"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/imgBack"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/custom_bg_shopping_cart_primary"
             android:padding="5dp"
             android:src="@drawable/back"
             app:tint="@color/white" />
@@ -28,6 +29,7 @@
             android:layout_height="wrap_content"
             android:text="Thanh toán"
             android:textSize="25dp"
+            android:textColor="@color/white"
             />
 
     </LinearLayout>

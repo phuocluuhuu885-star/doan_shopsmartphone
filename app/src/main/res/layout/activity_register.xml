@@ -7,6 +7,7 @@
     android:paddingHorizontal="22dp"
     android:layout_height="match_parent"
     android:id="@+id/register"
+    android:fitsSystemWindows="true"
     tools:context=".view.login.Register">
 
 

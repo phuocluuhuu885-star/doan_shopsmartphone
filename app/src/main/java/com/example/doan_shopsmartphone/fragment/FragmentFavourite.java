@@ -13,15 +13,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.adapter.FavouriteProductAdapter;
+import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.FragmentFavouriteBinding;
 import com.example.doan_shopsmartphone.model.Product;
+import com.example.doan_shopsmartphone.model.body.YeuthichRequestBody;
+import com.example.doan_shopsmartphone.model.response.ProductResponse;
+import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FragmentFavourite extends Fragment implements ObjectUtil {
     private List<Product> listProduct = new ArrayList<>();
@@ -32,7 +42,13 @@ public class FragmentFavourite extends Fragment implements ObjectUtil {
         // Required empty public constructor
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        initView();
+        callApiGetListAllProducts();
 
+    }
     public static FragmentFavourite newInstance(String param1, String param2) {
         FragmentFavourite fragment = new FragmentFavourite();
         Bundle args = new Bundle();
@@ -65,6 +81,72 @@ public class FragmentFavourite extends Fragment implements ObjectUtil {
                         .replace(R.id.framelayout, profile)
                         .addToBackStack(null)
                         .commit();
+            }
+        });
+    }
+
+    public void callApiGetListAllProducts() {
+        binding.progressBarFavourite.setVisibility(View.VISIBLE);
+        BaseApi.API.getListAllProduct(true, AccountUltil.TOKEN).enqueue(new Callback<ProductResponse>() {
+            @Override
+            public void onResponse(Call<ProductResponse> call, Response<ProductResponse> response) {
+                if (response.isSuccessful()) {
+                    ProductResponse productResponse = response.body();
+                    if(!(listProduct ==null)){
+                        listProduct.clear();
+                    }
+                    listProduct.addAll(productResponse.getResult());
+                    Log.d("datttttttttttt", "onResponse: "+listProduct.size());
+                    binding.progressBarFavourite.setVisibility(View.VISIBLE);
+                    BaseApi.API.getFavorites(AccountUltil.USER.getId()).enqueue(new Callback<List<YeuthichRequestBody>>() {
+                        @Override
+                        public void onResponse(Call<List<YeuthichRequestBody>> call, Response<List<YeuthichRequestBody>> response) {
+                            if (response.isSuccessful()) {
+                                List<YeuthichRequestBody>  productFavouriteResponse = response.body();
+                                Log.d("dattttttt", "onResponse: "+productFavouriteResponse.size());
+                                List<Product> listProductFavourite = new ArrayList<>();
+                                for (YeuthichRequestBody favorite : productFavouriteResponse) {
+                                    String favoriteProductId = favorite.getProduct_id();
+
+                                    // Sử dụng Stream API để lọc ra các sản phẩm từ listProduct có id trùng khớp với id trong favoriteProductId
+                                    List<Product> matchingProducts = listProduct.stream()
+                                            .filter(product -> favoriteProductId.equals(product.getId()))
+                                            .collect(Collectors.toList());
+
+                                    // Thêm các sản phẩm đã lọc được vào danh sách listProductFavourite
+                                    listProductFavourite.addAll(matchingProducts);
+                                }
+
+                                Log.d("datttttt", "onResponse: "+listProductFavourite.size());
+                                if(listProductFavourite.size()==0){
+                                    Toast.makeText(getActivity(), "Chưa Có Sản Phẩm Yêu Thích Nào", Toast.LENGTH_SHORT).show();
+                                }
+
+                                favouriteProductAdapter.setProductList(listProductFavourite);
+                                binding.recycleProductFavourite.setAdapter(favouriteProductAdapter);
+                                favouriteProductAdapter.notifyDataSetChanged();
+
+                            } else {
+                                Toast.makeText(getActivity(), "call list all products err", Toast.LENGTH_SHORT).show();
+                            }
+                            binding.progressBarFavourite.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<YeuthichRequestBody>> call, Throwable t) {
+
+                        }
+                    });
+                } else {
+                    Toast.makeText(getActivity(), "call list all products err", Toast.LENGTH_SHORT).show();
+                }
+                binding.progressBarFavourite.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<ProductResponse> call, Throwable t) {
+                Toast.makeText(getActivity(), "Err", Toast.LENGTH_SHORT).show();
+                binding.progressBarFavourite.setVisibility(View.GONE);
             }
         });
     }

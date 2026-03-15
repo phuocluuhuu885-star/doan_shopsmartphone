@@ -10,9 +10,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.doan_shopsmartphone.MainActivity;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.databinding.ActivityOrderSuccessBinding;
-import com.example.doan_shopsmartphone.fragment.homescreen.MainActivity;
 
 public class OrderSuccessActivity extends AppCompatActivity {
     ActivityOrderSuccessBinding binding;

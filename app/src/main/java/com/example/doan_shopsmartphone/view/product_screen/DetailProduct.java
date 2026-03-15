@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
+import com.example.doan_shopsmartphone.MainActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONException;
@@ -62,7 +63,6 @@ import com.example.doan_shopsmartphone.adapter.ReviewShowAdapter;
 import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.ActivityDetailProductBinding;
 import com.example.doan_shopsmartphone.databinding.LayoutDialigOptionProductBinding;
-import com.example.doan_shopsmartphone.fragment.homescreen.MainActivity;
 import com.example.doan_shopsmartphone.model.Comment;
 import com.example.doan_shopsmartphone.model.OptionProduct;
 import com.example.doan_shopsmartphone.model.Product;
@@ -294,7 +294,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
                         // Parse and display the error message
                         JSONObject errorJson = new JSONObject(errorBody);
                         String errorMessage = errorJson.getString("message");
-                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"loiiiiiiii" + errorMessage, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (JSONException e) {
@@ -307,6 +307,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
             @Override
             public void onFailure(Call<DetailProductResponse> call, Throwable t) {
                 Toast.makeText(DetailProduct.this, "Error", Toast.LENGTH_SHORT).show();
+                Log.e("loi", t.getMessage());
                 dialog.dismiss();
             }
         });

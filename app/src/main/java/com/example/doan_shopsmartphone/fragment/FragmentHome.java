@@ -3,6 +3,10 @@ package com.example.doan_shopsmartphone.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,6 +27,9 @@ import com.example.doan_shopsmartphone.model.Banner;
 import com.example.doan_shopsmartphone.model.response.BannerReponse;
 import com.example.doan_shopsmartphone.ultil.ApiUtil;
 import com.example.doan_shopsmartphone.ultil.TAG;
+import com.example.doan_shopsmartphone.view.Cart.CartActivity;
+import com.example.doan_shopsmartphone.view.chat_message.ChatActivity;
+import com.example.doan_shopsmartphone.view.find_product.FindProduct;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -81,6 +88,18 @@ public class FragmentHome extends Fragment {
         callApiBanner();
         ApiUtil.setTitleQuantityCart(getActivity(),binding.tvQuantityCart);
     }
+
+    private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if(result.getResultCode() == getActivity().RESULT_OK) {
+                        Intent intent = result.getData();
+                        int cartSize = intent.getIntExtra("data_cart_size", 0);
+                        binding.tvQuantityCart.setText(cartSize + "");
+                    }
+                }
+            });
 
     private void setTab() {
         viewPagerHomeAdapter = new ViewPageHomeAdapter(getActivity());
@@ -153,17 +172,26 @@ public class FragmentHome extends Fragment {
         binding.imgCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CartActivity.class);
+                mActivityResultLauncher.launch(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
             }
         });
         binding.findPro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), FindProduct.class);
+                mActivityResultLauncher.launch(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
             }
         });
 
         binding.chatBot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
+                mActivityResultLauncher.launch(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
             }
         });
     }

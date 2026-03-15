@@ -252,7 +252,7 @@ public class FragmentProduct extends Fragment  implements ObjectUtil {
         intent.putExtra("rating_start",averageRate);
         intent.putExtra("review_count",reviewcount);
         intent.putExtra("minPrice",minPrice);
-        Log.d("rating_start", "onclickObject: "+averageRate);
+        Log.d("rating_start", "onclickObject: "+id);
         getActivity().startActivity(intent);
     }
 

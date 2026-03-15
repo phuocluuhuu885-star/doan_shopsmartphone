@@ -1,5 +1,6 @@
 package com.example.doan_shopsmartphone.fragment.tab;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.example.doan_shopsmartphone.model.response.ProductByCategoryReponse;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
 import com.example.doan_shopsmartphone.ultil.TAG;
+import com.example.doan_shopsmartphone.view.product_screen.DetailProduct;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -139,6 +141,14 @@ public class FragmentPageSelling extends Fragment implements ObjectUtil {
         String sellproduct = String.valueOf(product.getSoldQuantity());
         String reviewcount = String.valueOf(product.getReviewCount());
         Double minPrice = (product.getMinPrice());
+        Intent intent = new Intent(getActivity(), DetailProduct.class);
+        intent.putExtra("id_product", id);
+        intent.putExtra("sold_quantity",sellproduct);
+        intent.putExtra("rating_start",averageRate);
+        intent.putExtra("review_count",reviewcount);
+        intent.putExtra("minPrice",minPrice);
+        Log.d("checkkgiaaa", "checkkkigaaaaa: "+minPrice);
+        getActivity().startActivity(intent);
     }
 
     @Override

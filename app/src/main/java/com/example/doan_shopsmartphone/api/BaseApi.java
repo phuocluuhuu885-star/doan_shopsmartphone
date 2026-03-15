@@ -1,6 +1,6 @@
 package com.example.doan_shopsmartphone.api;
 
-
+import com.example.doan_shopsmartphone.model.OrderResponse;
 import com.example.doan_shopsmartphone.model.body.PurchaseBody;
 import com.example.doan_shopsmartphone.model.body.YeuthichRequestBody;
 import com.example.doan_shopsmartphone.model.response.BannerReponse;
@@ -9,12 +9,11 @@ import com.example.doan_shopsmartphone.model.response.DetailProductResponse;
 import com.example.doan_shopsmartphone.model.response.DetailUserReponse;
 import com.example.doan_shopsmartphone.model.response.InfoResponse;
 import com.example.doan_shopsmartphone.model.response.ListCommentResponse;
-import com.example.doan_shopsmartphone.model.response.LoginResponse;
-import com.example.doan_shopsmartphone.model.response.OrderResponse;
 import com.example.doan_shopsmartphone.model.response.ProductByCategoryReponse;
 import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.model.response.BannerReponse;
+import com.example.doan_shopsmartphone.api.response.LoginResponse;
 import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -43,7 +42,7 @@ public interface BaseApi {
 
     String LOCALHOT = "192.168.1.21";
     BaseApi API = new Retrofit.Builder()
-            .baseUrl("http://192.168.1.21:3000/api/")
+            .baseUrl("http://"+LOCALHOT+":3000/api/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(BaseApi.class);
@@ -156,8 +155,16 @@ public interface BaseApi {
     Call<ProductByCategoryReponse> getListProductByCategory(@Query("token") String token);
     @GET("products/all-product")
     Call<ProductResponse> getListAllProducts(@Query("isActive") boolean isActive, @Query("token") String token);
+
     @FormUrlEncoded
     @POST("forgot-password")
     Call<ServerResponse> forgotPassword(@Field("email") String email);
 
+    @FormUrlEncoded
+    @POST("info/add")
+    Call<ServerResponse> addInfo(@Header("Authorization") String authorization,
+                                 @Field("name") String name,
+                                 @Field("address") String address,
+                                 @Field("phone_number") String phone_number,
+                                 @Field("checked") Boolean checked);
 }

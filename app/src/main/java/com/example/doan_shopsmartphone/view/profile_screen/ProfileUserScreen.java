@@ -44,7 +44,8 @@ import retrofit2.Response;
 public class ProfileUserScreen extends AppCompatActivity {
     private ActivityProfileUserScreenBinding binding;
     private ProgressLoadingDialog loadingDialog;
-    private SimpleDateFormat formatter ;
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +60,8 @@ public class ProfileUserScreen extends AppCompatActivity {
         binding.imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ProfileUserScreen.this, MainActivity.class);
-                setResult(RESULT_OK, intent);
-                finish();
+                setResult(RESULT_OK); // Chỉ cần thông báo thành công
+                finish(); // Đóng màn hình hiện tại
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
             }
         });
@@ -70,9 +70,9 @@ public class ProfileUserScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ImagePicker.with(ProfileUserScreen.this)
-                        .crop()	    			//Crop image(Optional), Check Customization for more option
-                        .compress(1024)			//Final image size will be less than 1 MB(Optional)
-                        .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                        .crop()
+                        .compress(1024)
+                        .maxResultSize(1080, 1080)
                         .start();
             }
         });
@@ -99,13 +99,16 @@ public class ProfileUserScreen extends AppCompatActivity {
             public void onClick(View view) {
                 String username = binding.edtUserName.getText().toString().trim();
                 String birthday = binding.edtBirthday.getText().toString().trim();
-                binding.edtUserName.setEnabled(false);
-                binding.edtBirthday.setEnabled(false);
-                binding.linearCalander.setClickable(false);
-                apiEditProfile(username, birthday);
+                if (validateValue(username, birthday)) {
+                    binding.edtUserName.setEnabled(false);
+                    binding.edtBirthday.setEnabled(false);
+                    binding.linearCalander.setClickable(false);
+                    apiEditProfile(username, birthday);
+                }
             }
         });
     }
+
     private void openCalander() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -115,7 +118,6 @@ public class ProfileUserScreen extends AppCompatActivity {
         DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                // set thời gian cho calendar
                 calendar.set(year, month, dayOfMonth);
                 binding.edtBirthday.setText(formatter.format(calendar.getTime()));
             }
@@ -127,136 +129,90 @@ public class ProfileUserScreen extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK) {
-            assert data != null;
+        if (resultCode == Activity.RESULT_OK && data != null) {
             Uri uri = data.getData();
-            File file = new File(getPath(uri));
-            RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
-            binding.imgAvartar.setImageURI(uri);
-            MultipartBody.Part fileImgAvatar = MultipartBody.Part.createFormData("avatar", file.getName(), requestBody);
-            apiUploadAvatar(fileImgAvatar);
-
+            String path = getPath(uri);
+            if (path != null) {
+                File file = new File(path);
+                RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+                binding.imgAvartar.setImageURI(uri);
+                MultipartBody.Part fileImgAvatar = MultipartBody.Part.createFormData("avatar", file.getName(), requestBody);
+                apiUploadAvatar(fileImgAvatar);
+            }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show();
-
-        } else {
-            Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
         }
     }
-    private String getPath(Uri uri){
-        String result;
-        Cursor cursor = getContentResolver()
-                .query(uri, null,null,null,null);
-        if (cursor == null){
-            result = uri.getPath();
-        }else {
-            cursor.moveToFirst();
-            int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(index);
+
+    private String getPath(Uri uri) {
+        String result = null;
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                if (index != -1) result = cursor.getString(index);
+            }
             cursor.close();
         }
-        return result;
+        return result != null ? result : uri.getPath();
     }
 
     private void apiUploadAvatar(MultipartBody.Part fileImgAvatar) {
-//        String token = AccountUltil.BEARER + AccountUltil.TOKEN;
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
-
         String idUser = AccountUltil.USER.getId();
         loadingDialog.show();
         BaseApi.API.uploadAvatar(token, idUser, fileImgAvatar).enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(@NonNull Call<ServerResponse> call, @NonNull Response<ServerResponse> response) {
-                if(response.isSuccessful()){ // chỉ nhận đầu status 200
-                    ServerResponse serverResponse = response.body();
-                    assert serverResponse != null;
-                    Log.d(TAG.toString, "onResponse-uploadAvatar: " + serverResponse.toString());
-                    if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
-                        Toast.makeText(ProfileUserScreen.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                        // Khởi tạo mỗi khi mình có dữ liệu hoặc thay đổi thì nó update AccountUser
-                        ApiUtil.getDetailUser(ProfileUserScreen.this, loadingDialog);
-                    }
-                } else { // nhận các đầu status #200
-                    try {
-                        assert response.errorBody() != null;
-                        String errorBody = response.errorBody().string();
-                        JSONObject errorJson = new JSONObject(errorBody);
-                        String errorMessage = errorJson.getString("message");
-                        Log.d(TAG.toString, "onResponse-uploadAvatar: " + errorMessage);
-                        Toast.makeText(ProfileUserScreen.this, errorMessage, Toast.LENGTH_SHORT).show();
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiUtil.getDetailUser(ProfileUserScreen.this, loadingDialog);
+                    Toast.makeText(ProfileUserScreen.this, "Cập nhật ảnh đại diện thành công", Toast.LENGTH_SHORT).show();
                 }
                 loadingDialog.dismiss();
             }
 
             @Override
             public void onFailure(@NonNull Call<ServerResponse> call, @NonNull Throwable t) {
-                Toast.makeText(ProfileUserScreen.this, t.toString(), Toast.LENGTH_SHORT).show();
-                Log.d(TAG.toString, "onFailure-uploadAvatar: " + t.toString());
                 loadingDialog.dismiss();
             }
         });
     }
+
     private void apiEditProfile(String username, String birthday) {
-//        String token = AccountUltil.BEARER + AccountUltil.TOKEN;
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
-
         String idUser = AccountUltil.USER.getId();
+        loadingDialog.show();
 
-        if(validateValue(username, birthday)) {
-            loadingDialog.show();
-            BaseApi.API.editProfile(token, idUser, username, birthday).enqueue(new Callback<ServerResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<ServerResponse> call, @NonNull Response<ServerResponse> response) {
-                    if(response.isSuccessful()){ // chỉ nhận đầu status 200
-                        ServerResponse serverResponse = response.body();
-                        assert serverResponse != null;
-                        Log.d(TAG.toString, "onResponse-editProfile: " + serverResponse.toString());
-                        if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
-                            Toast.makeText(ProfileUserScreen.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                            // Khởi tạo mỗi khi mình có dữ liệu hoặc thay đổi thì nó update AccountUser
-                            ApiUtil.getDetailUser(ProfileUserScreen.this, loadingDialog);
-                        }
-                    } else { // nhận các đầu status #200
-                        try {
+        BaseApi.API.editProfile(token, idUser, username, birthday).enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ServerResponse> call, @NonNull Response<ServerResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiUtil.getDetailUser(ProfileUserScreen.this, loadingDialog);
 
-                            assert response.errorBody() != null;
-                            String errorBody = response.errorBody().string();
-                            JSONObject errorJson = new JSONObject(errorBody);
-                            String errorMessage = errorJson.getString("message");
-                            Log.d(TAG.toString, "onResponse-editProfile: " + errorMessage);
-                            Toast.makeText(ProfileUserScreen.this, errorMessage, Toast.LENGTH_SHORT).show();
-                        }catch (IOException e){
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+                    Toast.makeText(ProfileUserScreen.this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+
+                    setResult(RESULT_OK);
+                } else {
                     loadingDialog.dismiss();
+                    Toast.makeText(ProfileUserScreen.this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
                 }
+            }
 
-                @Override
-                public void onFailure(@NonNull Call<ServerResponse> call, @NonNull Throwable t) {
-                    Toast.makeText(ProfileUserScreen.this, t.toString(), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG.toString, "onFailure-editProfile: " + t.toString());
-                    loadingDialog.dismiss();
-                }
-            });
-        }
-
+            @Override
+            public void onFailure(@NonNull Call<ServerResponse> call, @NonNull Throwable t) {
+                loadingDialog.dismiss();
+                Toast.makeText(ProfileUserScreen.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private boolean validateValue(String username, String birthday) {
-        if(TextUtils.isEmpty(username)) {
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(birthday)) {
             Toast.makeText(this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         try {
+            formatter.setLenient(false);
             formatter.parse(birthday);
         } catch (Exception e) {
             Toast.makeText(this, "Nhập đúng định dạng ngày tháng dd/MM/yyyy", Toast.LENGTH_SHORT).show();
@@ -267,21 +223,21 @@ public class ProfileUserScreen extends AppCompatActivity {
 
     @SuppressLint({"SimpleDateFormat", "ResourceAsColor"})
     private void initData() {
-        formatter = new SimpleDateFormat("dd/MM/yyyy");
         loadingDialog = new ProgressLoadingDialog(this);
-        binding.edtUserName.setText(AccountUltil.USER.getUsername());
-        binding.edtBirthday.setText(AccountUltil.USER.getBirthday());
-        binding.email.setText(AccountUltil.USER.getEmail());
-        Glide.with(this)
-                .load(AccountUltil.USER.getAvatar())
-                .placeholder(R.drawable.loading)
-                .error(R.drawable.avatar1)
-                .into(binding.imgAvartar);
+        if (AccountUltil.USER != null) {
+            binding.edtUserName.setText(AccountUltil.USER.getUsername());
+            binding.edtBirthday.setText(AccountUltil.USER.getBirthday());
+            binding.email.setText(AccountUltil.USER.getEmail());
+            Glide.with(this)
+                    .load(AccountUltil.USER.getAvatar())
+                    .placeholder(R.drawable.loading)
+                    .error(R.drawable.avatar1)
+                    .into(binding.imgAvartar);
+        }
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Intent intent = new Intent(ProfileUserScreen.this, MainActivity.class);
         setResult(RESULT_OK, intent);
         finish();

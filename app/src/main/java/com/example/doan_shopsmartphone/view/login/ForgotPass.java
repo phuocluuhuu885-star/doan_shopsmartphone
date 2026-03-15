@@ -1,6 +1,7 @@
 package com.example.doan_shopsmartphone.view.login;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -51,6 +52,15 @@ public class ForgotPass extends AppCompatActivity {
         binding.backfogot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                finish();
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+            }
+        });
+        binding.login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ForgotPass.this, LoginApp.class);
+                startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
             }
@@ -114,9 +124,9 @@ public class ForgotPass extends AppCompatActivity {
         loadingDialog = new ProgressLoadingDialog(this);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-//    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+    }
 }

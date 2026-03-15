@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent">
     <LinearLayout
-        android:background="@color/color_chudao"
+        android:background="@drawable/custom_border_header"
         android:paddingHorizontal="12dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -20,7 +21,6 @@
                 android:id="@+id/imgBack"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:background="@drawable/custom_bg_shopping_cart_white"
                 android:padding="5dp"
                 android:src="@drawable/back"
                 app:tint="@color/primary"

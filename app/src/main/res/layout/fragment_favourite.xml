@@ -5,22 +5,41 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context=".fragment.FragmentFavourite">
 
-    <ImageView
-        android:id="@+id/backDetailProduct"
-        app:tint="@color/white"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:background="@drawable/custom_bg_shopping_cart_primary"
-        android:padding="5dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="15dp"
-        android:src="@drawable/back"
-        app:layout_constraintStart_toStartOf="parent"
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:background="@drawable/custom_border_header"
+        android:paddingHorizontal="6dp"
+        android:orientation="horizontal"
+        android:paddingVertical="15dp"
+        android:layout_width="match_parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints"
-        />
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/backDetailProduct"
+            app:tint="@color/white"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:padding="5dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints"
+            />
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:text="Yêu thích"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
