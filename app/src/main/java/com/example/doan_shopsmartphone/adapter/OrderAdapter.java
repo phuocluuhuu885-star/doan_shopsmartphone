@@ -21,9 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.doan_shopsmartphone.R;
+import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.LayoutItemOrderBinding;
 import com.example.doan_shopsmartphone.model.OptionAndQuantity;
 import com.example.doan_shopsmartphone.model.Order;
+import com.example.doan_shopsmartphone.model.response.ListComment1Response;
+import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
 import com.google.android.material.textfield.TextInputEditText;
@@ -144,7 +147,87 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                         ratingBar.setRating(5);
                         String productid= listidProduct.get(position);
                         Log.d("test gọi dữ liệu", "prduct"+productid+"order"+order.getId()+"user"+AccountUltil.USER.getId());
+                        BaseApi.API.getReview(productid,order.getId(),AccountUltil.USER.getId()).enqueue(new Callback<ListComment1Response>() {
+                            @Override
+                            public void onResponse(Call<ListComment1Response> call, Response<ListComment1Response> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    ListComment1Response listCommentResponse = response.body();
+                                    if (listCommentResponse.getData() != null) {
+                                        Toast.makeText(adapter.getContext(), "Bạn Đã Đánh Giá Sản Phẩm Này,Vui Lòng Sửa", Toast.LENGTH_SHORT).show();
+                                        ratingBar.setRating(listCommentResponse.getData().getRate());
+                                        commentName.setText(listCommentResponse.getData().getName());
+                                        commentEditText.setText(listCommentResponse.getData().getContent());
+                                        postButton.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                String token = AccountUltil.BEARER + AccountUltil.getToken(context);
+                                                String comment = commentEditText.getText().toString();
+                                                String name = commentName.getText().toString();
+                                                if (TextUtils.isEmpty(name)) {
+                                                    Toast.makeText(context, "Vui Lòng Nhập Tên", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    float rating = ratingBar.getRating();
+                                                    int selectedPosition = spinner.getSelectedItemPosition();
+                                                    String productid= listidProduct.get(selectedPosition);
+                                                    BaseApi.API.updateComment(token,listCommentResponse.getData().getId(),productid,order.getId(),AccountUltil.USER.getId(),comment, (int) rating).enqueue(new Callback<ServerResponse>() {
+                                                        @Override
+                                                        public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                                                            Toast.makeText(context, "Sửa Đánh Giá Thành Công", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                        @Override
+                                                        public void onFailure(Call<ServerResponse> call, Throwable t) {
+                                                        }
+                                                    });
+                                                    dialog.dismiss();
+                                                }
 
+                                            }
+
+                                        });
+                                    } else {
+
+
+                                    }
+                                } else {
+                                    Log.d("test gọi dữ liệu", "Response không thành công hoặc body là null");
+                                    Log.d("test gọi dữ liệu", "onItemSelected: + đã vào hàm thay đổi1");
+
+                                    postButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            String token = AccountUltil.BEARER + AccountUltil.getToken(context);
+                                            String comment = commentEditText.getText().toString();
+                                            String name = commentName.getText().toString();
+                                            float rating = ratingBar.getRating();
+                                            if (TextUtils.isEmpty(name)) {
+                                                Toast.makeText(context, "Vui Lòng Nhập Tên", Toast.LENGTH_SHORT).show();
+
+                                            }else{
+                                                BaseApi.API.createComment(token,productid,productid,order.getId(),AccountUltil.USER.getId(),comment,name, (int) rating).enqueue(new Callback<ServerResponse>() {
+                                                    @Override
+                                                    public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                                                        Toast.makeText(context, "Đánh Giá Thành Công", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    @Override
+                                                    public void onFailure(Call<ServerResponse> call, Throwable t) {
+                                                    }
+
+                                                });
+                                                dialog.dismiss();
+
+                                            }
+
+
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ListComment1Response> call, Throwable t) {
+                                Log.d("bugg get d", "onFailure: "+t);
+                            }
+                        });
 
                     }
 

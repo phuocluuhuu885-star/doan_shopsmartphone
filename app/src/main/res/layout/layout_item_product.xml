@@ -43,7 +43,7 @@
             android:minLines="2"
             android:text="Tên sản phẩm"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_size_text_mini" />
+            android:textSize="@dimen/font_size_text" />
         <TextView
             android:id="@+id/tvstatus"
             android:layout_width="match_parent"

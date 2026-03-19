@@ -1,18 +1,13 @@
 package com.example.doan_shopsmartphone.model;
 
-
-
 import com.example.doan_shopsmartphone.ultil.AppInfo;
 import com.example.doan_shopsmartphone.zalo.Helper.Helpers;
 import com.example.doan_shopsmartphone.zalo.HttpProvider;
 
 import org.json.JSONObject;
-
 import java.util.Date;
-
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
-
 
 public class CreateOrder {
     private class CreateOrderData {
@@ -51,7 +46,7 @@ public class CreateOrder {
         }
     }
 
-     public JSONObject createOrder(String amount) throws Exception {
+    public JSONObject createOrder(String amount) throws Exception {
         CreateOrderData input = new CreateOrderData(amount);
 
         RequestBody formBody = new FormBody.Builder()
@@ -71,4 +66,3 @@ public class CreateOrder {
         return data;
     }
 }
-

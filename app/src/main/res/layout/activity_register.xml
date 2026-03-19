@@ -10,25 +10,30 @@
     android:fitsSystemWindows="true"
     tools:context=".view.login.Register">
 
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:padding="10dp">
     <ImageView
         android:id="@+id/btnRegis"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:background="@drawable/custom_bg_shopping_cart_primary"
-        android:padding="5dp"
-        android:layout_marginTop="20dp"
         android:src="@drawable/back"
         app:tint="@color/white" />
 
     <TextView
-
         android:text="Đăng ký"
         android:textSize="@dimen/font_size_text_title"
         android:textColor="@color/color_chudao"
         android:textStyle="bold"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+</LinearLayout>
+
 
     <LinearLayout
         android:layout_marginTop="30dp"

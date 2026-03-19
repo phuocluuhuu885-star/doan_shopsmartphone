@@ -24,6 +24,7 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.OptionView
     private List<OptionProduct> list;
     private OptionUtil optionUtil;
     private ObjectUtil objectUtil;
+    private int selectedPosition = -1;
 
     public OptionAdapter(Context context, List<OptionProduct> list) {
         this.context = context;
@@ -63,14 +64,21 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.OptionView
         if(objectUtil != null) {
             holder.binding.btnDelete.setVisibility(View.GONE);
         }
-
+        holder.itemView.setSelected(selectedPosition == position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int previousSelected = selectedPosition;
+                selectedPosition = holder.getAdapterPosition();
+
+                // Làm mới item cũ và item mới để cập nhật lại border
+                notifyItemChanged(previousSelected);
+                notifyItemChanged(selectedPosition);
+
+                // Các logic xử lý interface của bạn
                 if(optionUtil != null) {
                     optionUtil.onclickOption(optionProduct);
                 }
-
                 if(objectUtil != null) {
                     objectUtil.onclickObject(optionProduct);
                 }

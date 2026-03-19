@@ -66,7 +66,7 @@ public class PayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding  = ActivityPayBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        for(int i = 0; i< CartUtil.listCartCheck.size(); i++){
+        for(int i =0;i<CartUtil.listCartCheck.size();i++){
             CartUtil.listCartCheck.get(i).setDiscount_value(CartUtil.listCartCheck.get(i).getOptionProduct().getDiscountValue());
         }
 
@@ -77,7 +77,7 @@ public class PayActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         // ZaloPay SDK Init
-        ZaloPaySDK.init(2555, Environment.SANDBOX);
+        ZaloPaySDK.init(2554, Environment.SANDBOX);
 
         //Take paymentMethods
         paymentMethods = getIntent().getIntExtra("paymentMethods", 0);

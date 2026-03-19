@@ -1,7 +1,12 @@
 package com.example.doan_shopsmartphone.model;
 
 
-public class Notifi {
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
+public class Notifi implements Serializable {
+    @SerializedName("_id")
     private String id;
     private User sender;
     private User receiver;

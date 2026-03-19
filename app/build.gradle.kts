@@ -63,7 +63,9 @@ dependencies {
     //retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-
+    implementation ("io.socket:socket.io-client:2.1.0") {
+        exclude(group = "org.json", module = "json")
+    }
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation(fileTree(mapOf("dir" to "D:\\zalopay", "include" to listOf("*.aar", "*.jar"), "exclude" to listOf<String>())))
@@ -78,6 +80,6 @@ dependencies {
     implementation ("io.jsonwebtoken:jjwt-jackson:0.11.2")
     implementation("com.google.firebase:firebase-analytics")
     implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
-
+    implementation("com.facebook.android:facebook-login:latest.release")
 
 }

@@ -51,6 +51,10 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
         holder.binding.tvName.setText(info.getName()  + " | ");
         holder.binding.tvAddress.setText(info.getAddress());
         holder.binding.tvPhoneNumber.setText(info.getPhoneNumber());
+        // 1. Xóa listener cũ trước khi set trạng thái để tránh việc gọi vòng lặp vô tận
+        holder.binding.chkChooseInfo.setOnCheckedChangeListener(null);
+
+        // 2. Thiết lập trạng thái hiển thị
         if(info.getChecked()) {
             holder.binding.tvDefault.setVisibility(View.VISIBLE);
             holder.binding.chkChooseInfo.setChecked(true);
@@ -58,11 +62,30 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
             holder.binding.tvDefault.setVisibility(View.GONE);
             holder.binding.chkChooseInfo.setChecked(false);
         }
+
+        // 3. Xử lý sự kiện click vào Checkbox (hoặc cả Item)
+        holder.binding.chkChooseInfo.setOnClickListener(v -> {
+            // Chỉ xử lý nếu item này chưa được chọn
+            if (!info.getChecked()) {
+                updateSingleSelection(position);
+                infoInterface.onclickObject(info);
+            }
+        });
         holder.binding.chkChooseInfo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked) {
-                    infoInterface.onclickObject(info);
+                    if (!info.getChecked()) {
+                        // 1. Cập nhật giao diện cục bộ (Local Update)
+                        for (int i = 0; i < infoList.size(); i++) {
+                            infoList.get(i).setChecked(i == position);
+                        }
+                        notifyDataSetChanged();
+
+                        // 2. Gửi lệnh lên Server (Sync Update)
+                        // Trong Activity/Fragment, bạn phải viết API để update trạng thái này vào DB
+                        infoInterface.onclickObject(info);
+                    }
                 }
             }
         });
@@ -74,7 +97,12 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
             }
         });
     }
-
+    private void updateSingleSelection(int selectedPosition) {
+        for (int i = 0; i < infoList.size(); i++) {
+            infoList.get(i).setChecked(i == selectedPosition);
+        }
+        notifyDataSetChanged(); // Làm mới toàn bộ danh sách để cập nhật giao diện
+    }
     @Override
     public int getItemCount() {
         if(infoList != null) {

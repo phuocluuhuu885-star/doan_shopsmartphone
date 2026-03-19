@@ -21,9 +21,9 @@ import retrofit2.Response;
 
 public class ApiUtil {
     public static void getDetailUser(Context context,ProgressLoadingDialog loadingDialog) {
+
         String token = AccountUltil.BEARER + AccountUltil.getToken(context);
         String idUser = JWTUltil.decoded(AccountUltil.TOKEN).getUserId();
-        loadingDialog.show();
         BaseApi.API.detailProfile(token,idUser).enqueue(new Callback<DetailUserReponse>() {
             @Override
             public void onResponse(Call<DetailUserReponse> call, Response<DetailUserReponse> response) {
@@ -47,7 +47,6 @@ public class ApiUtil {
                         throw  new RuntimeException(e);
                     }
                 }
-                loadingDialog.dismiss();
             }
 
             @Override

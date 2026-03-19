@@ -110,7 +110,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:gravity="center"
-                    android:text="Geotech Store"
+                    android:text="FMobile Store"
                     android:textSize="17dp"
                     android:textStyle="bold" />
             </LinearLayout>

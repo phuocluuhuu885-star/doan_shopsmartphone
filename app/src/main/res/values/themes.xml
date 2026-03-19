@@ -3,24 +3,27 @@
     <style name="Base.Theme.Doan_ShopSmartphone" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimary">@color/gray_ground</item>
         <item name="colorPrimaryVariant">@color/white</item>
         <item name="colorOnPrimary">@color/white</item>
-
         <!-- Text color -->
         <item name="android:textColor">@color/black</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">
-            @android:color/transparent
+            @android:color/black
         </item>
         <!--  Background  -->
         <item name="android:windowBackground">@color/white</item>
         <item name="android:textColorHint">@color/gray69</item>
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
-
+        <item name="android:fontFamily">@font/font_montserrat</item>
+        <item name="fontFamily">@font/font_montserrat</item>
     </style>
 
-    <style name="Theme.Doan_ShopSmartphone" parent="Base.Theme.Doan_ShopSmartphone" />
+    <style name="Theme.Doan_ShopSmartphone" parent="Base.Theme.Doan_ShopSmartphone">
+        <item name="android:fontFamily">@font/font_montserrat</item>
+        <item name="fontFamily">@font/font_montserrat</item>
+    </style>
     <style name="Base.Theme.Yellow" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/color_chudao</item>

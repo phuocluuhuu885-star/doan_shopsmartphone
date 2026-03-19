@@ -1,6 +1,7 @@
 package com.example.doan_shopsmartphone.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.doan_shopsmartphone.databinding.LayoutItemCartPayBinding;
 import com.example.doan_shopsmartphone.model.OptionAndQuantity;
+import com.example.doan_shopsmartphone.view.Cart.CartActivity;
+import com.example.doan_shopsmartphone.view.voucher.VoucherScreen;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -55,6 +58,16 @@ public class CartPayAdapter extends RecyclerView.Adapter<CartPayAdapter.CartPayV
             @Override
             public void onClick(View view) {
 
+            }
+        });
+        holder.binding.voucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String productId = cart.getOptionProduct().getProduct().getId();
+                Intent intent = new Intent(context, VoucherScreen.class);
+                intent.putExtra("productId", productId);
+                intent.putExtra("price", cart.getOptionProduct().getPrice());
+                context.startActivity(intent);
             }
         });
     }

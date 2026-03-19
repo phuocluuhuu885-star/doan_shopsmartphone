@@ -148,7 +148,6 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
     private void getVoucher() {
         voucherList = new ArrayList<>();
         for (int i = 1; i < 6; i++) {
-            voucherList.add(new Voucher("Giảm" + i + "% đối với đơn hàng trên 100k", "Giảm" + i + "%", "1234", ""));
         }
         binding.count.setText(voucherList.size() + " mã giảm giá");
         productAdapter = new ProductAdapter(this, productList, this);
@@ -847,20 +846,16 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
             bindingoption.btnSave.setText("Thêm vào giỏ hàng");
         }
         if (productDetail.getOption().size() != 0) {
-            Glide.with(DetailProduct.this).load(productDetail.getOption().get(0).getImage()).into(bindingoption.imgProduct);
-        } else {
-            Glide.with(DetailProduct.this).load(R.drawable.error).into(bindingoption.imgProduct);
-        }
-        if (productDetail.getOption().size() != 0) {
             DecimalFormat df = new DecimalFormat("###,###,###");
             bindingoption.tvPrice.setText( df.format(minPrice)+ " đ");
+            bindingoption.tvWarehouseQuantity.setText("Kho: " + productDetail.getOption().get(0).getSoldQuantity());
+            Glide.with(DetailProduct.this).load(productDetail.getOption().get(0).getImage()).into(bindingoption.imgProduct);
+            bindingoption.tvName.setText(productDetail.getName());
+
         } else {
             bindingoption.tvPrice.setText("No data");
-        }
-        if (productDetail.getOption().size() != 0) {
-            bindingoption.tvWarehouseQuantity.setText("Kho: " + productDetail.getOption().get(0).getSoldQuantity());
-        } else {
             bindingoption.tvWarehouseQuantity.setText("No data");
+            Glide.with(DetailProduct.this).load(R.drawable.error).into(bindingoption.imgProduct);
         }
     }
 
@@ -870,7 +865,6 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
         // Do dùng trung 1 hàm lên phải kiểm tra xem giá trị trả về là của OptionProduct Hay Product
         if (object instanceof OptionProduct) {
             DecimalFormat df = new DecimalFormat("###,###,###");
-            Log.d("OBjectDetail", "onclickObject: " + object.toString());
             optionProduct = (OptionProduct) object;
             Log.d("phan tram giam gia", "onclickObject: "+optionProduct.getDiscountValue());
             double phantramgiamgia = (double) (100 - optionProduct.getDiscountValue()) /100;

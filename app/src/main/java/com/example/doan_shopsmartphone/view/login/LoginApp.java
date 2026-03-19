@@ -53,7 +53,7 @@ public class LoginApp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
-
+        initView();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -62,7 +62,7 @@ public class LoginApp extends AppCompatActivity {
         initLoginGoogle();
         setContentView(binding.getRoot());
         initController();
-        initView();
+
     }
 
     private void initController() {
@@ -183,7 +183,7 @@ public class LoginApp extends AppCompatActivity {
     private void initLoginGoogle() {
         sharedPreferences = getSharedPreferences("USER_FILE",MODE_PRIVATE);
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.web_client_id))
+                .requestIdToken("511125845737-i0frkihqr9dos93vee83m1kog0n7u20c.apps.googleusercontent.com")
                 .requestEmail().build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
@@ -205,67 +205,70 @@ public class LoginApp extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completeTask) {
         try {
             GoogleSignInAccount account = completeTask.getResult(ApiException.class);
-
-            // lấy token người dùng
             String idToken = account.getIdToken();
-            String email=  account.getEmail();
 
-            // kiểm tra token xem có null ko
+            if (idToken != null) {
+                // 1. Hiển thị loading trước khi gọi API
+                if (loadingDialog != null) loadingDialog.show();
 
-            if(idToken!= null) {
-                // Điều hướng qua màn Main và chuyển token qua
                 BaseApi.API.loginGoogle(idToken).enqueue(new Callback<LoginResponse>() {
                     @Override
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                        if(response.isSuccessful()) {
-                            LoginResponse loginResponse =response.body();
+                        // 2. Tắt loading khi có kết quả trả về
+                        if (loadingDialog != null) loadingDialog.dismiss();
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            LoginResponse loginResponse = response.body();
                             if (loginResponse.getCode() == 200) {
                                 String token = loginResponse.getToken();
 
+                                // Lưu token
                                 AccountUltil.saveToken(LoginApp.this, token);
-
                                 AccountUltil.TOKEN = token;
-                                Log.d("GOOGLE_ID_TOKEN", idToken);
 
-                                Log.d("JWT", "Saved GG token = " + token);
+                                Log.d("JWT", "Login thành công, Token: " + token);
 
-                                ApiUtil.getDetailUser(LoginApp.this, loadingDialog);
+                                // Lấy dữ liệu cần thiết
+                                ApiUtil.getDetailUser(LoginApp.this, null); // Truyền null nếu ko muốn hiện dialog lần nữa
                                 ApiUtil.getAllCart(LoginApp.this, null);
 
                                 screenSwitch(LoginApp.this, MainActivity.class);
                                 finish();
+                            } else {
+                                Toast.makeText(LoginApp.this, "Lỗi: " + loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
                             }
-
                         } else {
-                            try {
-                                String errorBody = response.errorBody().string();
-                                JSONObject erJson = new JSONObject(errorBody);
-                                String errorMessage = erJson.getString("message");
-                                Log.d("GOOGLE_ID_TOKEN", idToken);
-                                Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_SHORT).show();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (JSONException e) {
-                                throw  new RuntimeException(e);
-                            }
+                            // Xử lý lỗi từ Server (400, 401, 500...)
+                            parseErrorBody(response);
                         }
-                        loadingDialog.dismiss();
                     }
 
                     @Override
                     public void onFailure(Call<LoginResponse> call, Throwable t) {
-                        Log.d("GOOGLE_ID_TOKEN", idToken);
+                        // 3. Phải tắt loading và báo lỗi nếu rớt mạng/server sập
+                        if (loadingDialog != null) loadingDialog.dismiss();
+                        Log.e("API_ERROR", t.getMessage());
+                        Toast.makeText(LoginApp.this, "Lỗi kết nối Server!", Toast.LENGTH_SHORT).show();
                     }
                 });
-            } else  {
-                // Xử lí token null
-                Log.e("Token","Token is null");
             }
         } catch (ApiException e) {
-            Log.d("GOOGLE_ID_TOKEN", e.toString());
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w("ApiException", "signInResult:failed code=" + e.getStatusCode());
-            Toast.makeText(this, "Đăng nhập bằng google thất bại!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Đăng nhập Google thất bại (Code: " + e.getStatusCode() + ")", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Hàm phụ để đọc lỗi từ server cho sạch code
+    private void parseErrorBody(Response<LoginResponse> response) {
+        try {
+            String errorBody = response.errorBody().string();
+            JSONObject erJson = new JSONObject(errorBody);
+            String errorMessage = erJson.optString("message", "Lỗi không xác định");
+            Log.e("SERVER_ERROR", "Raw error body: " + errorBody);
+            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("SERVER_ERROR", "Lỗi khi parse JSON: " + e.getMessage());
         }
     }
 }

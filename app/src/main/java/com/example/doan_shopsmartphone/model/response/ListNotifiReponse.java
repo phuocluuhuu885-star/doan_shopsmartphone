@@ -1,28 +1,32 @@
 package com.example.doan_shopsmartphone.model.response;
 
-import com.example.doan_shopsmartphone.model.OrderResult;
+import com.example.doan_shopsmartphone.model.Notifi;
 
-public class ServerResponse {
+import java.util.List;
+
+public class ListNotifiReponse {
     private int code;
     private String message;
-    private OrderResult result;
+    private List<Notifi> result;
 
-    public ServerResponse() {
+    public ListNotifiReponse() {
     }
 
-    public ServerResponse(int code, String message) {
+    public ListNotifiReponse(int code, String message, List<Notifi> result) {
         this.code = code;
         this.message = message;
+        this.result = result;
     }
 
     @Override
     public String toString() {
-        return "Response{" +
+        return "ListNotifiReponse{" +
                 "code=" + code +
                 ", message='" + message + '\'' +
+                ", result=" + result +
                 '}';
     }
-    public OrderResult getResult() { return result; }
+
     public int getCode() {
         return code;
     }
@@ -37,5 +41,13 @@ public class ServerResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public List<Notifi> getResult() {
+        return result;
+    }
+
+    public void setResult(List<Notifi> result) {
+        this.result = result;
     }
 }

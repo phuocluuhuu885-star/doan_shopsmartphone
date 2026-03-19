@@ -4,60 +4,106 @@
     android:layout_height="wrap_content"
     android:background="@drawable/custom_ln_thanhtoan"
     android:padding="10dp"
-    android:gravity="center"
+    android:orientation="vertical"
     android:layout_marginTop="4dp"
     >
-
-    <ImageView
-        android:id="@+id/imgProduct"
-        android:background="@drawable/custom_img_sp"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:src="@drawable/anhdt1"/>
-
     <LinearLayout
-        android:layout_marginLeft="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/tvProductName"
-            android:textSize="15dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Iphone 14 Pro Max (512gb/1TB)"/>
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/imgProduct"
+            android:background="@drawable/custom_img_sp"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@drawable/anhdt1"/>
 
-        <TextView
-            android:id="@+id/tvNameColor"
-            android:textSize="15dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
-            android:textColor="@color/gray99"
-            android:text="Màu sắc : Blue"/>
-
-
-        <RelativeLayout
+        <LinearLayout
+            android:layout_marginLeft="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
             <TextView
-                android:id="@+id/tvPrice"
+                android:id="@+id/tvProductName"
                 android:textSize="15dp"
-                android:textColor="@color/red"
-                android:text="5.000.000đ"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/tvQuantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:text="Iphone 14 Pro Max (512gb/1TB)"/>
+
+            <TextView
+                android:id="@+id/tvNameColor"
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
                 android:textColor="@color/gray99"
-                android:text="Số lượng : x1" />
-        </RelativeLayout>
+                android:text="Màu sắc : Blue"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:textSize="15dp"
+                    android:textColor="@color/red"
+                    android:text="5.000.000đ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/tvQuantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/gray99"
+                    android:text="Số lượng : x1" />
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:paddingVertical="15dp"
+        android:id="@+id/voucher"
+        android:paddingHorizontal="10dp">
 
+        <ImageView
+            android:id="@+id/imageVoucher"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/voucher" />
 
+        <TextView
+            android:id="@+id/tv_voucher_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:text="Voucher"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
 
+        <TextView
+            android:id="@+id/tv_voucher_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:textColor="@color/color_chudao"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/image_arrow_1"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/baseline_arrow_forward_ios_24" />
+
+    </LinearLayout>
 </LinearLayout>

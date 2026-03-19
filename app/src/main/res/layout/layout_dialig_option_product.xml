@@ -31,6 +31,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     />
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Kho: 37"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintStart_toEndOf="@+id/imgProduct"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/tvWarehouseQuantity"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    />
                 <TextView
                     android:id="@+id/tvPrice"
                     android:layout_width="wrap_content"
