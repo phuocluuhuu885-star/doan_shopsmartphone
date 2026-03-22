@@ -69,6 +69,11 @@ public class FragmentPageWaitConfirm extends Fragment implements ObjectUtil {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         urlListOrder();
     }
 

@@ -67,6 +67,11 @@ public class FragmentPageCancelled extends Fragment implements ObjectUtil {
         super.onViewCreated(view, savedInstanceState);
 
         initView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         urlListOrder();
     }
 

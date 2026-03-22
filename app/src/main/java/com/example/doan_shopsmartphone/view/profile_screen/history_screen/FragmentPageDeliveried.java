@@ -69,8 +69,12 @@ public class FragmentPageDeliveried extends Fragment implements ObjectUtil {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView();
-        urlListOrder();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        urlListOrder();
     }
     private void initView() {
         orderList = new ArrayList<>();
