@@ -20,6 +20,7 @@ public class ServerResponse {
         return "Response{" +
                 "code=" + code +
                 ", message='" + message + '\'' +
+                ", result=" + (result != null ? result.toString() : "null") +
                 '}';
     }
     public OrderResult getResult() { return result; }

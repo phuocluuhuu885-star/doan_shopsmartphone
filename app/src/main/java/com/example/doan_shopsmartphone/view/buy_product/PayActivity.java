@@ -18,9 +18,18 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
+import com.example.doan_shopsmartphone.model.Notifi;
+import com.example.doan_shopsmartphone.model.OptionOfListCart;
+import com.example.doan_shopsmartphone.model.OrderResult;
+import com.example.doan_shopsmartphone.model.Voucher;
+import com.example.doan_shopsmartphone.model.body.NotificationBody;
+import com.example.doan_shopsmartphone.model.response.NotificationResponse;
+import com.example.doan_shopsmartphone.model.response.NotificationResult;
 import com.example.doan_shopsmartphone.view.success_screen.OrderSuccessActivity;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.adapter.CartPayAdapter;
@@ -36,6 +45,8 @@ import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.CartUtil;
 import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;
 import com.example.doan_shopsmartphone.ultil.TAG;
+import com.example.doan_shopsmartphone.view.voucher.VoucherScreen;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,7 +70,26 @@ public class PayActivity extends AppCompatActivity {
     private int totalPrice;
 
     private int paymentMethods;
+
+    private List<String> productIds;
     private static final int REQUEST_CODE_ORDER_SUCCESS = 1;
+
+
+    ActivityResultLauncher<Intent> voucherLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    // Nhận lại danh sách voucher
+                    ArrayList<Voucher> selectedList = (ArrayList<Voucher>) result.getData().getSerializableExtra("LIST_VOUCHER_SELECTED");
+
+                    if (selectedList != null) {
+                        Log.e( "da: ", selectedList.get(0).toString() );
+                        calculateMultiVoucher(selectedList);
+                        // Chạy hàm tính toán tổng tiền cho từng sản phẩm như mình đã hướng dẫn ở trên
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +119,14 @@ public class PayActivity extends AppCompatActivity {
             binding.txtPaymentMethods.setText("Thanh toán qua ví ZaloPay");
         }
 
-
-
+         productIds = CartUtil.listCartCheck.stream()
+                .map(cartItem -> cartItem.getOptionProduct()) // Lấy Object OptionOfListCart
+                .filter(Objects::nonNull)                     // Kiểm tra null để tránh crash
+                .map(option -> option.getProduct())           // Lấy Object Product
+                .filter(Objects::nonNull)                     // Kiểm tra null tiếp
+                .map(product -> product.getId())              // Cuối cùng lấy Product ID
+                .collect(Collectors.toList());
+        Log.e( "idPro: ",productIds.toString() );
         initView();
         initController();
         urlGetAllInfo();
@@ -164,6 +200,14 @@ public class PayActivity extends AppCompatActivity {
             }
         });
 
+        binding.onVoucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PayActivity.this, VoucherScreen.class);
+                intent.putStringArrayListExtra("LIST_PRODUCT_ID", (ArrayList<String>) productIds);
+                voucherLauncher.launch(intent);
+            }
+        });
         binding.btnOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -239,12 +283,22 @@ public class PayActivity extends AppCompatActivity {
             BaseApi.API.createOrder(token, purchaseBody).enqueue(new Callback<ServerResponse>() {
                 @Override
                 public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                    Log.d("JSON_THO", new Gson().toJson(response.body()));
                     if(response.isSuccessful()){ // chỉ nhận đầu status 200
                         ServerResponse serverResponse = response.body();
                         Log.d(TAG.toString, "onResponse-createOrder: " + serverResponse.toString());
                         if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
                             Toast.makeText(PayActivity.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
                             removeDataCart();
+                            OrderResult orderData = serverResponse.getResult();
+                            urlCreateNotification(orderData.getId());
+                            if (orderData != null) {
+                                String id = orderData.getId();
+                                String transId = orderData.getAppTransId();
+                                Log.d("DEBUG", "ID nhận được: " + serverResponse.toString()+"  id"+ id);
+                            } else {
+                                Log.d("DEBUG", "Đối tượng Result bị null!");
+                            }
 //                            CartUtil.listCartCheck.clear();
                         }
                     } else { // nhận các đầu status #200
@@ -271,6 +325,46 @@ public class PayActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void urlCreateNotification(String orderId) {
+        // 1. Chuẩn bị dữ liệu (Ví dụ mẫu)
+        String token = AccountUltil.BEARER + AccountUltil.getToken(this);
+        // Chuẩn bị dữ liệu gửi lên
+        NotificationBody body = new NotificationBody(
+                AccountUltil.USER.getId(),   // Người gửi (User)
+                AccountUltil.USER.getId(),           // ID Admin hoặc Shop (Receiver)
+                orderId,                     // ID đơn hàng vừa tạo
+                "Bạn có đơn hàng mới mã: " + orderId,
+                "wfc"                        // Type: Chờ xác nhận
+        );
+
+        // Đảm bảo Interface BaseApi định nghĩa: Call<NotificationResponse> createNotification(...)
+
+        BaseApi.API.createNotification(token, body).enqueue(new Callback<NotificationResponse>() {
+            @Override
+            public void onResponse(Call<NotificationResponse> call, Response<NotificationResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Lấy object NotificationResponse ra
+                    NotificationResponse serverRes = response.body();
+
+                    // Lấy kết quả Notifi bên trong (biến 'result' trong class NotificationResponse)
+                    Notifi noti = serverRes.getResult();
+
+                    if (noti != null) {
+                        Log.d("DEBUG", "Thông báo đã lưu: " + noti.getId() + " - " + noti.getContent());
+                        Toast.makeText(PayActivity.this, "Tạo thông báo thành công!", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Log.e("DEBUG", "Server trả lỗi: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NotificationResponse> call, Throwable t) {
+                Log.e("DEBUG", "Lỗi mạng hoặc lổi Parse: " + t.getMessage());
+            }
+        });
     }
 
     private void removeDataCart() {
@@ -511,20 +605,61 @@ public class PayActivity extends AppCompatActivity {
     }
     private void initView() {
         totalPrice = getIntent().getIntExtra("totalPrice", 0);
-        DecimalFormat df = new DecimalFormat("###,###,###");
-        binding.tvTotalPrice.setText(df.format(totalPrice) + "đ");
-
         loadingDialog = new ProgressLoadingDialog(this);
         infoList = new ArrayList<>();
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         binding.rcvProduct.setLayoutManager(linearLayoutManager);
         cartPayAdapter = new CartPayAdapter(this, CartUtil.listCartCheck);
+        Log.e( "qwep: ",""+CartUtil.listCartCheck.toString() );
         binding.rcvProduct.setAdapter(cartPayAdapter);
-
-
     }
 
+    private void calculateMultiVoucher(ArrayList<Voucher> selectedVouchers) {
+        long totalOrderPrice = 0; // Tổng tiền cuối cùng của cả hóa đơn
+        long totalDiscount = 0;   // Tổng số tiền được giảm giá
+
+        // 1. Duyệt qua từng sản phẩm trong giỏ hàng của bạn
+        for (OptionAndQuantity item : CartUtil.listCartCheck) {
+            // Tính giá gốc của dòng sản phẩm này (Giá x Số lượng)
+            long itemOriginalPrice = (long) item.getOptionProduct().getPrice() * item.getQuantity();
+            long discountForThisItem = 0;
+
+            // 2. Tìm xem trong danh sách Voucher đã chọn, cái nào áp dụng cho sản phẩm này
+            for (Voucher v : selectedVouchers) {
+                // Kiểm tra: Nếu voucher này có chứa ID của sản phẩm hiện tại
+
+                    if (v.getDiscountType() == 1) { // Loại 1: Giảm theo %
+                        discountForThisItem = (itemOriginalPrice * v.getDiscountValue()) / 100;
+
+
+                    } else { // Loại 2: Giảm thẳng tiền mặt
+                        discountForThisItem = v.getDiscountValue();
+                    }
+
+                    // Vì mỗi sản phẩm thường chỉ áp dụng 1 voucher, nên tìm thấy là thoát vòng lặp voucher
+            }
+
+            // 3. Tính giá sau khi giảm cho sản phẩm này
+            long priceAfterDiscount = itemOriginalPrice - discountForThisItem;
+            if (priceAfterDiscount < 0) priceAfterDiscount = 0;
+
+            // 4. Cộng dồn vào tổng hóa đơn
+            totalOrderPrice += priceAfterDiscount;
+            totalDiscount += discountForThisItem;
+            updatePriceUI(totalOrderPrice, totalDiscount);
+        }
+
+        // 5. Cập nhật lên giao diện (UI)
+    }
+
+    private void updatePriceUI(long totalPay, long totalDiscount) {
+        // Định dạng số có dấu phân cách nghìn (1,000,000)
+        DecimalFormat formatter = new DecimalFormat("###,###,###");
+
+        binding.tvTotalPrice.setText(formatter.format(totalPay) + " Đ");
+        binding.disscount.setText(formatter.format(totalDiscount) + " Đ");
+        // Lưu giá trị cuối cùng vào một biến toàn cục để gửi lên Server khi bấm "Mua hàng"
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();

@@ -1,8 +1,10 @@
 package com.example.doan_shopsmartphone.api;
 
+import com.example.doan_shopsmartphone.model.body.NotificationBody;
 import com.example.doan_shopsmartphone.model.response.CountResponse;
 import com.example.doan_shopsmartphone.model.response.ListComment1Response;
 import com.example.doan_shopsmartphone.model.response.ListNotifiReponse;
+import com.example.doan_shopsmartphone.model.response.NotificationResponse;
 import com.example.doan_shopsmartphone.model.response.OrderResponse;
 import com.example.doan_shopsmartphone.model.body.PurchaseBody;
 import com.example.doan_shopsmartphone.model.body.YeuthichRequestBody;
@@ -12,14 +14,12 @@ import com.example.doan_shopsmartphone.model.response.DetailProductResponse;
 import com.example.doan_shopsmartphone.model.response.DetailUserReponse;
 import com.example.doan_shopsmartphone.model.response.InfoResponse;
 import com.example.doan_shopsmartphone.model.response.ListCommentResponse;
-import com.example.doan_shopsmartphone.model.response.OrderResponse;
 import com.example.doan_shopsmartphone.model.response.ProductByCategoryReponse;
 import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.example.doan_shopsmartphone.model.response.ServerResponse;
-import com.example.doan_shopsmartphone.model.response.BannerReponse;
 import com.example.doan_shopsmartphone.model.response.LoginResponse;
-import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.example.doan_shopsmartphone.model.response.UpdateStatusResponse;
+import com.example.doan_shopsmartphone.model.response.VoucherRequest;
 import com.example.doan_shopsmartphone.model.response.VoucherResponse;
 import com.example.doan_shopsmartphone.model.response.store.DetailBills;
 import com.google.gson.Gson;
@@ -50,7 +50,7 @@ public interface BaseApi {
 
     String LOCALHOT = "192.168.1.20";
     BaseApi API = new Retrofit.Builder()
-            .baseUrl("http://"+LOCALHOT+":3000/api/")
+            .baseUrl("http://" + LOCALHOT + ":3000/api/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(BaseApi.class);
@@ -64,12 +64,14 @@ public interface BaseApi {
                                          @Field("order_id") String orderId,
                                          @Field("user_id") String user_id
     );
+
     @GET("notifi/get-notifi-list/{userId}")
     Call<ListNotifiReponse> getNotifiList(@Header("Authorization") String authorization,
                                           @Path("userId") String accountId);
 
     @GET("notifi/get-Unread/{userId}")
     Call<CountResponse> getCountUnread(@Path("userId") String userId);
+
     @FormUrlEncoded
     @POST("review/create-review/{productId}")
     Call<ServerResponse> createComment(@Header("Authorization") String authorization,
@@ -91,21 +93,26 @@ public interface BaseApi {
                                        @Field("user_id") String userId,
                                        @Field("content") String content,
                                        @Field("rate") int rate);
-    @PUT("notifi/update-status/{notificationId}") // Đường dẫn khớp với Router Node.js
+
+    @PUT("notifi/update-status/{notificationId}")
+        // Đường dẫn khớp với Router Node.js
     Call<UpdateStatusResponse> updateStatusNotifi(
             @Path("notificationId") String notificationId
     );
+
     @GET("products/all-product")
     Call<ProductResponse> getListAllProduct(@Query("isActive") boolean isActive, @Query("token") String token);
 
-    @GET("voucher/voucher-by-product/{productId}")
-    Call<VoucherResponse> getVoucherByProduct(
-            @Path("productId") String productId
-    );
+    @POST("voucher/voucher-by-forcart")
+    Call<VoucherResponse> getVouchersByList(@Body VoucherRequest request);
 
     @FormUrlEncoded
     @POST("login")
-    Call<LoginResponse> login(@Field("email") String email, @Field("password") String password);
+    Call<LoginResponse> login(
+            @Field("email") String email,
+            @Field("password") String password,
+            @Field("fcmToken") String fcmToken // Thêm dòng này
+    );
 
     @GET("voucher/get-list")
     Call<VoucherResponse> getListVoucher(@Header("Authorization") String token);
@@ -113,6 +120,13 @@ public interface BaseApi {
     @GET("user/detail-profile/{idUser}")
     Call<DetailUserReponse> detailProfile(@Header("Authorization") String authorization,
                                           @Path("idUser") String idUser);
+
+    @POST("notifi/postnotifi")
+        // Thay đổi đường dẫn theo server của bạn
+    Call<NotificationResponse> createNotification(
+            @Header("Authorization") String token,
+            @Body NotificationBody body
+    );
 
     @FormUrlEncoded
     @PUT("user/change-password/{idUser}")
@@ -235,6 +249,7 @@ public interface BaseApi {
                                  @Field("address") String address,
                                  @Field("phone_number") String phone_number,
                                  @Field("checked") Boolean checked);
+
     @GET("order/detail-order/{orderId}")
     Call<DetailBills> getDetailBill(@Header("Authorization") String authorization, @Path("orderId") String orderId);
 }

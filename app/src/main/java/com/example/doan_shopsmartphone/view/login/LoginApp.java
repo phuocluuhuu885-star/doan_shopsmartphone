@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.doan_shopsmartphone.MainActivity;
 import com.example.doan_shopsmartphone.R;
@@ -30,6 +34,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +62,21 @@ public class LoginApp extends AppCompatActivity {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        return;
+                    }
+                    String token = task.getResult();
+                    Log.d("FCM_TOKEN", "Token của máy này: " + token);
+                    // Hãy gọi API của bạn để lưu Token này vào bảng User trên Server
+                });
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         initLoginGoogle();
         setContentView(binding.getRoot());
@@ -110,8 +129,16 @@ public class LoginApp extends AppCompatActivity {
     }
 
     private void loginAccount(String email,String pass) {
+
         if(validateLogin(email,pass)) {
-            BaseApi.API.login(email,pass).enqueue(new Callback<LoginResponse>() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            String token = "";
+            if (task.isSuccessful()) {
+                token = task.getResult();
+            }
+
+            // Gọi API login với 3 tham số
+            BaseApi.API.login(email,pass,token).enqueue(new Callback<LoginResponse>() {
                 @Override
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     if(response.isSuccessful()) {
@@ -159,6 +186,11 @@ public class LoginApp extends AppCompatActivity {
                     loadingDialog.dismiss();
                 }
             });
+        });
+
+
+
+
         }
 
     }

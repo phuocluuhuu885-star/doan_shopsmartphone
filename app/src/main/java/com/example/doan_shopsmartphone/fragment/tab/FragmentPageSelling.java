@@ -87,16 +87,13 @@ public class FragmentPageSelling extends Fragment implements ObjectUtil {
         binding.recycleProductSelling.setAdapter(productAdapter);
     }
     private void callApiProductByCategory() {
-        Log.d("checkkbuggggg", "davaoday");
         binding.progressBar.setVisibility(View.VISIBLE);
         BaseApi.API.getListProductByCategory(AccountUltil.TOKEN).enqueue(new Callback<ProductByCategoryReponse>() {
             @Override
             public void onResponse(Call<ProductByCategoryReponse> call, Response<ProductByCategoryReponse> response) {
-                Log.d("checkkbuggggg", "davaoday1");
 
                 if (response.isSuccessful()) { // chỉ nhận đầu status 200
                     ProductByCategoryReponse reponse = response.body();
-                    Log.d(TAG.toString, "onResponse-ListProductByCategory: " + reponse.toString());
                     if (reponse.getCode() == 200) {
                         for (ProductByCategory productByCategory : reponse.getResult()) {
                             if (productByCategory.getProduct().size() > 0) {
@@ -110,7 +107,6 @@ public class FragmentPageSelling extends Fragment implements ObjectUtil {
                         String errorBody = response.errorBody().string();
                         JSONObject errorJson = new JSONObject(errorBody);
                         String errorMessage = errorJson.getString("message");
-                        Log.d(TAG.toString, "onResponse-register: " + errorMessage);
                         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
                     }catch (IOException e){
                         e.printStackTrace();

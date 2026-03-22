@@ -1,18 +1,26 @@
 package com.example.doan_shopsmartphone.view.voucher;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.doan_shopsmartphone.R;
+import com.example.doan_shopsmartphone.adapter.CartParentAdapter;
 import com.example.doan_shopsmartphone.adapter.VoucherSCAdapter;
 import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.ActivityVoucherScreenBinding;
 import com.example.doan_shopsmartphone.model.Voucher;
+import com.example.doan_shopsmartphone.model.VoucherGroup;
+import com.example.doan_shopsmartphone.model.body.CartItem;
+import com.example.doan_shopsmartphone.model.response.VoucherRequest;
 import com.example.doan_shopsmartphone.model.response.VoucherResponse;
-import com.example.doan_shopsmartphone.ultil.AccountUltil;
+import com.example.doan_shopsmartphone.view.buy_product.PayActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,70 +32,95 @@ import retrofit2.Response;
 
 public class VoucherScreen extends AppCompatActivity {
     ActivityVoucherScreenBinding binding;
-    List<Voucher> list;
-    VoucherSCAdapter adapter;
-    private String productId;
-    private int productPrice;
+    private CartParentAdapter adapterr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityVoucherScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         init();
-        loadVoucherList();
+        loadAllVouchers();
+
     }
 
     private void init() {
         // Nhận dữ liệu từ Adapter Pay truyền sang
-        productId = getIntent().getStringExtra("productId");
-        productPrice = getIntent().getIntExtra("price", 0);
         binding.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        list = new ArrayList<>();
-        adapter = new VoucherSCAdapter(this, list, productId, productPrice);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-        binding.rcvVoucherStore.setLayoutManager(layoutManager);
-        binding.rcvVoucherStore.setAdapter(adapter);
+
+        binding.btnApplyVoucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<Voucher> selectedVouchers = adapterr.getAllSelectedVouchers();
+                if (selectedVouchers != null && !selectedVouchers.isEmpty()) {
+                    // 2. Tạo intent để chứa dữ liệu trả về
+                    Intent resultIntent = new Intent();
+
+                    // Gửi cả danh sách đi thay vì gửi từng trường lẻ
+                    resultIntent.putExtra("LIST_VOUCHER_SELECTED", selectedVouchers);
+
+                    // 3. Đánh dấu thành công và gửi dữ liệu
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                } else {
+                    Toast.makeText(VoucherScreen.this, "Chưa chọn mã nào!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+    private void loadAllVouchers() {
+        ArrayList<String> productIds = getIntent().getStringArrayListExtra("LIST_PRODUCT_ID");
+        if (productIds == null || productIds.isEmpty()) {
+            Toast.makeText(this, "Không có sản phẩm nào để áp dụng voucher", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Tạo đối tượng request nếu API của bạn yêu cầu Body là một Object
+        // VoucherRequest request = new VoucherRequest(productIds);
+        VoucherRequest request = new VoucherRequest(productIds);
+        // Gọi API (Lưu ý: Truyền productIds vào)
+        BaseApi.API.getVouchersByList(request).enqueue(new Callback<VoucherResponse>() {
+            @Override
+            public void onResponse(Call<VoucherResponse> call, Response<VoucherResponse> response) {
+                if ( response.code() == 200 ) {
+                    VoucherResponse voucherResponse = response.body();
+
+                    if (voucherResponse.isSuccess()) {
+                        // Lấy danh sách các nhóm Voucher theo sản phẩm
+                        List<VoucherGroup> data = voucherResponse.getData();
+
+                        if (data != null && !data.isEmpty()) {
+                            // Cài đặt Adapter cho RecyclerView chính (Cái nhìn thấy trên màn hình)
+                            setupRecyclerView(data);
+                        } else {
+                            Toast.makeText(VoucherScreen.this, "Hiện không có voucher khả dụng", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.e("voucherAPI: ", "Server trả về lỗi: " + voucherResponse.getMessage());
+                    }
+                } else {
+                    Log.e("voucherAPI: ", "Lỗi kết nối hoặc mã lỗi: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VoucherResponse> call, Throwable t) {
+                Log.e("voucherAPI: ", "Lỗi hệ thống: " + t.getMessage());
+                Toast.makeText(VoucherScreen.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void loadVoucherList() {
-        String productId = getIntent().getStringExtra("productId");
-        BaseApi.API.getVoucherByProduct(productId)
-                .enqueue(new Callback<VoucherResponse>() {
-                    @Override
-                    public void onResponse(Call<VoucherResponse> call, Response<VoucherResponse> response) {
+    private void setupRecyclerView(List<VoucherGroup> data) {
+        binding.rcvVoucherStore.setLayoutManager(new LinearLayoutManager(this));
 
-                        if (response.isSuccessful() && response.body() != null) {
-
-                            VoucherResponse res = response.body();
-
-                            if (res.getCode() == 200 || res.getCode() == 201) {
-
-                                // lấy list voucher theo product
-                                list = res.getData();
-
-                                // set dữ liệu cho adapter
-                                adapter.setListOrder(list);
-
-                                adapter.notifyDataSetChanged();
-
-                            } else {
-                                Log.e("API_ERROR", "Code API: " + res.getCode());
-                            }
-
-                        } else {
-                            Log.e("API_ERROR", "Không lấy được danh sách Voucher");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<VoucherResponse> call, Throwable t) {
-                        Log.e("API_FAILURE", t.getMessage());
-                    }
-                });
+        // Khởi tạo Adapter cha (Chứa tên Sản phẩm và danh sách Voucher con)
+         adapterr = new CartParentAdapter( this,data);
+        binding.rcvVoucherStore.setAdapter(adapterr);
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
@@ -63,9 +64,7 @@ public class FragmentPageDiscount extends Fragment implements ObjectUtil {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentPageDiscountBinding.inflate(inflater,container,false);
-        list = new ArrayList<>();
-        adapter = new ProductSaleAdapter(getContext(), list, this);
-        binding.recyProSale.setAdapter(adapter);
+
         return binding.getRoot();
     }
 
@@ -73,6 +72,12 @@ public class FragmentPageDiscount extends Fragment implements ObjectUtil {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        list = new ArrayList<>();
+        adapter = new ProductSaleAdapter(getContext(), list, this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        binding.recyProSale.setLayoutManager(linearLayoutManager);
+        binding.recyProSale.setAdapter(adapter);
+        ShowListProductDiscouted();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

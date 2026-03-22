@@ -89,7 +89,7 @@ public class FragmentNotification extends Fragment {
         initView();
         initController();
         initSocket();
-
+        Log.e( "idPro: ",CartUtil.listCartCheck.toString() );
         // Gọi dữ liệu lần đầu
         getListNotify();
         setNumberCart();
@@ -149,10 +149,8 @@ public class FragmentNotification extends Fragment {
                 if(response.isSuccessful() && response.body() != null){
                     ListNotifiReponse res = response.body();
                     if(res.getCode() == 200 || res.getCode() == 201) {
-                        // Cập nhật vào list hiện tại của Adapter
                         notifiList.clear();
                         notifiList.addAll(res.getResult());
-                        Log.e("API", "Error code: " + response.body().getResult());
                         notificationAdapter.notifyDataSetChanged();
 
                     }
@@ -184,7 +182,6 @@ public class FragmentNotification extends Fragment {
         binding.tvQuantityCart.setText(CartUtil.listCart.size() + "");
     }
     public  void initView(){
-        Log.d("cccccccccccccccc", "initView: +vao day");
         notifiList = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         binding.rcvNofity.setLayoutManager(layoutManager);

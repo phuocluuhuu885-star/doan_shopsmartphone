@@ -1,16 +1,42 @@
 package com.example.doan_shopsmartphone.model.response;
 
 import com.example.doan_shopsmartphone.model.Voucher;
+import com.example.doan_shopsmartphone.model.VoucherGroup;
 
 import java.util.List;
 
 public class VoucherResponse {
-        private int code;
+        private boolean success;
         private String message;
-        private List<Voucher> data; // Biến này phải trùng tên với "data" trong JSON server trả về
+        private List<VoucherGroup> data;
 
-        // Getter và Setter
-        public int getCode() { return code; }
-        public String getMessage() { return message; }
-        public List<Voucher> getData() { return data; }
+        public VoucherResponse(boolean success, String message, List<VoucherGroup> data) {
+                this.success = success;
+                this.message = message;
+                this.data = data;
+        }
+
+        public boolean isSuccess() {
+                return success;
+        }
+
+        public void setSuccess(boolean success) {
+                this.success = success;
+        }
+
+        public String getMessage() {
+                return message;
+        }
+
+        public void setMessage(String message) {
+                this.message = message;
+        }
+
+        public List<VoucherGroup> getData() {
+                return data;
+        }
+
+        public void setData(List<VoucherGroup> data) {
+                this.data = data;
+        }
 }

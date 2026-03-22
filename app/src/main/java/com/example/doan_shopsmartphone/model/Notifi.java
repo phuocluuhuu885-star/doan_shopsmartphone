@@ -9,12 +9,14 @@ public class Notifi implements Serializable {
     @SerializedName("_id")
     private String id;
     private User sender;
+    @SerializedName("receiver_id")
     private User receiver;
     private String content;
     private String status;
     private String type;
     private String createdAt;
     private String updatedAt;
+    @SerializedName("order_id")
     private  String order_id;
 
     public Notifi(String id, User sender, User receiver, String content, String status, String type, String createdAt, String updatedAt, String order_id) {

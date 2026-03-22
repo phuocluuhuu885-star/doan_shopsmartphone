@@ -1,6 +1,7 @@
 package com.example.doan_shopsmartphone.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -25,6 +26,7 @@ import com.example.doan_shopsmartphone.model.Order;
 import com.example.doan_shopsmartphone.model.response.UpdateStatusResponse;
 import com.example.doan_shopsmartphone.model.response.store.DetailBills;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
+import com.example.doan_shopsmartphone.view.oder.DetailOderActivity;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -131,22 +133,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BaseApi.API.getDetailBill(token,notification.getOrder_id()).enqueue(new Callback<DetailBills>() {
-                    @Override
-                    public void onResponse(Call<DetailBills> call, Response<DetailBills> response) {
-                        if(response.isSuccessful()){
-                            DetailBills detailBills = response.body();
-                            Order resultBuil = detailBills.getResult();
-                            showCustomDialog(context,resultBuil);
+                Intent intent = new Intent(context, DetailOderActivity.class);
 
-                        }
-                    }
+                // Truyền ID đơn hàng đi
+                intent.putExtra("ORDER_ID_KEY", notification.getOrder_id());
 
-                    @Override
-                    public void onFailure(Call<DetailBills> call, Throwable t) {
-
-                    }
-                });
+                context.startActivity(intent);
 
                 BaseApi.API.updateStatusNotifi(notification.getId()).enqueue(new Callback<UpdateStatusResponse>() {
                     @Override

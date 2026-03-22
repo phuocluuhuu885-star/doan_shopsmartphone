@@ -15,8 +15,12 @@ import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.model.Order;
 import com.example.doan_shopsmartphone.model.Voucher;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
+import com.example.doan_shopsmartphone.ultil.OnVoucherSelectedListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.VoucherViewHolder>{
@@ -24,20 +28,16 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
     private List<Voucher> voucherlist;
     private ObjectUtil objectUtil;
     int selectedPosition = -1;
-    private String productId;
-    private int productPrice;
-    public VoucherSCAdapter(Context context, List<Voucher> list, String productId, int productPrice) {
-        this.context = context;
-        this.voucherlist = list;
-        this.productId = productId;
-        this.productPrice = productPrice;
+    private OnVoucherSelectedListener listener;
+    public VoucherSCAdapter(List<Voucher> voucherlist, OnVoucherSelectedListener listener) {
+        this.voucherlist = voucherlist;
+        this.listener = listener;
     }
 
     public void setListOrder(List<Voucher> voucherList) {
         this.voucherlist = voucherList;
         notifyDataSetChanged();
     }
-
 
     @NonNull
     @Override
@@ -49,34 +49,59 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
     @Override
     public void onBindViewHolder(@NonNull VoucherViewHolder holder, int position) {
         Voucher store = voucherlist.get(position);
-        boolean isEligible = checkEligibility(store);
-        holder.itemView.setAlpha(isEligible ? 1.0f : 0.5f);
+
         holder.select.setSelected(position == selectedPosition);
         holder.select.setSelected(position == selectedPosition);
         holder.tvSale.setText(store.getCode());
-        holder.tvprice.setText("Gia"+store.getMinOrderValue());
+        holder.tvprice.setText(store.getDiscountValue()+"Đ");
         holder.name.setText(store.getTitle());
+        holder.count.setText("x"+store.getQuantity());
+        boolean isEligible = isVoucherValids(store);
+        if (!isEligible) {
+            // TRƯỜNG HỢP: Voucher không đủ điều kiện (Hết hạn hoặc hết lượt)
+            holder.itemView.setAlpha(0.3f); // Mờ hẳn đi
+            holder.itemView.setEnabled(false); // Chặn tương tác
+        } else {
+            // TRƯỜNG HỢP: Voucher còn hạn và còn lượt
+            holder.itemView.setEnabled(true);
+            holder.select.setVisibility(View.VISIBLE);
+
+            // Xử lý mờ theo logic "Đã chọn 1 cái thì cái còn lại mờ đi"
+            if (selectedPosition == -1) {
+                holder.itemView.setAlpha(1.0f); // Chưa chọn cái nào -> Sáng rõ
+            } else {
+                if (selectedPosition == position) {
+                    holder.itemView.setAlpha(1.0f); // Cái đang chọn -> Sáng rõ
+                } else {
+                    holder.itemView.setAlpha(0.5f); // Cái khác -> Mờ nhẹ
+                }
+            }
+        }
+        holder.select.setSelected(position == selectedPosition);
+        if (store.getExpiryDate() != null) {
+            String formattedDate = formatDate(store.getExpiryDate()); // Gọi hàm format ở trên
+            holder.date.setText("HSD: " + formattedDate);
+        }
+
+
+        // 3. Xử lý sự kiện Click
         holder.itemView.setOnClickListener(v -> {
             int previousSelected = selectedPosition;
-            if (!isEligible) {
-                Toast.makeText(context, "Sản phẩm không đủ điều kiện áp dụng mã này", Toast.LENGTH_SHORT).show();
-                return;
-            }
+
             if (selectedPosition == position) {
-                // NẾU CLICK VÀO ITEM ĐANG CHỌN -> BỎ CHỌN
-                selectedPosition = -1;
-
+                selectedPosition = -1; // Bỏ chọn
             } else {
-                // NẾU CLICK VÀO ITEM KHÁC -> CHỌN ITEM ĐÓ
-                selectedPosition = position;
-
+                selectedPosition = position; // Chọn mới
+            }
+            // GỬI DỮ LIỆU LÊN CHA
+            if (listener != null) {
+                listener.onVoucherSelected(store);
             }
 
-            // Cập nhật giao diện cho item cũ và item mới
-            notifyItemChanged(previousSelected);
-            notifyItemChanged(selectedPosition);
-
+            notifyDataSetChanged();
         });
+
+
     }
 
     @Override
@@ -87,8 +112,33 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
         return 0;
     }
 
+    public Voucher getSelectedVoucher() {
+        if (selectedPosition != -1 && selectedPosition < voucherlist.size()) {
+            return voucherlist.get(selectedPosition);
+        }
+        return null; // Trả về null nếu chưa chọn cái nào
+    }
+
+    public boolean isVoucherValids(Voucher voucher) {
+        try {
+            // 1. Kiểm tra số lượng
+            if (voucher.getQuantity() <= 0) return false;
+
+            // 2. Kiểm tra ngày hết hạn
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+            Date expiryDate = inputFormat.parse(voucher.getExpiryDate());
+            Date currentDate = new Date(); // Ngày hiện tại
+
+            if (expiryDate == null || expiryDate.before(currentDate)) {
+                return false; // Đã hết hạn
+            }
+            return true; // Thỏa mãn tất cả điều kiện
+        } catch (Exception e) {
+            return false;
+        }
+    }
     public class VoucherViewHolder extends RecyclerView.ViewHolder {
-        TextView tvSale, tvprice, tvDate, name;
+        TextView tvSale, tvprice, tvDate, name,count,date;
         ConstraintLayout select;
         public VoucherViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -97,18 +147,25 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
             tvSale = itemView.findViewById(R.id.sale);
             tvDate = itemView.findViewById(R.id.date);
             select = itemView.findViewById(R.id.btnSelectVoucher);
+            count = itemView.findViewById(R.id.count);
+            date = itemView.findViewById(R.id.date);
         }
     }
 
-    // Hàm kiểm tra điều kiện Voucher
-    private boolean checkEligibility(Voucher v) {
-        // Kiểm tra tiền tối thiểu
-        if (productPrice < v.getMinOrderValue()) return false;
+    private String formatDate(String dateString) {
+        try {
+            // Định dạng nhận vào từ Server (Mongoose Date)
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+            // Định dạng muốn hiển thị ra màn hình
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-        // Kiểm tra sản phẩm có trong danh sách áp dụng không (nếu mảng không rỗng)
-        if (v.getApplicableProducts() != null && !v.getApplicableProducts().isEmpty()) {
-            return v.getApplicableProducts().contains(productId);
+            Date date = inputFormat.parse(dateString);
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            return "N/A"; // Nếu lỗi thì hiện N/A
         }
-        return true; // Toàn sàn
     }
+
+     //Hàm kiểm tra điều kiện Voucher
+
 }

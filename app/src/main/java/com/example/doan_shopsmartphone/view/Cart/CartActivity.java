@@ -79,7 +79,7 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
                 // updateCart();
             }
         });
-
+        Log.e( "idPro: ",CartUtil.listCartCheck.toString() );
         binding.listVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -126,6 +126,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/onVoucher"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -155,11 +156,15 @@
                     app:layout_constraintStart_toEndOf="@id/imageVoucher"/>
 
                 <TextView
+                    android:id="@+id/disscount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Miễn phí vận chuyển"
+                    android:text="Chọn voucher"
+                    android:textColor="@color/color_chudao"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="20dp"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/image_arrow_1"
                     />
