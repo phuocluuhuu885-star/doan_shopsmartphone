@@ -60,16 +60,6 @@ public class CartPayAdapter extends RecyclerView.Adapter<CartPayAdapter.CartPayV
 
             }
         });
-        holder.binding.voucher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String productId = cart.getOptionProduct().getProduct().getId();
-                Intent intent = new Intent(context, VoucherScreen.class);
-                intent.putExtra("productId", productId);
-                intent.putExtra("price", cart.getOptionProduct().getPrice());
-                context.startActivity(intent);
-            }
-        });
     }
 
     @Override

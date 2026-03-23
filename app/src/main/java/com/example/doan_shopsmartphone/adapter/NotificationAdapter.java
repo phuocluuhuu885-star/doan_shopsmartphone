@@ -63,7 +63,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Notifi notification = notifiList.get(position);
-
         //Xử lí background cho thông báo chưa đọc/đã đọc
         if ("unread".equals(notification.getStatus())) {
             // NẾU CHƯA ĐỌC:
@@ -77,31 +76,32 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             holder.binding.bgItem.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             // Chữ tiêu đề để bình thường
             holder.binding.tvTitle.setTypeface(null, Typeface.NORMAL);
+            holder.binding.tvDate.setText(notification.getStatus());
         }
 
-        switch (notification.getType()){
-            case "msg":
-                holder.binding.tvDate.setText("Bạn có tin nhắn mới từ " + notification.getSender().getUsername());
-                break;
-            case "delivere":
-                holder.binding.tvDate.setText("Đang giao hàng");
-                break;
-            case "wfc":
-                holder.binding.tvDate.setText("đang chờ xác nhận");
-                break;
-            case "wfd":
-                holder.binding.tvDate.setText("Đang chờ giao hàng");
-                break;
-            case "delivered":
-                holder.binding.tvDate.setText("Giao hàng thành công");
-                break;
-            case "canceled":
-                holder.binding.tvDate.setText("Đã hủy");
-                holder.binding.tvDate.setTextColor(ContextCompat.getColor(context, R.color.red));
-                break;
-            default:holder.binding.tvDate.setText("Bạn có thông báo mới");
-                break;
-        }
+//        switch (notification.getType()){
+//            case "msg":
+//                holder.binding.tvDate.setText("Bạn có tin nhắn mới từ " + notification.getSender().getUsername());
+//                break;
+//            case "delivere":
+//                holder.binding.tvDate.setText("Đang giao hàng");
+//                break;
+//            case "wfc":
+//                holder.binding.tvDate.setText("đang chờ xác nhận");
+//                break;
+//            case "wfd":
+//                holder.binding.tvDate.setText("Đang chờ giao hàng");
+//                break;
+//            case "delivered":
+//                holder.binding.tvDate.setText("Giao hàng thành công");
+//                break;
+//            case "canceled":
+//                holder.binding.tvDate.setText("Đã hủy");
+//                holder.binding.tvDate.setTextColor(ContextCompat.getColor(context, R.color.red));
+//                break;
+//            default:holder.binding.tvDate.setText("Bạn có thông báo mới");
+//                break;
+//        }
 
         // image
         Glide.with(context)
@@ -138,7 +138,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 // Truyền ID đơn hàng đi
                 intent.putExtra("ORDER_ID_KEY", notification.getOrder_id());
 
-                context.startActivity(intent);
+
 
                 BaseApi.API.updateStatusNotifi(notification.getId()).enqueue(new Callback<UpdateStatusResponse>() {
                     @Override
@@ -164,6 +164,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                         Log.e("API_ERROR", "Lỗi kết nối: " + t.getMessage());
                     }
                 });
+                context.startActivity(intent);
             }
         });
 

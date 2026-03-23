@@ -604,7 +604,12 @@ public class PayActivity extends AppCompatActivity {
         return true;
     }
     private void initView() {
+        DecimalFormat formatter = new DecimalFormat("###,###,###");
         totalPrice = getIntent().getIntExtra("totalPrice", 0);
+        binding.tvTotalPrice.setText(formatter.format(totalPrice) + " Đ");
+        binding.disscount.setText(formatter.format(0) + " Đ");
+        binding.totalOder.setText(formatter.format(totalPrice) + " Đ");
+        binding.totalDisscount.setText(formatter.format(0) + " Đ");
         loadingDialog = new ProgressLoadingDialog(this);
         infoList = new ArrayList<>();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -658,6 +663,8 @@ public class PayActivity extends AppCompatActivity {
 
         binding.tvTotalPrice.setText(formatter.format(totalPay) + " Đ");
         binding.disscount.setText(formatter.format(totalDiscount) + " Đ");
+        binding.totalOder.setText(formatter.format(totalPay) + " Đ");
+        binding.totalDisscount.setText(formatter.format(totalDiscount) + " Đ");
         // Lưu giá trị cuối cùng vào một biến toàn cục để gửi lên Server khi bấm "Mua hàng"
     }
     @Override
