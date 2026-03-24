@@ -19,6 +19,7 @@ public class Order {
     private boolean payment_status;
     private String createdAt;
     private String updatedAt;
+    private String reason; // Thêm trường reason
 
 
     public Order(String id, User user, Info info, List<OptionAndQuantity> productsOrder, int totalPrice, String status, boolean payment_status) {
@@ -113,5 +114,13 @@ public class Order {
 
     public String getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

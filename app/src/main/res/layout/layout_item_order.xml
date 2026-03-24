@@ -89,28 +89,41 @@
         android:orientation="horizontal"
         android:layout_weight="10"
         >
-        <TextView
-            android:id="@+id/tvStatus"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="5"
             android:layout_height="wrap_content"
-            android:text="Giao hàng thành công"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColor="#2ABDB0"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Giao hàng thành công"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp"
+                android:textColor="#2ABDB0"
+                android:gravity="center_vertical"
+                />
+
+            <TextView
+                android:id="@+id/tvReason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lý do: ..."
+                android:textSize="12sp"
+                android:textColor="@color/red"
+                android:visibility="gone"
+                android:paddingBottom="10dp"
+                />
+        </LinearLayout>
 
 
         <TextView
             android:id="@+id/btnreview"
             android:layout_width="0dp"
             android:layout_weight="2.5"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="Đánh Giá"
             android:textSize="15dp"
@@ -120,13 +133,14 @@
             />
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:text="|"/>
         <TextView
             android:id="@+id/btnItem"
             android:layout_width="0dp"
             android:layout_weight="2.5"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="Hủy đơn"
             android:textSize="15dp"

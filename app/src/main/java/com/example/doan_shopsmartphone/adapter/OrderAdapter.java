@@ -3,18 +3,24 @@ package com.example.doan_shopsmartphone.adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.text.TextWatcher;
+import android.text.Editable;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +35,7 @@ import com.example.doan_shopsmartphone.model.response.ListComment1Response;
 import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
+import com.example.doan_shopsmartphone.ultil.TAG;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.DecimalFormat;
@@ -86,6 +93,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.binding.tvStatus.setText(order.getStatus());
         holder.binding.tvQuantityTypeProduct.setText(order.getProductsOrder().size() + " loại sản phẩm");
 
+        if (order.getStatus().equals(TAG.CANCELLED) && !TextUtils.isEmpty(order.getReason())) {
+            holder.binding.tvReason.setVisibility(View.VISIBLE);
+            holder.binding.tvReason.setText("Lý do: " + order.getReason());
+        } else {
+            holder.binding.tvReason.setVisibility(View.GONE);
+        }
 
         if (status == 0) {
             holder.binding.btnItem.setText("Hủy hàng");
@@ -111,12 +124,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             holder.binding.tvStatus.setTextColor(Color.GRAY);
         }
 
-        holder.binding.btnItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.binding.btnItem.setOnClickListener(view -> {
+            if (status == 0) { // chỉ tab chờ xác nhận mới cho huỷ
+                showCancelDialog(order, position);
+            } else {
                 objectUtil.onclickObject(order);
             }
-        });
+                });
         holder.binding.btnreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -300,5 +314,68 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             super(binding.getRoot());
             this.binding = binding;
         }
+    }
+    // ===== [ADD] ===== dialog huỷ
+    private void showCancelDialog(Order order, int position) {
+        Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_cancel_order);
+        
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        RadioGroup rgReasons = dialog.findViewById(R.id.rg_reasons);
+        Button btnConfirm = dialog.findViewById(R.id.btn_confirm);
+        ImageView btnClose = dialog.findViewById(R.id.btn_close);
+
+        btnConfirm.setEnabled(false);
+
+        rgReasons.setOnCheckedChangeListener((group, checkedId) -> {
+            btnConfirm.setEnabled(true);
+        });
+
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
+        btnConfirm.setOnClickListener(v -> {
+            int selectedId = rgReasons.getCheckedRadioButtonId();
+            if (selectedId != -1) {
+                RadioButton selectedRadioButton = dialog.findViewById(selectedId);
+                String reason = selectedRadioButton.getText().toString();
+                callApiCancel(order, reason, position, dialog);
+            }
+        });
+
+        dialog.show();
+    }
+    // ===== [ADD] ===== call API huỷ
+    private void callApiCancel(Order order, String reason, int position, Dialog dialog) {
+        String token = AccountUltil.BEARER + AccountUltil.getToken(context);
+
+        BaseApi.API.updateOrderStatus(token, order.getId(), TAG.CANCELLED, reason)
+                .enqueue(new Callback<ServerResponse>() {
+                    @Override
+                    public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                        if (response.isSuccessful()) {
+
+                            Toast.makeText(context, "Huỷ thành công", Toast.LENGTH_SHORT).show();
+
+                            // update UI
+                            orderList.remove(position);
+                            notifyItemRemoved(position);
+
+                            dialog.dismiss();
+                        } else {
+                            Toast.makeText(context, "Huỷ thất bại", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ServerResponse> call, Throwable t) {
+                        Toast.makeText(context, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

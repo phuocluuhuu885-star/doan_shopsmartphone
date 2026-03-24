@@ -149,7 +149,7 @@ public class FragmentPageWaitConfirm extends Fragment implements ObjectUtil {
     private void udpateStatusOrder(Order order) {
         String token = AccountUltil.BEARER + AccountUltil.getToken(requireContext());
         loadingDialog.show();
-        BaseApi.API.updateOrderStatus(token, order.getId(), TAG.CANCELLED).enqueue(new Callback<ServerResponse>() {
+        BaseApi.API.updateOrderStatus(token, order.getId(), TAG.CANCELLED, "Người dùng hủy").enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(@NonNull Call<ServerResponse> call, @NonNull Response<ServerResponse> response) {
                 if(response.isSuccessful()){ // chỉ nhận đầu status 200
