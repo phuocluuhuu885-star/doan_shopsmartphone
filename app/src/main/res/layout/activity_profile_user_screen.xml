@@ -197,6 +197,7 @@
                     android:enabled="false"
                     android:id="@+id/btnSave"
                     android:elevation="10dp"
+                android:alpha="1"
                     android:layout_marginTop="40dp"
                     android:text="Thay đổi"
                     android:textColor="@color/white"

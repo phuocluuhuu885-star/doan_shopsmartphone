@@ -31,15 +31,14 @@ import com.example.doan_shopsmartphone.ultil.CartUtil;
 import com.example.doan_shopsmartphone.ultil.TAG;
 import com.example.doan_shopsmartphone.ultil.swipe.ItemTouchHelperListener;
 import com.example.doan_shopsmartphone.ultil.swipe.RecycleViewItemTouchHelper;
-import com.example.doan_shopsmartphone.view.voucher.VoucherScreen;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 import retrofit2.Call;
@@ -51,7 +50,6 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
     private CartAdapter cartAdapter;
     private int totalPrice = 0;
     private int paymentMethods = 1;
-    private static final int REQUEST_CODE_CHANGE_PAYMENT_METHODS = 1;
 
 
     @Override
@@ -80,23 +78,6 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
             }
         });
         Log.e( "idPro: ",CartUtil.listCartCheck.toString() );
-        binding.listVoucher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CartActivity.this, VoucherScreen.class);
-                startActivity(intent);
-            }
-        });
-
-
-        binding.listThanhToan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ChangePaymentMethodsActivity.class);
-                intent.putExtra("paymentMethods", paymentMethods);
-                startActivityForResult(intent, REQUEST_CODE_CHANGE_PAYMENT_METHODS);
-            }
-        });
         binding.btnPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,21 +91,6 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
             }
         });
 
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_CHANGE_PAYMENT_METHODS && resultCode == RESULT_OK) {
-            paymentMethods = data.getIntExtra("paymentMethods", 1);
-            // Cập nhật UI hoặc thực hiện các tác vụ khác với giá trị paymentMethods mới
-            if (paymentMethods == 1){
-                Toast.makeText(this, "Bạn đã chọn thanh toán khi nhận hàng", Toast.LENGTH_SHORT).show();
-            }
-            if (paymentMethods == 2 ){
-                Toast.makeText(this, "Bạn đã chọn thanh toán qua ví ZaloPay", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
     private void initView() {
         // Xóa toàn bộ list đc chọn cũ
@@ -252,18 +218,18 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
         onBackActivity();
     }
     private void updateCart() {
-        ExecutorService executorService = Executors.newCachedThreadPool();
+        int total = CartUtil.listCart.size();
+        if (total == 0) return;
+
+        AtomicInteger finished = new AtomicInteger(0);
+        AtomicBoolean anyFailed = new AtomicBoolean(false);
+
         for (int i = 0; i < CartUtil.listCart.size(); i++) {
-            int position = i;
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    updateQuantityCart(CartUtil.listCart.get(position));
-                }
-            });
+            updateQuantityCart(CartUtil.listCart.get(i), finished, anyFailed, total);
         }
     }
-    private void updateQuantityCart(OptionAndQuantity cart) {
+
+    private void updateQuantityCart(OptionAndQuantity cart, AtomicInteger finished, AtomicBoolean anyFailed, int total) {
 //        String token = AccountUltil.BEARER + AccountUltil.TOKEN;
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
 
@@ -280,13 +246,13 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
                     Log.d("Server cart trả về", "onResponse: " + serverResponse.getCode());
                     Log.d(TAG.toString, "onResponse-updateQuantityCartItem: " + serverResponse.toString());
                     if(serverResponse.getCode() == 200) {
-                        Log.d(TAG.toString, "onResponse: " + serverResponse.getCode());
-                        Intent intent = new Intent(CartActivity.this, PayActivity.class);
-                        intent.putExtra("totalPrice" , totalPrice);
-                        intent.putExtra("paymentMethods", paymentMethods);
-                        startActivity(intent);
+                        Log.d(TAG.toString, "onResponse-updateQuantityCartItem: " + serverResponse.getCode());
+                    } else {
+                        anyFailed.set(true);
+                        Toast.makeText(CartActivity.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else { // nhận các đầu status #200
+                    anyFailed.set(true);
                     try {
                         assert response.errorBody() != null;
                         String errorBody = response.errorBody().string();
@@ -300,12 +266,27 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
                         throw new RuntimeException(e);
                     }
                 }
+
+                if (finished.incrementAndGet() == total && !anyFailed.get()) {
+                    Intent intent = new Intent(CartActivity.this, PayActivity.class);
+                    intent.putExtra("totalPrice" , totalPrice);
+                    intent.putExtra("paymentMethods", paymentMethods);
+                    startActivity(intent);
+                }
             }
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
+                anyFailed.set(true);
                 Toast.makeText(CartActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
                 Log.d(TAG.toString, "onFailure-updateQuantityCartItem: " + t.toString());
+
+                if (finished.incrementAndGet() == total && !anyFailed.get()) {
+                    Intent intent = new Intent(CartActivity.this, PayActivity.class);
+                    intent.putExtra("totalPrice" , totalPrice);
+                    intent.putExtra("paymentMethods", paymentMethods);
+                    startActivity(intent);
+                }
             }
         });
     }

@@ -35,6 +35,29 @@
         android:layout_height="1dp"
         android:background="#EEEEEE" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:text="Nhập lý do hủy"
+        android:textColor="@color/color_chudao"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edt_reason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:hint="Lý do hủy hàng (ít nhất 5 ký tự)"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:background="@drawable/bg_white_border_gray"
+        android:textColor="@android:color/black" />
+
     <RadioGroup
         android:id="@+id/rg_reasons"
         android:layout_width="match_parent"
@@ -100,7 +123,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:backgroundTint="#EE4D2D"
+        android:backgroundTint="@color/color_chudao"
         android:paddingVertical="12dp"
         android:text="Xác nhận"
         android:textAllCaps="false"

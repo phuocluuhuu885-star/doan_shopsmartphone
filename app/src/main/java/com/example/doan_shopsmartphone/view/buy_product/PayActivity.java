@@ -46,6 +46,7 @@ import com.example.doan_shopsmartphone.ultil.CartUtil;
 import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;
 import com.example.doan_shopsmartphone.ultil.TAG;
 import com.example.doan_shopsmartphone.view.voucher.VoucherScreen;
+import com.example.doan_shopsmartphone.view.Cart.ChangePaymentMethodsActivity;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -91,6 +92,26 @@ public class PayActivity extends AppCompatActivity {
             }
     );
 
+    private final ActivityResultLauncher<Intent> paymentMethodsLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            int selected = result.getData().getIntExtra("paymentMethods", paymentMethods);
+                            paymentMethods = selected;
+                            updatePaymentMethodsUI();
+                        }
+                    }
+            );
+
+    private void updatePaymentMethodsUI() {
+        if (paymentMethods == 1) {
+            binding.txtPaymentMethods.setText("Thanh toán khi nhận hàng");
+        } else if (paymentMethods == 2) {
+            binding.txtPaymentMethods.setText("Thanh toán qua ví ZaloPay");
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,11 +133,11 @@ public class PayActivity extends AppCompatActivity {
         //Take paymentMethods
         paymentMethods = getIntent().getIntExtra("paymentMethods", 0);
         if (paymentMethods == 1){
-            binding.txtPaymentMethods.setText("Thanh toán khi nhận hàng");
+            updatePaymentMethodsUI();
 
         }
         if (paymentMethods == 2){
-            binding.txtPaymentMethods.setText("Thanh toán qua ví ZaloPay");
+            updatePaymentMethodsUI();
         }
 
          productIds = CartUtil.listCartCheck.stream()
@@ -208,6 +229,16 @@ public class PayActivity extends AppCompatActivity {
                 voucherLauncher.launch(intent);
             }
         });
+
+        binding.layoutPaymentMethods.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PayActivity.this, ChangePaymentMethodsActivity.class);
+                intent.putExtra("paymentMethods", paymentMethods);
+                paymentMethodsLauncher.launch(intent);
+            }
+        });
+
         binding.btnOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -252,6 +283,7 @@ public class PayActivity extends AppCompatActivity {
                 public void onActivityResult(ActivityResult result) {
                     if(result.getResultCode() == RESULT_OK) {
                         Intent intent = result.getData();
+                        if (intent == null || intent.getExtras() == null) return;
                         Bundle bundle = intent.getExtras();
                         //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         //    info = bundle.getSerializable("obje   ct_info", Info.class);
@@ -263,7 +295,9 @@ public class PayActivity extends AppCompatActivity {
                                 info = (Info) objectInfo;
                             }
                         }
-                        binding.tvInfoUser.setText(info.getName() + " | " + info.getPhoneNumber() + " | " + info.getAddress());
+                        if (info != null) {
+                            binding.tvInfoUser.setText(info.getName() + " | " + info.getPhoneNumber() + " | " + info.getAddress());
+                        }
                     }
                 }
             });

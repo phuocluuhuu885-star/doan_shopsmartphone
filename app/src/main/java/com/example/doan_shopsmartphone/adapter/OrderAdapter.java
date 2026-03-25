@@ -93,7 +93,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.binding.tvStatus.setText(order.getStatus());
         holder.binding.tvQuantityTypeProduct.setText(order.getProductsOrder().size() + " loại sản phẩm");
 
-        if (order.getStatus().equals(TAG.CANCELLED) && !TextUtils.isEmpty(order.getReason())) {
+        String statusText = order.getStatus();
+        if (TAG.CANCELLED.equals(statusText) && !TextUtils.isEmpty(order.getReason())) {
             holder.binding.tvReason.setVisibility(View.VISIBLE);
             holder.binding.tvReason.setText("Lý do: " + order.getReason());
         } else {
@@ -328,30 +329,56 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
 
         RadioGroup rgReasons = dialog.findViewById(R.id.rg_reasons);
+        TextInputEditText edtReason = dialog.findViewById(R.id.edt_reason);
         Button btnConfirm = dialog.findViewById(R.id.btn_confirm);
         ImageView btnClose = dialog.findViewById(R.id.btn_close);
 
         btnConfirm.setEnabled(false);
 
+        if (edtReason != null) {
+            edtReason.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String reason = s == null ? "" : s.toString().trim();
+                    btnConfirm.setEnabled(reason.length() >= 5);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
+        }
+
         rgReasons.setOnCheckedChangeListener((group, checkedId) -> {
-            btnConfirm.setEnabled(true);
+            if (checkedId != -1 && edtReason != null) {
+                RadioButton selectedRadioButton = dialog.findViewById(checkedId);
+                if (selectedRadioButton != null) {
+                    // Tự điền vào ô nhập lý do (người dùng vẫn có thể sửa)
+                    edtReason.setText(selectedRadioButton.getText().toString());
+                }
+            }
         });
 
         btnClose.setOnClickListener(v -> dialog.dismiss());
 
         btnConfirm.setOnClickListener(v -> {
-            int selectedId = rgReasons.getCheckedRadioButtonId();
-            if (selectedId != -1) {
-                RadioButton selectedRadioButton = dialog.findViewById(selectedId);
-                String reason = selectedRadioButton.getText().toString();
-                callApiCancel(order, reason, position, dialog);
+            String reason = edtReason == null ? "" : edtReason.getText().toString().trim();
+            if (reason.length() < 5) {
+                Toast.makeText(context, "Lý do hủy phải từ 5 ký tự trở lên", Toast.LENGTH_SHORT).show();
+                return;
             }
+            btnConfirm.setEnabled(false);
+            callApiCancel(order, reason, position, dialog, btnConfirm);
         });
 
         dialog.show();
     }
     // ===== [ADD] ===== call API huỷ
-    private void callApiCancel(Order order, String reason, int position, Dialog dialog) {
+    private void callApiCancel(Order order, String reason, int position, Dialog dialog, Button btnConfirm) {
         String token = AccountUltil.BEARER + AccountUltil.getToken(context);
 
         BaseApi.API.updateOrderStatus(token, order.getId(), TAG.CANCELLED, reason)
@@ -369,12 +396,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                             dialog.dismiss();
                         } else {
                             Toast.makeText(context, "Huỷ thất bại", Toast.LENGTH_SHORT).show();
+                            btnConfirm.setEnabled(true);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ServerResponse> call, Throwable t) {
                         Toast.makeText(context, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        btnConfirm.setEnabled(true);
                     }
                 });
     }

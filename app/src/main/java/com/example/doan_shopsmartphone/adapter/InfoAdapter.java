@@ -55,7 +55,8 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
         holder.binding.chkChooseInfo.setOnCheckedChangeListener(null);
 
         // 2. Thiết lập trạng thái hiển thị
-        if(info.getChecked()) {
+        boolean checked = Boolean.TRUE.equals(info.getChecked());
+        if(checked) {
             holder.binding.tvDefault.setVisibility(View.VISIBLE);
             holder.binding.chkChooseInfo.setChecked(true);
         } else {
@@ -63,29 +64,16 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
             holder.binding.chkChooseInfo.setChecked(false);
         }
 
-        // 3. Xử lý sự kiện click vào Checkbox (hoặc cả Item)
-        holder.binding.chkChooseInfo.setOnClickListener(v -> {
-            // Chỉ xử lý nếu item này chưa được chọn
-            if (!info.getChecked()) {
-                updateSingleSelection(position);
-                infoInterface.onclickObject(info);
-            }
-        });
+        // 3. Xử lý sự kiện chọn địa chỉ
         holder.binding.chkChooseInfo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked) {
-                    if (!info.getChecked()) {
-                        // 1. Cập nhật giao diện cục bộ (Local Update)
-                        for (int i = 0; i < infoList.size(); i++) {
-                            infoList.get(i).setChecked(i == position);
-                        }
-                        notifyDataSetChanged();
+                if (!isChecked) return;
 
-                        // 2. Gửi lệnh lên Server (Sync Update)
-                        // Trong Activity/Fragment, bạn phải viết API để update trạng thái này vào DB
-                        infoInterface.onclickObject(info);
-                    }
+                // Tránh gọi lại nếu checkbox này đã được chọn sẵn
+                if (!Boolean.TRUE.equals(info.getChecked())) {
+                    updateSingleSelection(position);
+                    infoInterface.onclickObject(info);
                 }
             }
         });

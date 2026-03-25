@@ -67,6 +67,7 @@
                 android:visibility="visible"
                 android:layout_gravity="center"
                 android:src="@drawable/find_product"
+                app:tint="@color/color_chudao"
                 android:layout_width="24dp"
                 android:layout_height="24dp"/>
             <LinearLayout
