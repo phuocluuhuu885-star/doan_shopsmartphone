@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.model.Voucher;
+import com.example.doan_shopsmartphone.model.VoucherDetail;
 
 import java.util.List;
 
@@ -18,9 +19,9 @@ import java.util.List;
 
 public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHolder>{
     Context context;
-    List<Voucher> list;
+    List<VoucherDetail> list;
 
-    public VoucherAdapter(Context context, List<Voucher> list) {
+    public VoucherAdapter(Context context, List<VoucherDetail> list) {
         this.context = context;
         this.list = list;
     }
@@ -34,12 +35,21 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Voucher voucher = list.get(position);
-        holder.textSale.setText(voucher.getTitle());
+        VoucherDetail voucher = list.get(position);
+        if (voucher.getDiscountType()==1){
+            holder.textSale.setText(voucher.getDiscountValue()+"%");
+        }else {
+            holder.textSale.setText(voucher.getDiscountValue()+"K");
+        }
+
+
     }
 
     @Override
     public int getItemCount() {
+        if (list == null) {
+            return 0;
+        }
         return list.size();
     }
 

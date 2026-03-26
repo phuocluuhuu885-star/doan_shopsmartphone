@@ -654,14 +654,14 @@ public class PayActivity extends AppCompatActivity {
     }
 
     private void calculateMultiVoucher(ArrayList<Voucher> selectedVouchers) {
-        long totalOrderPrice = 0; // Tổng tiền cuối cùng của cả hóa đơn
-        long totalDiscount = 0;   // Tổng số tiền được giảm giá
+        int totalOrderPrice = 0; // Tổng tiền cuối cùng của cả hóa đơn
+        int totalDiscount = 0;   // Tổng số tiền được giảm giá
 
         // 1. Duyệt qua từng sản phẩm trong giỏ hàng của bạn
         for (OptionAndQuantity item : CartUtil.listCartCheck) {
             // Tính giá gốc của dòng sản phẩm này (Giá x Số lượng)
-            long itemOriginalPrice = (long) item.getOptionProduct().getPrice() * item.getQuantity();
-            long discountForThisItem = 0;
+            int itemOriginalPrice = (int) item.getOptionProduct().getPrice() * item.getQuantity();
+            int discountForThisItem = 0;
 
             // 2. Tìm xem trong danh sách Voucher đã chọn, cái nào áp dụng cho sản phẩm này
             for (Voucher v : selectedVouchers) {
@@ -679,7 +679,7 @@ public class PayActivity extends AppCompatActivity {
             }
 
             // 3. Tính giá sau khi giảm cho sản phẩm này
-            long priceAfterDiscount = itemOriginalPrice - discountForThisItem;
+            int priceAfterDiscount = itemOriginalPrice - discountForThisItem;
             if (priceAfterDiscount < 0) priceAfterDiscount = 0;
 
             // 4. Cộng dồn vào tổng hóa đơn
@@ -691,7 +691,7 @@ public class PayActivity extends AppCompatActivity {
         // 5. Cập nhật lên giao diện (UI)
     }
 
-    private void updatePriceUI(long totalPay, long totalDiscount) {
+    private void updatePriceUI(int totalPay, int totalDiscount) {
         // Định dạng số có dấu phân cách nghìn (1,000,000)
         DecimalFormat formatter = new DecimalFormat("###,###,###");
 

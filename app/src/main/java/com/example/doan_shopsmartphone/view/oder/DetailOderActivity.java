@@ -73,7 +73,6 @@ public class DetailOderActivity extends AppCompatActivity {
                     DetailBills detailBills = response.body();
                     Order resultBuil = detailBills.getResult();
                     bindDataToUI(resultBuil);
-                    Log.e( "qwe: ",""+resultBuil.getProductsOrder().toString() );
 
                     adapter = new DetailOderItemAdapter(DetailOderActivity.this, resultBuil.getProductsOrder());
                     rvProducts.setAdapter(adapter);

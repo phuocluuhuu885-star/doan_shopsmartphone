@@ -121,7 +121,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             date = new Date();
             dateOrder = new Date();
         }
-        holder.binding.tvTitle.setText("Đơn hàng: #" + notification.getOrder_id().substring(notification.getOrder_id().length() - 6)+" đã đặt thành công");
+        //holder.binding.tvTitle.setText("Đơn hàng: #" + notification.getOrder_id().substring(notification.getOrder_id().length() - 6)+" đã đặt thành công");
         holder.binding.tvContent.setText("Thời gian đặt đơn:"+outputFormat.format(dateOrder));
 
         if(position == notifiList.size() -1) {

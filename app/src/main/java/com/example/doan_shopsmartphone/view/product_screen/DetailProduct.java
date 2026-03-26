@@ -41,6 +41,9 @@ import com.bumptech.glide.Glide;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.doan_shopsmartphone.MainActivity;
+import com.example.doan_shopsmartphone.model.VoucherDetail;
+import com.example.doan_shopsmartphone.model.response.VoucherDetaiResponse;
+import com.example.doan_shopsmartphone.model.response.VoucherResponse;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONException;
@@ -98,7 +101,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
     }
     private ActivityDetailProductBinding binding;
     private List<Product> productList;
-    private List<Voucher> voucherList;
+    private List<VoucherDetail> voucherList;
     private ProductAdapter productAdapter;
     private VoucherAdapter voucherAdapter;
     private ProgressLoadingDialog dialog;
@@ -117,6 +120,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
     String ratingstar;
     String sold_quantity;
     String review_count ;
+    String idProduct;
 
     Double minPrice ;
 
@@ -125,6 +129,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         ratingstar = intent.getStringExtra("rating_start");
+        idProduct = intent.getStringExtra("id_product");
         sold_quantity = intent.getStringExtra("sold_quantity");
         review_count = intent.getStringExtra("review_count");
         minPrice = intent.getDoubleExtra("minPrice",1000);
@@ -147,13 +152,32 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
 
     private void getVoucher() {
         voucherList = new ArrayList<>();
-        for (int i = 1; i < 6; i++) {
-        }
-        binding.count.setText(voucherList.size() + " mã giảm giá");
+        BaseApi.API.getVouchersByProduct(idProduct).enqueue(new Callback<VoucherDetaiResponse>() {
+            @Override
+            public void onResponse(Call<VoucherDetaiResponse> call, Response<VoucherDetaiResponse> response) {
+                if(response.body().getCode()==200){
+                    voucherList = response.body().getResult();
+                    Log.e( "voucherDetail: ", "cd"+response.body().getResult() );
+                    voucherAdapter = new VoucherAdapter(DetailProduct.this, voucherList);
+                    binding.recyVoucher.setAdapter(voucherAdapter);
+                    binding.count.setText(voucherList.size() + " mã giảm giá");
+                }else {
+                    Log.e( "voucherDetailel: ", "cd"+response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VoucherDetaiResponse> call, Throwable t) {
+                Log.e( "voucherDetail: ", "cd"+t.getMessage() );
+            }
+        });
+
+
+
         productAdapter = new ProductAdapter(this, productList, this);
-        voucherAdapter = new VoucherAdapter(this, voucherList);
+
         binding.recyProductSimilar.setAdapter(productAdapter);
-        binding.recyVoucher.setAdapter(voucherAdapter);
+
     }
     public void  clickReview(Context context){
         String token = AccountUltil.BEARER + AccountUltil.getToken(context);
@@ -624,19 +648,6 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
 
             }
         });
-//        binding.txtratingbarrr.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                clickReview();
-//            }
-//        });
-//        binding.ratingBar.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                clickReview();
-//
-//            }
-//        });
 
         binding.backDetailProduct.setOnClickListener(new View.OnClickListener() {
             @Override

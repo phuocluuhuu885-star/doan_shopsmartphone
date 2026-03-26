@@ -5,36 +5,59 @@
     android:layout_height="match_parent"
     android:layout_marginTop="20dp"
     >
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_margin="10dp"
-      >
-      <ImageView
-          android:layout_width="20dp"
-          android:layout_height="20dp"
-          android:src="@drawable/account_circle"
-          android:id="@+id/img_avt_review"
-          />
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="20dp"
-          android:layout_marginLeft="10dp"
-          android:text="Đạt"
-          android:id="@+id/txt_name_review"
-          />
-  </LinearLayout>
-    <TextView
-        android:layout_margin="10dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nội Dung Comment"
-        android:id="@+id/txt_comment_review"
+        android:orientation="vertical"
+        android:padding="10dp"
 
-        />
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/account_circle"
+                android:id="@+id/img_avt_review"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginLeft="10dp"
+                android:text="Lưu Hữu Phước"
+                android:id="@+id/txt_name_review"
+                />
+        </LinearLayout>
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressTint="@color/yellow"
+            android:rating="5" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nội Dung Comment"
+            android:id="@+id/txt_comment_review"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="10/02/2020"
+            android:layout_marginTop="10dp"
+            android:id="@+id/date"
+            />
+    </LinearLayout>
+
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#000000" />
+        android:layout_height="0.5dp"
+        android:background="#C8C8C8" />
 </LinearLayout>

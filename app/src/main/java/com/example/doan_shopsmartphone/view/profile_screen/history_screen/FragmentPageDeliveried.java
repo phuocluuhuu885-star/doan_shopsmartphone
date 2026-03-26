@@ -124,7 +124,7 @@ public class FragmentPageDeliveried extends Fragment implements ObjectUtil {
             @Override
             public void onFailure(@NonNull Call<OrderResponse> call, @NonNull Throwable t) {
                 Toast.makeText(getActivity(), t.toString(), Toast.LENGTH_SHORT).show();
-                Log.d(TAG.toString, "onFailure-getListOrder: " + t.toString());
+                Log.d("faild", "onFailure-getListOrder: " + t.toString());
                 binding.progressBar.setVisibility(View.GONE);
             }
         });

@@ -1,89 +1,135 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="20dp">
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:orientation="vertical">
-
-       <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_marginBottom="20dp"
-           android:orientation="horizontal">
-
-           <ImageView
-               android:id="@+id/btn_back_review"
-               android:layout_width="20dp"
-               android:layout_height="20dp"
-               android:src="@drawable/back"/>
-           <Spinner
-               android:id="@+id/spinnerName"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_marginLeft="30dp"/>
-       </LinearLayout>
-
-
-    <!-- Chọn số sao -->
-    <RatingBar
-        android:id="@+id/ratingBar"
-        android:layout_width="235dp"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="#EEEEEE">
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:background="@drawable/custom_border_header"
+        android:paddingHorizontal="6dp"
+        android:orientation="horizontal"
+        android:paddingVertical="15dp"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/btn_back_review"
+            app:tint="@color/white"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:padding="5dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/back"
+            tools:ignore="MissingConstraints"
+            />
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:text="Đánh giá sản phẩm"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+    </LinearLayout>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numStars="5"
-        android:progressTint="@android:color/holo_orange_dark"
-        android:layout_marginTop="10px"
-        android:layout_marginBottom="10px"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="8dp"
         android:layout_gravity="center"
-        android:rating="5"
-        android:scaleY="1" />
-    <!-- Chọn tên -->
+        app:cardElevation="4dp">
 
-
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/filledTextField_name_cmt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="0dp"
-        android:hint="Enter your name">
-
-        <!--this is the actual edit text which takes the input-->
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edt_commentName"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="15dp">
 
-    </com.google.android.material.textfield.TextInputLayout>
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/filledTextField_cmt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="0dp"
-        android:hint="Enter your comment">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn sản phẩm:"
+                android:layout_marginBottom="5dp"/>
 
-        <!--this is the actual edit text which takes the input-->
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edt_commentReview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <Spinner
+                android:id="@+id/spinnerName"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="15dp"
+                android:background="@android:drawable/btn_dropdown"/>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:numStars="5"
+                android:rating="5"
+                android:stepSize="1"
+                android:progressTint="@color/yellow"
+                android:layout_marginBottom="20dp"/>
 
-    <!-- Nút Post -->
-    <Button
-        android:id="@+id/btnPost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="70dp"
-        android:text="Submit" />
-   </LinearLayout>
-</ScrollView>
+            <EditText
+                android:id="@+id/edt_commentName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Tên của bạn"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:drawable/edit_text"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Viết đánh giá của bạn:"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="5dp"/>
+            <EditText
+                android:id="@+id/edt_commentReview"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:hint="Viết nhận xét của bạn..."
+                android:gravity="top"
+                android:padding="10dp"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="15dp"
+                android:background="@android:drawable/edit_text"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hình ảnh đính kèm:"
+                android:layout_marginBottom="5dp"/>
+
+            <Button
+                android:id="@+id/btn_add_photos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn ảnh"
+                android:backgroundTint="#888888"
+                android:textColor="#FFFFFF"
+                android:background="@color/color_chudao"
+                android:layout_marginBottom="10dp"/>
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/imgReview"/>
+
+            <Button
+                android:id="@+id/btnPost"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:text="GỬI ĐÁNH GIÁ"
+                android:textStyle="bold"
+                android:backgroundTint="#FF5722"
+                android:textColor="#FFFFFF"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

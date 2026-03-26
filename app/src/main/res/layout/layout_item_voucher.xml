@@ -24,10 +24,11 @@
             android:layout_marginHorizontal="15dp"
             android:id="@+id/textVoucher"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_size_text"
+            android:textSize="@dimen/font_size_text_title_medium"
             android:gravity="center"
             android:layout_gravity="center"
             android:text="ok"
+            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>

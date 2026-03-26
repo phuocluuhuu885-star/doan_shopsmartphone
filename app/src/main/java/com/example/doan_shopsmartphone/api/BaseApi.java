@@ -19,6 +19,7 @@ import com.example.doan_shopsmartphone.model.response.ProductResponse;
 import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.model.response.LoginResponse;
 import com.example.doan_shopsmartphone.model.response.UpdateStatusResponse;
+import com.example.doan_shopsmartphone.model.response.VoucherDetaiResponse;
 import com.example.doan_shopsmartphone.model.response.VoucherRequest;
 import com.example.doan_shopsmartphone.model.response.VoucherResponse;
 import com.example.doan_shopsmartphone.model.response.store.DetailBills;
@@ -48,7 +49,7 @@ import retrofit2.http.Part;
 public interface BaseApi {
     Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
 
-    String LOCALHOT = "192.168.100.116";
+    String LOCALHOT = "192.168.1.20";
     BaseApi API = new Retrofit.Builder()
             .baseUrl("http://" + LOCALHOT + ":3000/api/")
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -64,6 +65,10 @@ public interface BaseApi {
                                          @Field("order_id") String orderId,
                                          @Field("user_id") String user_id
     );
+
+
+    @GET("voucher/voucher-by-product/{productId}")
+    Call<VoucherDetaiResponse> getVouchersByProduct(@Path("productId") String productId);
 
     @GET("notifi/get-notifi-list/{userId}")
     Call<ListNotifiReponse> getNotifiList(@Header("Authorization") String authorization,
@@ -174,8 +179,7 @@ public interface BaseApi {
     @PUT("order/update-order-status/{idOrder}")
     Call<ServerResponse> updateOrderStatus(@Header("Authorization") String authorization,
                                            @Path("idOrder") String idOrder,
-                                           @Field("status") String status,
-                                           @Field("reason") String reason);
+                                           @Field("status") String status);
 
     @FormUrlEncoded
     @POST("register")
