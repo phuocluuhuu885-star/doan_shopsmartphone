@@ -61,8 +61,11 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
 
         }
         holder.binding.tvNameColor.setText("Loại: " + option.getOptionProduct().getNameColor());
+        String orderImage = option.getOptionProduct().getProduct() != null
+                ? option.getOptionProduct().getProduct().getImage()
+                : option.getOptionProduct().getImage();
         Glide.with(context)
-                .load(option.getOptionProduct().getImage())
+                .load(orderImage)
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.error)
                 .into(holder.binding.imgProduct);
