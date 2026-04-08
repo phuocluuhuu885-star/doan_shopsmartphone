@@ -50,10 +50,7 @@ public class DetailOderItemAdapter extends RecyclerView.Adapter<DetailOderItemAd
         int gia =(cart.getOptionProduct().getPrice());
         Double gia1 = gia*checkgia;
         holder.binding.tvPrice.setText(df.format(gia1) + " đ");
-        String detailOrderImage = cart.getOptionProduct().getProduct() != null
-                ? cart.getOptionProduct().getProduct().getImage()
-                : cart.getOptionProduct().getImage();
-        Glide.with(context).load(detailOrderImage).into(holder.binding.imgProduct);
+        Glide.with(context).load(cart.getOptionProduct().getImage()).into(holder.binding.imgProduct);
     }
 
     @Override

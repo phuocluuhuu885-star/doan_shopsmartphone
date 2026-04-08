@@ -52,10 +52,7 @@ public class CartPayAdapter extends RecyclerView.Adapter<CartPayAdapter.CartPayV
             int gia =(cart.getOptionProduct().getPrice());
         Double gia1 = gia*checkgia;
         holder.binding.tvPrice.setText(df.format(gia1) + " đ");
-        String cartPayImage = cart.getOptionProduct().getProduct() != null
-                ? cart.getOptionProduct().getProduct().getImage()
-                : cart.getOptionProduct().getImage();
-        Glide.with(context).load(cartPayImage).into(holder.binding.imgProduct);
+        Glide.with(context).load(cart.getOptionProduct().getImage()).into(holder.binding.imgProduct);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

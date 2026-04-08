@@ -87,11 +87,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.tvPrice.setText(df.format(gia) + "đ");
         holder.tvQuantity.setText(cart.getQuantity() + "");
         holder.tvColorOption.setText("Phân loại: " + cart.getOptionProduct().getNameColor());
-        String cartImage = cart.getOptionProduct().getProduct() != null
-                ? cart.getOptionProduct().getProduct().getImage()
-                : cart.getOptionProduct().getImage();
+
         Glide.with(context)
-                .load(cartImage)
+                .load(cart.getOptionProduct().getImage())
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.error)
                 .into(holder.imgProduct);

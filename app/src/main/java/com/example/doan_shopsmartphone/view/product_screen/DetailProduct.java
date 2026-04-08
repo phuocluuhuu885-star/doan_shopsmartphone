@@ -39,6 +39,9 @@ import com.bumptech.glide.Glide;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.doan_shopsmartphone.MainActivity;
+import com.example.doan_shopsmartphone.adapter.OptionAdapter;
+import com.example.doan_shopsmartphone.model.VoucherDetail;
+import com.example.doan_shopsmartphone.model.response.VoucherDetaiResponse;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONException;
@@ -90,7 +93,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
     }
     private ActivityDetailProductBinding binding;
     private List<Product> productList;
-    private List<Voucher> voucherList;
+    private List<VoucherDetail> voucherList;
     private ProductAdapter productAdapter;
     private VoucherAdapter voucherAdapter;
     private ProgressLoadingDialog dialog;
@@ -98,6 +101,8 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
     private ProductDetail productDetail;
     private int quantityProduct = 1;
     private OptionProduct optionProduct;
+    private List<OptionProduct> optionProductList;
+    private OptionAdapter optionAdapter;
     private LayoutDialigOptionProductBinding bindingOption;
     private final int totalPrice = 0;
     private String strDetailProduct = "";
@@ -107,6 +112,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
     String ratingstar;
     String sold_quantity;
     String review_count ;
+    String idProduct;
 
     Double minPrice ;
 
@@ -114,6 +120,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
+        idProduct = intent.getStringExtra("id_product");
         ratingstar = intent.getStringExtra("rating_start");
         sold_quantity = intent.getStringExtra("sold_quantity");
         review_count = intent.getStringExtra("review_count");
@@ -137,13 +144,27 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
 
     private void getVoucher() {
         voucherList = new ArrayList<>();
-        for (int i = 1; i < 6; i++) {
-        }
-        binding.count.setText(voucherList.size() + " mã giảm giá");
+        BaseApi.API.getVouchersByProduct(idProduct).enqueue(new Callback<VoucherDetaiResponse>() {
+            @Override
+            public void onResponse(Call<VoucherDetaiResponse> call, Response<VoucherDetaiResponse> response) {
+                if(response.body().getCode()==200){
+                    voucherList = response.body().getResult();
+                    Log.e( "voucherDetail: ", "cd"+response.body().getResult() );
+                    voucherAdapter = new VoucherAdapter(DetailProduct.this, voucherList);
+                    binding.recyVoucher.setAdapter(voucherAdapter);
+                    binding.count.setText(voucherList.size() + " mã giảm giá");
+                }else {
+                    Log.e( "voucherDetailel: ", "cd"+response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VoucherDetaiResponse> call, Throwable t) {
+                Log.e( "voucherDetail: ", "cd"+t.getMessage() );
+            }
+        });
         productAdapter = new ProductAdapter(this, productList, this);
-        voucherAdapter = new VoucherAdapter(this, voucherList);
         binding.recyProductSimilar.setAdapter(productAdapter);
-        binding.recyVoucher.setAdapter(voucherAdapter);
     }
     public void  clickReview(Context context){
         String token = AccountUltil.BEARER + AccountUltil.getToken(context);
@@ -313,13 +334,18 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
                 String linkImg = detailProductResponse.getResult().getImage().get(i);
                 listImg.add(new SlideModel(linkImg, ScaleTypes.FIT));
             }
-            String price = df.format(minPrice) + " đ";
-            binding.tvPrice.setText(price);
+            if (detailProductResponse.getResult().getOption().size() != 0) {
+                DecimalFormat df = new DecimalFormat("###,###,###");
+                String price = df.format(minPrice) + " đ";
+                binding.tvPrice.setText(price);
+            } else {
+                binding.tvPrice.setText("Không có dữ liệu trả về");
+                Toast.makeText(this, detailProductResponse.getMessage(), Toast.LENGTH_SHORT).show();
+            }
 
             if (detailProductResponse.getResult().getImage().size() != 0) {
                 binding.imgProduct.setImageList(listImg, ScaleTypes.FIT);
             } else {
-                Glide.with(DetailProduct.this).load(R.drawable.error).into(binding.imgProduct);
             }
 
 
@@ -671,14 +697,12 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
         Window window = dialog1.getWindow();
         assert window != null;
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        setDataBottomSheetDialog(isCheck, bindingOption);
-
-        if (productDetail.getOption() != null && !productDetail.getOption().isEmpty()) {
-            optionProduct = productDetail.getOption().get(0); // Use first available option by default
-        } else {
-            optionProduct = null;
-        }
-        bindingOption.rcvOptionProduct.setVisibility(View.GONE);
+        setDataBottomSheetDialog(isCheck, bindingOption); // Set data cho bottom sheet
+        optionProductList = new ArrayList<>();
+        optionAdapter = new OptionAdapter(DetailProduct.this, optionProductList);
+        optionAdapter.setObjectUtil(this);
+        optionAdapter.setDataListOptionProduct(productDetail.getOption());
+        bindingOption.rcvOptionProduct.setAdapter(optionAdapter);
         dialog1.show();
 
         setOnclickBottomDialog(isCheck, bindingOption);
@@ -811,44 +835,66 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
         } else {
             bindingoption.btnSave.setText("Thêm vào giỏ hàng");
         }
-        bindingoption.tvPrice.setText(df.format(minPrice) + " đ");
-        bindingoption.tvName.setText(productDetail.getName());
-
-        if (productDetail.getImage() != null && productDetail.getImage().size() != 0) {
-            Glide.with(DetailProduct.this)
-                    .load(productDetail.getImage().get(0))
-                    .placeholder(R.drawable.loading)
-                    .error(R.drawable.error)
-                    .into(bindingoption.imgProduct);
+        if (productDetail.getOption().size() != 0) {
+            Glide.with(DetailProduct.this).load(productDetail.getOption().get(0).getImage()).into(bindingoption.imgProduct);
         } else {
-            Glide.with(DetailProduct.this)
-                    .load(R.drawable.error)
-                    .into(bindingoption.imgProduct);
+            Glide.with(DetailProduct.this).load(R.drawable.error).into(bindingoption.imgProduct);
         }
-
-        if (productDetail.getOption() != null && !productDetail.getOption().isEmpty()) {
+        if (productDetail.getOption().size() != 0) {
+            DecimalFormat df = new DecimalFormat("###,###,###");
+            bindingoption.tvPrice.setText( df.format(minPrice)+ " đ");
+        } else {
+            bindingoption.tvPrice.setText("No data");
+        }
+        if (productDetail.getOption().size() != 0) {
             bindingoption.tvWarehouseQuantity.setText("Kho: " + productDetail.getOption().get(0).getSoldQuantity());
         } else {
-            bindingoption.tvWarehouseQuantity.setText("Kho: " + 0);
+            bindingoption.tvWarehouseQuantity.setText("No data");
         }
     }
 
 
+
     @Override
     public void onclickObject(Object object) {
-        if (object instanceof Product) {
+        // Do dùng trung 1 hàm lên phải kiểm tra xem giá trị trả về là của OptionProduct Hay Product
+        if (object instanceof OptionProduct) {
+            DecimalFormat df = new DecimalFormat("###,###,###");
+            Log.d("OBjectDetail", "onclickObject: " + object.toString());
+            optionProduct = (OptionProduct) object;
+            Log.d("phan tram giam gia", "onclickObject: "+optionProduct.getDiscountValue());
+            double phantramgiamgia = (double) (100 - optionProduct.getDiscountValue()) /100;
+            Log.d("phan tram giam gia", "onclickObject: "+phantramgiamgia);
+            Log.d("price", "onclickObject: "+optionProduct.getPrice());
+            Double price =  (optionProduct.getPrice()*phantramgiamgia);
+            bindingOption.tvPrice.setText(df.format(price) +" đ");
+            if (optionProduct.getQuantity() > 0) {
+                optionProduct = (OptionProduct) object;
+                Glide.with(this)
+                        .load(optionProduct.getImage())
+                        .placeholder(R.drawable.loading)
+                        .error(R.drawable.error)
+                        .into(bindingOption.imgProduct);
+
+                bindingOption.tvWarehouseQuantity.setText("Kho: " + optionProduct.getQuantity());
+            } else {
+                bindingOption.tvWarehouseQuantity.setText("Kho: " + 0);
+                Toast.makeText(this, "Sản phẩm đã hết hàng", Toast.LENGTH_SHORT).show();
+            }
+
+        } else if (object instanceof Product) {
             Product product = (Product) object;
             String id = product.getId();
             String averageRate = String.valueOf(product.getAverageRate());
             String sellproduct = String.valueOf(product.getSoldQuantity());
             String reviewcount = String.valueOf(product.getReviewCount());
-            Double minPrice = product.getMinPrice();
+            Double minPrice = (product.getMinPrice());
             Intent intent = new Intent(this, DetailProduct.class);
             intent.putExtra("id_product", id);
-            intent.putExtra("sold_quantity", sellproduct);
-            intent.putExtra("rating_start", averageRate);
-            intent.putExtra("review_count", reviewcount);
-            intent.putExtra("minPrice", minPrice);
+            intent.putExtra("sold_quantity",sellproduct);
+            intent.putExtra("rating_start",averageRate);
+            intent.putExtra("review_count",reviewcount);
+            intent.putExtra("minPrice",minPrice);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
