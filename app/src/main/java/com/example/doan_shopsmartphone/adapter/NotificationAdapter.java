@@ -65,18 +65,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         Notifi notification = notifiList.get(position);
         //Xử lí background cho thông báo chưa đọc/đã đọc
         if ("unread".equals(notification.getStatus())) {
-            // NẾU CHƯA ĐỌC:
-            // Đổi màu nền thành xanh nhạt
             holder.binding.bgItem.setBackgroundColor(ContextCompat.getColor(context, R.color.color_noti));
-            // Có thể cho chữ tiêu đề in đậm để nổi bật hơn
             holder.binding.tvTitle.setTypeface(null, Typeface.BOLD);
         } else {
-            // NẾU ĐÃ ĐỌC:
-            // Đổi màu nền về trắng
             holder.binding.bgItem.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
-            // Chữ tiêu đề để bình thường
             holder.binding.tvTitle.setTypeface(null, Typeface.NORMAL);
-            holder.binding.tvDate.setText(notification.getStatus());
         }
 
 //        switch (notification.getType()){
@@ -106,22 +99,24 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         // image
         Glide.with(context)
                 .load(R.drawable.avatar1)
-                .placeholder(R.drawable.loading)
+                .placeholder(com.example.doan_shopsmartphone.R.drawable.loading)
+                .error(R.drawable.error)
                 .into(holder.binding.imgAvartar);
 
         // date
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss  dd-MM-yyyy");
-        Date date;
         Date dateOrder;
         try {
-            date = inputFormat.parse(notification.getCreatedAt());
             dateOrder = inputFormat.parse((notification.getContent()));
         } catch (Exception e) {
-            date = new Date();
             dateOrder = new Date();
         }
-        //holder.binding.tvTitle.setText("Đơn hàng: #" + notification.getOrder_id().substring(notification.getOrder_id().length() - 6)+" đã đặt thành công");
+        if(notification.getOrder_id()!=null){
+            holder.binding.tvTitle.setText("Đơn hàng: #" + notification.getOrder_id()+" đã đặt thành công. Vui lòng theo dõi đơn hàng trong lịch sử đặt hàng");
+        }else{
+            holder.binding.tvTitle.setText("- -");
+        }
         holder.binding.tvContent.setText("Thời gian đặt đơn:"+outputFormat.format(dateOrder));
 
         if(position == notifiList.size() -1) {
@@ -134,11 +129,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailOderActivity.class);
-
                 // Truyền ID đơn hàng đi
                 intent.putExtra("ORDER_ID_KEY", notification.getOrder_id());
-
-
 
                 BaseApi.API.updateStatusNotifi(notification.getId()).enqueue(new Callback<UpdateStatusResponse>() {
                     @Override

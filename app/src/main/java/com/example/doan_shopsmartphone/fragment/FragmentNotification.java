@@ -74,21 +74,11 @@ public class FragmentNotification extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // Khi Fragment bị hủy, nên gỡ listener để tránh rò rỉ bộ nhớ
-        if (mSocket != null) {
-            mSocket.off("new_notification", onNewNotification);
-        }
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 // Chỉ khởi tạo View và Adapter 1 lần ở đây
         initView();
         initController();
-        initSocket();
         Log.e( "idPro: ",CartUtil.listCartCheck.toString() );
         // Gọi dữ liệu lần đầu
         getListNotify();
@@ -104,35 +94,6 @@ public class FragmentNotification extends Fragment {
         });
 
     }
-
-    private void initSocket() {
-        SocketManager.getInstance().connect();
-
-        // QUAN TRỌNG: Gỡ listener cũ trước khi thêm mới để tránh trùng lặp khi quay lại Fragment
-        mSocket.off("new_notification", onNewNotification);
-        mSocket.on("new_notification", onNewNotification);
-    }
-    private Emitter.Listener onNewNotification = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if(getActivity() == null) {
-                return;
-            }
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        JSONObject data = (JSONObject) args[0];
-                        String content = data.getString("content");
-                        NotificationUtil.sendNotification(getActivity(),content);
-
-                    } catch (JSONException e) {
-                        throw  new RuntimeException(e);
-                    }
-                }
-            });
-        }
-    };
 
     private void getListNotify() {
         Log.e("APIR", "Token is missing!");

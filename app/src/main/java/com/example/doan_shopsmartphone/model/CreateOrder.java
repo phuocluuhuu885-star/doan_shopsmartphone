@@ -32,7 +32,7 @@ public class CreateOrder {
             EmbedData = "{}";
             Items = "[]";
             BankCode = "zalopayapp";
-            Description = "Geotech Store pay for order #" + Helpers.getAppTransId();
+            Description = "FMobile for order #" + Helpers.getAppTransId();
             String inputHMac = String.format("%s|%s|%s|%s|%s|%s|%s",
                     this.AppId,
                     this.AppTransId,
