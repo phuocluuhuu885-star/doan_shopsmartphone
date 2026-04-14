@@ -11,7 +11,7 @@ public class ProductDetail implements Serializable {
 
     private ProductType category_id;
     private String name;
-    private List<String> image;
+    private List<String> images;
     private String description;
     private String status;
     private boolean discounted;
@@ -37,11 +37,11 @@ public class ProductDetail implements Serializable {
     }
 
 
-    public ProductDetail(String id, ProductType category_id, String name, List<String> image, String description, String status, boolean discounted, boolean is_active, String screen, String camera, String chipset, String cpu, String gpu, int ram, int rom, String operatingSystem, String battery, int weight, String connection, String specialFeature, String manufacturer, String other, List<OptionProduct> option, List<ProductRate> product_review) {
+    public ProductDetail(String id, ProductType category_id, String name, List<String> images, String description, String status, boolean discounted, boolean is_active, String screen, String camera, String chipset, String cpu, String gpu, int ram, int rom, String operatingSystem, String battery, int weight, String connection, String specialFeature, String manufacturer, String other, List<OptionProduct> option, List<ProductRate> product_review) {
         this.id = id;
         this.category_id = category_id;
         this.name = name;
-        this.image = image;
+        this.images = images;
         this.description = description;
         this.status = status;
         this.discounted = discounted;
@@ -71,7 +71,7 @@ public class ProductDetail implements Serializable {
 
                 ", category_id=" + category_id +
                 ", name='" + name + '\'' +
-                ", image=" + image +
+                ", images=" + images +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
                 ", discounted=" + discounted +
@@ -122,11 +122,11 @@ public class ProductDetail implements Serializable {
     }
 
     public List<String> getImage() {
-        return image;
+        return images;
     }
 
     public void setImage(List<String> image) {
-        this.image = image;
+        this.images = image;
     }
 
     public String getDescription() {

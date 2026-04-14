@@ -3,7 +3,7 @@
     <style name="Base.Theme.Doan_ShopSmartphone" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="colorPrimary">@color/gray_ground</item>
+        <item name="colorPrimary">@color/color_chudao</item>
         <item name="colorPrimaryVariant">@color/white</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Text color -->
@@ -14,7 +14,7 @@
         </item>
         <!--  Background  -->
         <item name="android:windowBackground">@color/white</item>
-        <item name="android:textColorHint">@color/gray69</item>
+        <item name="android:textColorHint">@color/color_chudao</item>
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
         <item name="android:fontFamily">@font/font_montserrat</item>
         <item name="fontFamily">@font/font_montserrat</item>

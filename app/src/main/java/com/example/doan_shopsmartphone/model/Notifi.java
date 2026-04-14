@@ -9,7 +9,6 @@ public class Notifi implements Serializable {
     @SerializedName("_id")
     private String id;
     private User sender;
-    @SerializedName("receiver_id")
     private User receiver;
     private String content;
     private String status;

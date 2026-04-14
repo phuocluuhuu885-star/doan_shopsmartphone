@@ -326,8 +326,6 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
     @SuppressLint({"SetTextI18n", "CheckResult"})
     private void setDataUi(DetailProductResponse detailProductResponse) {
 
-        Log.d("checkgiaaaa", "setDataUi: "+minPrice);
-
         if (detailProductResponse != null) {
             List<SlideModel> listImg = new ArrayList<>();
             for (int i = 0; i < detailProductResponse.getResult().getImage().size(); i++) {
@@ -346,6 +344,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
             if (detailProductResponse.getResult().getImage().size() != 0) {
                 binding.imgProduct.setImageList(listImg, ScaleTypes.FIT);
             } else {
+                Toast.makeText(this, "Khong co anh", Toast.LENGTH_SHORT).show();
             }
 
 
@@ -495,62 +494,62 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
                 strDetailProduct = "";
                 isShowDetail = true;
             }
-            if (productDetail.getScreen() != null) {
-                strDetailProduct += "Screen: " + productDetail.getScreen() + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-            }
-            if (productDetail.getCamera() != null) {
-                strDetailProduct += "Camera: " + productDetail.getCamera() + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-                isShowDetail = true;
-            }
-            if (productDetail.getChipset() != null) {
-                strDetailProduct += "Chipset: " + productDetail.getChipset() + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-                isShowDetail = true;
-            }
-
-            if (productDetail.getRam() != 0) {
-                strDetailProduct += "Ram: " + productDetail.getRam() + "GB" + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-                isShowDetail = true;
-            }
-            if (productDetail.getRom() != 0) {
-                strDetailProduct += "Rom: " + productDetail.getRom() + "GB" + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-                isShowDetail = true;
-            }
-            if (productDetail.getOperatingSystem() != null) {
-                strDetailProduct += "OperatingSystem: " + productDetail.getOperatingSystem() + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-                isShowDetail = true;
-            }
-            if (productDetail.getBattery() != null) {
-                strDetailProduct += "Battery: " + productDetail.getBattery() + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-                isShowDetail = true;
-            }
-            if (productDetail.getWeight() != 0) {
-                strDetailProduct += "Weight: " + productDetail.getWeight() + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-                isShowDetail = true;
-            }
+//            if (productDetail.getScreen() != null) {
+//                strDetailProduct += "Screen: " + productDetail.getScreen() + "\n" + "\n";
+//                isShowDetail = false;
+//            } else {
+//                strDetailProduct = "";
+//            }
+//            if (productDetail.getCamera() != null) {
+//                strDetailProduct += "Camera: " + productDetail.getCamera() + "\n" + "\n";
+//                isShowDetail = false;
+//            } else {
+//                strDetailProduct = "";
+//                isShowDetail = true;
+//            }
+//            if (productDetail.getChipset() != null) {
+//                strDetailProduct += "Chipset: " + productDetail.getChipset() + "\n" + "\n";
+//                isShowDetail = false;
+//            } else {
+//                strDetailProduct = "";
+//                isShowDetail = true;
+//            }
+//
+//            if (productDetail.getRam() != 0) {
+//                strDetailProduct += "Ram: " + productDetail.getRam() + "GB" + "\n" + "\n";
+//                isShowDetail = false;
+//            } else {
+//                strDetailProduct = "";
+//                isShowDetail = true;
+//            }
+//            if (productDetail.getRom() != 0) {
+//                strDetailProduct += "Rom: " + productDetail.getRom() + "GB" + "\n" + "\n";
+//                isShowDetail = false;
+//            } else {
+//                strDetailProduct = "";
+//                isShowDetail = true;
+//            }
+//            if (productDetail.getOperatingSystem() != null) {
+//                strDetailProduct += "OperatingSystem: " + productDetail.getOperatingSystem() + "\n" + "\n";
+//                isShowDetail = false;
+//            } else {
+//                strDetailProduct = "";
+//                isShowDetail = true;
+//            }
+//            if (productDetail.getBattery() != null) {
+//                strDetailProduct += "Battery: " + productDetail.getBattery() + "\n" + "\n";
+//                isShowDetail = false;
+//            } else {
+//                strDetailProduct = "";
+//                isShowDetail = true;
+//            }
+//            if (productDetail.getWeight() != 0) {
+//                strDetailProduct += "Weight: " + productDetail.getWeight() + "\n" + "\n";
+//                isShowDetail = false;
+//            } else {
+//                strDetailProduct = "";
+//                isShowDetail = true;
+//            }
             if (productDetail.getManufacturer() != null) {
                 strDetailProduct += "Manufacturer: " + productDetail.getManufacturer() + "\n" + "\n";
                 isShowDetail = false;
