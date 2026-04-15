@@ -21,7 +21,6 @@ import retrofit2.Response;
 
 public class ApiUtil {
     public static void getDetailUser(Context context,ProgressLoadingDialog loadingDialog) {
-
         String token = AccountUltil.BEARER + AccountUltil.getToken(context);
         String idUser = JWTUltil.decoded(AccountUltil.TOKEN).getUserId();
         BaseApi.API.detailProfile(token,idUser).enqueue(new Callback<DetailUserReponse>() {
@@ -29,10 +28,13 @@ public class ApiUtil {
             public void onResponse(Call<DetailUserReponse> call, Response<DetailUserReponse> response) {
                 if(response.isSuccessful()){ // status 200
                     DetailUserReponse detailUserReponse = response.body();
-
-                    Log.d(TAG.toString,"OnResponse-DetailProfile:"+detailUserReponse.toString());
-                    if(detailUserReponse.getCode() ==200) {
-                        AccountUltil.USER = detailUserReponse.getData();  // lấy data user
+                    if (detailUserReponse != null) {
+                        Log.d(TAG.toString,"OnResponse-DetailProfile:"+detailUserReponse.toString());
+                        if(detailUserReponse.getCode() ==200) {
+                            AccountUltil.USER = detailUserReponse.getData();  // lấy data user
+                        }
+                    } else {
+                        Log.d(TAG.toString,"OnResponse-DetailProfile: body null");
                     }
                 } else { // status #200
                     try {
@@ -46,6 +48,9 @@ public class ApiUtil {
                     } catch (JSONException e) {
                         throw  new RuntimeException(e);
                     }
+                }
+                if (loadingDialog != null && loadingDialog.isShowing()) {
+                    loadingDialog.dismiss();
                 }
             }
 

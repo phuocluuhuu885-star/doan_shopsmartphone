@@ -3,6 +3,7 @@ package com.example.doan_shopsmartphone.view.buy_product;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -365,15 +366,16 @@ public class PayActivity extends AppCompatActivity {
         // 1. Chuẩn bị dữ liệu (Ví dụ mẫu)
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
         // Chuẩn bị dữ liệu gửi lên
+        String productPreview = buildOrderProductPreview();
+        String content = "Bạn có đơn hàng mới: " + (productPreview.isEmpty() ? orderId : productPreview);
+
         NotificationBody body = new NotificationBody(
                 AccountUltil.USER.getId(),   // Người gửi (User)
                 AccountUltil.USER.getId(),           // ID Admin hoặc Shop (Receiver)
                 orderId,                     // ID đơn hàng vừa tạo
-                "Bạn có đơn hàng mới mã: " + orderId,
+                content,
                 "wfc"                        // Type: Chờ xác nhận
         );
-
-        // Đảm bảo Interface BaseApi định nghĩa: Call<NotificationResponse> createNotification(...)
 
         BaseApi.API.createNotification(token, body).enqueue(new Callback<NotificationResponse>() {
             @Override
@@ -399,6 +401,36 @@ public class PayActivity extends AppCompatActivity {
                 Log.e("DEBUG", "Lỗi mạng hoặc lổi Parse: " + t.getMessage());
             }
         });
+    }
+
+    private String buildOrderProductPreview() {
+        if (CartUtil.listCartCheck == null || CartUtil.listCartCheck.isEmpty()) {
+            return "";
+        }
+
+        List<String> productNames = new ArrayList<>();
+        for (OptionAndQuantity cartItem : CartUtil.listCartCheck) {
+            if (cartItem == null || cartItem.getOptionProduct() == null || cartItem.getOptionProduct().getProduct() == null) {
+                continue;
+            }
+            String name = cartItem.getOptionProduct().getProduct().getName();
+            if (name != null && !name.trim().isEmpty()) {
+                productNames.add(name.trim());
+            }
+            if (productNames.size() >= 2) {
+                break;
+            }
+        }
+
+        if (productNames.isEmpty()) {
+            return "";
+        }
+
+        if (CartUtil.listCartCheck.size() > 2) {
+            return TextUtils.join(", ", productNames) + ", ...";
+        }
+
+        return TextUtils.join(", ", productNames);
     }
 
     private void removeDataCart() {

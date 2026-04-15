@@ -108,16 +108,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss  dd-MM-yyyy");
         Date dateOrder;
         try {
-            dateOrder = inputFormat.parse((notification.getContent()));
+            dateOrder = inputFormat.parse(notification.getCreatedAt());
         } catch (Exception e) {
             dateOrder = new Date();
         }
-        if(notification.getOrder_id()!=null){
-            holder.binding.tvTitle.setText("Đơn hàng: #" + notification.getOrder_id()+" đã đặt thành công. Vui lòng theo dõi đơn hàng trong lịch sử đặt hàng");
-        }else{
+
+        if (notification.getContent() != null && !notification.getContent().trim().isEmpty()) {
+            holder.binding.tvTitle.setText(notification.getContent());
+        } else if (notification.getOrder_id() != null) {
+            holder.binding.tvTitle.setText("Đơn hàng: #" + notification.getOrder_id() + " đã đặt thành công. Vui lòng theo dõi đơn hàng trong lịch sử đặt hàng");
+        } else {
             holder.binding.tvTitle.setText("- -");
         }
-        holder.binding.tvContent.setText("Thời gian đặt đơn:"+outputFormat.format(dateOrder));
+        holder.binding.tvContent.setText("Thời gian đặt đơn: " + outputFormat.format(dateOrder));
 
         if(position == notifiList.size() -1) {
             holder.binding.line.setVisibility(View.GONE);
