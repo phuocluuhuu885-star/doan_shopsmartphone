@@ -20,6 +20,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -689,38 +690,104 @@ public class PayActivity extends AppCompatActivity {
         int totalOrderPrice = 0; // Tổng tiền cuối cùng của cả hóa đơn
         int totalDiscount = 0;   // Tổng số tiền được giảm giá
 
-        // 1. Duyệt qua từng sản phẩm trong giỏ hàng của bạn
-        for (OptionAndQuantity item : CartUtil.listCartCheck) {
-            // Tính giá gốc của dòng sản phẩm này (Giá x Số lượng)
-            int itemOriginalPrice = (int) item.getOptionProduct().getPrice() * item.getQuantity();
-            int discountForThisItem = 0;
-
-            // 2. Tìm xem trong danh sách Voucher đã chọn, cái nào áp dụng cho sản phẩm này
-            for (Voucher v : selectedVouchers) {
-                // Kiểm tra: Nếu voucher này có chứa ID của sản phẩm hiện tại
-
-                    if (v.getDiscountType() == 1) { // Loại 1: Giảm theo %
-                        discountForThisItem = (itemOriginalPrice * v.getDiscountValue()) / 100;
-
-
-                    } else { // Loại 2: Giảm thẳng tiền mặt
-                        discountForThisItem = v.getDiscountValue();
-                    }
-
-                    // Vì mỗi sản phẩm thường chỉ áp dụng 1 voucher, nên tìm thấy là thoát vòng lặp voucher
-            }
-
-            // 3. Tính giá sau khi giảm cho sản phẩm này
-            int priceAfterDiscount = itemOriginalPrice - discountForThisItem;
-            if (priceAfterDiscount < 0) priceAfterDiscount = 0;
-
-            // 4. Cộng dồn vào tổng hóa đơn
-            totalOrderPrice += priceAfterDiscount;
-            totalDiscount += discountForThisItem;
-            updatePriceUI(totalOrderPrice, totalDiscount);
+        if (selectedVouchers == null) {
+            selectedVouchers = new ArrayList<>();
         }
 
-        // 5. Cập nhật lên giao diện (UI)
+        // 1. Duyệt qua từng sản phẩm trong giỏ hàng
+        for (OptionAndQuantity item : CartUtil.listCartCheck) {
+            if (item == null || item.getOptionProduct() == null || item.getQuantity() <= 0) {
+                continue;
+            }
+
+            int unitPrice = (int) item.getOptionProduct().getPrice();
+            int itemOriginalPrice = unitPrice * item.getQuantity();
+            if (itemOriginalPrice <= 0) {
+                item.setDiscount_value(0);
+                continue;
+            }
+
+            // Giảm giá mặc định theo option (giảm sản phẩm) trước khi áp voucher
+            int optionDiscountPercent = Math.max(0, item.getOptionProduct().getDiscountValue());
+            int optionDiscountMoney = (itemOriginalPrice * optionDiscountPercent) / 100;
+            int priceAfterOptionDiscount = Math.max(itemOriginalPrice - optionDiscountMoney, 0);
+
+            Voucher matchedVoucher = findVoucherForItem(item, selectedVouchers);
+            int voucherDiscountMoney = calculateVoucherMoney(matchedVoucher, priceAfterOptionDiscount);
+
+            int totalDiscountForThisItem = Math.min(optionDiscountMoney + voucherDiscountMoney, itemOriginalPrice);
+            int priceAfterDiscount = itemOriginalPrice - totalDiscountForThisItem;
+            if (priceAfterDiscount < 0) priceAfterDiscount = 0;
+
+            // Quy đổi tổng giảm thành % để backend tính lại đúng giá trị đã áp voucher
+            int mergedPercent = Math.round((totalDiscountForThisItem * 100f) / itemOriginalPrice);
+            mergedPercent = Math.max(0, Math.min(100, mergedPercent));
+            item.setDiscount_value(mergedPercent);
+
+            Log.d(
+                    "VOUCHER_APPLY",
+                    String.format(
+                            Locale.US,
+                            "item=%s original=%d optionDiscount=%d voucherDiscount=%d mergedPercent=%d",
+                            item.getId(),
+                            itemOriginalPrice,
+                            optionDiscountMoney,
+                            voucherDiscountMoney,
+                            mergedPercent
+                    )
+            );
+
+            totalOrderPrice += priceAfterDiscount;
+            totalDiscount += totalDiscountForThisItem;
+        }
+
+        // 2. Cập nhật lên giao diện
+        updatePriceUI(totalOrderPrice, totalDiscount);
+    }
+
+    private Voucher findVoucherForItem(OptionAndQuantity item, List<Voucher> selectedVouchers) {
+        if (item == null || item.getOptionProduct() == null || item.getOptionProduct().getProduct() == null) {
+            return null;
+        }
+        String productId = item.getOptionProduct().getProduct().getId();
+        if (productId == null) return null;
+
+        Voucher globalVoucher = null;
+        for (Voucher voucher : selectedVouchers) {
+            if (voucher == null) continue;
+            List<Voucher.ProductObj> applicableProducts = voucher.getApplicableProducts();
+            if (applicableProducts == null || applicableProducts.isEmpty()) {
+                if (globalVoucher == null) globalVoucher = voucher;
+                continue;
+            }
+            for (Voucher.ProductObj productObj : applicableProducts) {
+                if (productObj != null && productId.equals(productObj.get_id())) {
+                    return voucher;
+                }
+            }
+        }
+        return globalVoucher;
+    }
+
+    private int calculateVoucherMoney(Voucher voucher, int basePriceAfterOptionDiscount) {
+        if (voucher == null || basePriceAfterOptionDiscount <= 0) {
+            return 0;
+        }
+
+        if (voucher.getMinOrderValue() > 0 && basePriceAfterOptionDiscount < voucher.getMinOrderValue()) {
+            return 0;
+        }
+
+        int voucherDiscountMoney;
+        if (voucher.getDiscountType() == 1) { // giảm theo %
+            voucherDiscountMoney = (basePriceAfterOptionDiscount * voucher.getDiscountValue()) / 100;
+            if (voucher.getMaxDiscountValue() > 0) {
+                voucherDiscountMoney = Math.min(voucherDiscountMoney, voucher.getMaxDiscountValue());
+            }
+        } else { // giảm tiền trực tiếp
+            voucherDiscountMoney = voucher.getDiscountValue();
+        }
+        return Math.max(0, Math.min(voucherDiscountMoney, basePriceAfterOptionDiscount));
     }
 
     private void updatePriceUI(int totalPay, int totalDiscount) {
@@ -731,7 +798,8 @@ public class PayActivity extends AppCompatActivity {
         binding.disscount.setText(formatter.format(totalDiscount) + " Đ");
         binding.totalOder.setText(formatter.format(totalPay) + " Đ");
         binding.totalDisscount.setText(formatter.format(totalDiscount) + " Đ");
-        // Lưu giá trị cuối cùng vào một biến toàn cục để gửi lên Server khi bấm "Mua hàng"
+        // Dùng cho luồng tạo đơn Zalo
+        totalPrice = totalPay;
     }
     @Override
     public void onBackPressed() {
