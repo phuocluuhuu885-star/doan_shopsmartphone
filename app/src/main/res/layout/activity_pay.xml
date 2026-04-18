@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:paddingBottom="15dp"
-                    android:text="Nguyễn Thế Ngọc | 0389111525 Xóm 1  Yên Nội, Đồng Quang huyện Quốc Oai - Hà Nội" />
+                    android:text="Nguyễn Quang Thắng" />
             </LinearLayout>
 
             <LinearLayout
