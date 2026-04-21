@@ -86,8 +86,13 @@ public class PayActivity extends AppCompatActivity {
                     ArrayList<Voucher> selectedList = (ArrayList<Voucher>) result.getData().getSerializableExtra("LIST_VOUCHER_SELECTED");
 
                     if (selectedList != null) {
-                        Log.e( "da: ", selectedList.get(0).toString() );
+                        if (!selectedList.isEmpty()) {
+                            Log.e("voucher_selected", selectedList.toString());
+                        }
                         calculateMultiVoucher(selectedList);
+                        if (cartPayAdapter != null) {
+                            cartPayAdapter.notifyDataSetChanged();
+                        }
                         // Chạy hàm tính toán tổng tiền cho từng sản phẩm như mình đã hướng dẫn ở trên
                     }
                 }
