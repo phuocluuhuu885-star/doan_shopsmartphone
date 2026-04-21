@@ -131,6 +131,16 @@ public class FragmentPageCancelled extends Fragment implements ObjectUtil {
     }
     @Override
     public void onclickObject(Object object) {
-
+        if (object instanceof Order) {
+            Order order = (Order) object;
+            if (order.getProductsOrder() != null && !order.getProductsOrder().isEmpty()) {
+                String productId = order.getProductsOrder().get(0).getOptionProduct().getProduct().getId();
+                android.content.Intent intent = new android.content.Intent(getActivity(), com.example.doan_shopsmartphone.view.product_screen.DetailProduct.class);
+                intent.putExtra("id_product", productId);
+                startActivity(intent);
+            } else {
+                Toast.makeText(getActivity(), "Không tìm thấy thông tin sản phẩm", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -122,9 +122,12 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
         Intent intent = getIntent();
         idProduct = intent.getStringExtra("id_product");
         ratingstar = intent.getStringExtra("rating_start");
+        if (ratingstar == null || ratingstar.isEmpty()) ratingstar = "0";
         sold_quantity = intent.getStringExtra("sold_quantity");
+        if (sold_quantity == null || sold_quantity.isEmpty()) sold_quantity = "0";
         review_count = intent.getStringExtra("review_count");
-        minPrice = intent.getDoubleExtra("minPrice",1000);
+        if (review_count == null || review_count.isEmpty()) review_count = "0";
+        minPrice = intent.getDoubleExtra("minPrice",1000.0);
         binding = ActivityDetailProductBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         initView();
