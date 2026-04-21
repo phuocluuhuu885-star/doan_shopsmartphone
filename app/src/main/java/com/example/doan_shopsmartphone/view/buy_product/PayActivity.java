@@ -201,11 +201,12 @@ public class PayActivity extends AppCompatActivity {
         });
     }
     private void setDataInfo() {
-        if(infoList.size() == 0) {
+        if(infoList == null || infoList.size() == 0) {
             binding.tvInfoUser.setText("Chưa có địa chỉ mời bạn tạo");
+            info = null;
             return;
         }
-        info = infoList.get(0);
+        info = null;
         for (int i = 0; i < infoList.size(); i++) {
             if(infoList.get(i).getChecked()) {
                 info = infoList.get(i);
@@ -215,7 +216,7 @@ public class PayActivity extends AppCompatActivity {
         if(info != null) {
             binding.tvInfoUser.setText(info.getName() + " | " + info.getPhoneNumber() + " | " + info.getAddress());
         } else {
-            binding.tvInfoUser.setText("Chưa có địa chỉ mời bạn tạo");
+            binding.tvInfoUser.setText("Vui lòng chọn địa chỉ giao hàng");
         }
     }
     private void initController() {
