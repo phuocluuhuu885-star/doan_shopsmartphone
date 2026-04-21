@@ -113,9 +113,6 @@ public class FragmentHome extends Fragment {
                         tab.setText("Sản phẩm");
                         break;
                     case 1:
-                        tab.setText("Giảm giá");
-                        break;
-                    case 2:
                         tab.setText("Bán chạy");
                         break;
                     default:
