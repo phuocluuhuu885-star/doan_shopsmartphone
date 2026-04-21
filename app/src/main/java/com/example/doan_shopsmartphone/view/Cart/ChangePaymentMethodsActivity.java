@@ -3,6 +3,8 @@ package com.example.doan_shopsmartphone.view.Cart;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +17,11 @@ import com.example.doan_shopsmartphone.R;
 
 public class ChangePaymentMethodsActivity extends AppCompatActivity {
 
-    private AppCompatButton zalopay, payNormal;
+    private LinearLayout layoutCod, layoutZalopay;
+    private ImageView ivCheckCod, ivCheckZaloPay, imgBack;
+    private AppCompatButton btnConfirm;
     private int paymentMethods = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,37 +32,62 @@ public class ChangePaymentMethodsActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        zalopay = findViewById(R.id.btn_zalopay);
-        payNormal = findViewById(R.id.btn_pay);
+
+        layoutCod = findViewById(R.id.layout_cod);
+        layoutZalopay = findViewById(R.id.layout_zalopay);
+        ivCheckCod = findViewById(R.id.iv_check_cod);
+        ivCheckZaloPay = findViewById(R.id.iv_check_zalopay);
+        btnConfirm = findViewById(R.id.btn_confirm);
+        imgBack = findViewById(R.id.imgBack);
 
         // Lấy giá trị paymentMethods từ Intent
         paymentMethods = getIntent().getIntExtra("paymentMethods", 0);
+        updateSelectionUI();
 
-        payNormal.setOnClickListener(new View.OnClickListener() {
+        imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Cập nhật giá trị paymentMethods
+                finish();
+            }
+        });
+
+        layoutCod.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 paymentMethods = 1;
-
-                // Truyền giá trị paymentMethods trở lại CartActivity
-                Intent intent = new Intent();
-                intent.putExtra("paymentMethods", paymentMethods);
-                setResult(RESULT_OK, intent);
-                finish();
+                updateSelectionUI();
             }
         });
-        zalopay.setOnClickListener(new View.OnClickListener() {
+
+        layoutZalopay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Cập nhật giá trị paymentMethods
                 paymentMethods = 2;
+                updateSelectionUI();
+            }
+        });
 
-                // Truyền giá trị paymentMethods trở lại CartActivity
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.putExtra("paymentMethods", paymentMethods);
                 setResult(RESULT_OK, intent);
                 finish();
             }
         });
+    }
+
+    private void updateSelectionUI() {
+        if (paymentMethods == 1) {
+            ivCheckCod.setImageResource(R.drawable.ic_check_circle_primary);
+            ivCheckZaloPay.setImageResource(R.drawable.ic_circle_outline);
+        } else if (paymentMethods == 2) {
+            ivCheckCod.setImageResource(R.drawable.ic_circle_outline);
+            ivCheckZaloPay.setImageResource(R.drawable.ic_check_circle_primary);
+        } else {
+            ivCheckCod.setImageResource(R.drawable.ic_circle_outline);
+            ivCheckZaloPay.setImageResource(R.drawable.ic_circle_outline);
+        }
     }
 }

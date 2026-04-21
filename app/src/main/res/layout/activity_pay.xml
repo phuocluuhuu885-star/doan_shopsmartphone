@@ -180,11 +180,21 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="8dp"
+                android:text="Phương thức thanh toán"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutPaymentMethods"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:background="@color/white"
                 android:orientation="horizontal"
                 android:paddingVertical="15dp">
