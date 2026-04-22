@@ -299,7 +299,15 @@
                         android:textSize="17sp" />
 
                 </LinearLayout>
-
+                <TextView
+                    android:id="@+id/tvVoucherDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="30dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="#888888"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>

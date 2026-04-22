@@ -18,7 +18,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -701,6 +703,7 @@ public class PayActivity extends AppCompatActivity {
     private void calculateMultiVoucher(ArrayList<Voucher> selectedVouchers) {
         int totalOrderPrice = 0; // Tổng tiền cuối cùng của cả hóa đơn
         int totalDiscount = 0;   // Tổng số tiền được giảm giá
+        Map<String, Integer> voucherMap = new HashMap<>(); // Lưu trữ tiền giảm cho từng mã code
 
         if (selectedVouchers == null) {
             selectedVouchers = new ArrayList<>();
@@ -727,6 +730,12 @@ public class PayActivity extends AppCompatActivity {
             Voucher matchedVoucher = findVoucherForItem(item, selectedVouchers);
             int voucherDiscountMoney = calculateVoucherMoney(matchedVoucher, priceAfterOptionDiscount);
 
+            // Tích lũy tiền giảm theo mã voucher
+            if (matchedVoucher != null && voucherDiscountMoney > 0) {
+                String code = matchedVoucher.getCode();
+                voucherMap.put(code, voucherMap.getOrDefault(code, 0) + voucherDiscountMoney);
+            }
+
             int totalDiscountForThisItem = Math.min(optionDiscountMoney + voucherDiscountMoney, itemOriginalPrice);
             int priceAfterDiscount = itemOriginalPrice - totalDiscountForThisItem;
             if (priceAfterDiscount < 0) priceAfterDiscount = 0;
@@ -736,25 +745,21 @@ public class PayActivity extends AppCompatActivity {
             mergedPercent = Math.max(0, Math.min(100, mergedPercent));
             item.setDiscount_value(mergedPercent);
 
-            Log.d(
-                    "VOUCHER_APPLY",
-                    String.format(
-                            Locale.US,
-                            "item=%s original=%d optionDiscount=%d voucherDiscount=%d mergedPercent=%d",
-                            item.getId(),
-                            itemOriginalPrice,
-                            optionDiscountMoney,
-                            voucherDiscountMoney,
-                            mergedPercent
-                    )
-            );
-
             totalOrderPrice += priceAfterDiscount;
             totalDiscount += totalDiscountForThisItem;
         }
 
-        // 2. Cập nhật lên giao diện
-        updatePriceUI(totalOrderPrice, totalDiscount);
+        // 2. Tạo chuỗi chi tiết voucher
+        StringBuilder details = new StringBuilder();
+        DecimalFormat formatter = new DecimalFormat("###,###,###");
+        for (Map.Entry<String, Integer> entry : voucherMap.entrySet()) {
+            if (details.length() > 0) details.append("\n");
+            details.append("[").append(entry.getKey()).append("]: -")
+                    .append(formatter.format(entry.getValue())).append("đ");
+        }
+
+        // 3. Cập nhật lên giao diện
+        updatePriceUI(totalOrderPrice, totalDiscount, details.toString());
     }
 
     private Voucher findVoucherForItem(OptionAndQuantity item, List<Voucher> selectedVouchers) {
@@ -802,14 +807,23 @@ public class PayActivity extends AppCompatActivity {
         return Math.max(0, Math.min(voucherDiscountMoney, basePriceAfterOptionDiscount));
     }
 
-    private void updatePriceUI(int totalPay, int totalDiscount) {
+    private void updatePriceUI(int totalPay, int totalDiscount, String voucherDetails) {
         // Định dạng số có dấu phân cách nghìn (1,000,000)
         DecimalFormat formatter = new DecimalFormat("###,###,###");
 
         binding.tvTotalPrice.setText(formatter.format(totalPay) + " Đ");
         binding.disscount.setText(formatter.format(totalDiscount) + " Đ");
-        binding.totalOder.setText(formatter.format(totalPay) + " Đ");
+        binding.totalOder.setText(formatter.format(totalPay + totalDiscount) + " Đ"); // Tổng tiền hàng chưa giảm
         binding.totalDisscount.setText(formatter.format(totalDiscount) + " Đ");
+        
+        // Hiển thị chi tiết voucher
+        if (voucherDetails != null && !voucherDetails.isEmpty()) {
+            binding.tvVoucherDetails.setVisibility(View.VISIBLE);
+            binding.tvVoucherDetails.setText(voucherDetails);
+        } else {
+            binding.tvVoucherDetails.setVisibility(View.GONE);
+        }
+        
         // Dùng cho luồng tạo đơn Zalo
         totalPrice = totalPay;
     }
