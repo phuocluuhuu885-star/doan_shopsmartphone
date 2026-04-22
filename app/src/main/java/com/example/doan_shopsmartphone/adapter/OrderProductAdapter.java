@@ -43,23 +43,32 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
     @Override
     public void onBindViewHolder(@NonNull OrderProductViewHolder holder, int position) {
         OptionAndQuantity option = listOption.get(position);
-        if(option == null) {
+        if (option == null || option.getOptionProduct() == null) {
+            holder.binding.tvNameProduct.setText("Sản phẩm không tồn tại");
+            holder.binding.tvNameColor.setText("Lỗi dữ liệu");
+            holder.binding.tvQuantityPrice.setText("");
+            holder.binding.imgProduct.setImageResource(R.drawable.error);
             return;
         }
-        holder.binding.tvNameProduct.setText(option.getOptionProduct().getProduct().getName());
+
+        String productName = "Sản phẩm không tên";
+        if (option.getOptionProduct().getProduct() != null) {
+            productName = option.getOptionProduct().getProduct().getName();
+        }
+        holder.binding.tvNameProduct.setText(productName);
+
         DecimalFormat df = new DecimalFormat("###,###,###");
         int discountvalue = option.getDiscount_value();
-        Log.d("zzzzzzzzzzz", "onBindViewHolder: "+option.getDiscount_value());
-        if(option.getDiscount_value() ==0){
-            holder.binding.tvQuantityPrice.setText(option.getQuantity() +  " x " + df.format(option.getOptionProduct().getPrice()));
-
-        }if(discountvalue>0){
-            double voucher = (double)  (100-option.getDiscount_value())/100;
+        
+        if (discountvalue == 0) {
+            holder.binding.tvQuantityPrice.setText(option.getQuantity() + " x " + df.format(option.getOptionProduct().getPrice()) + "đ");
+        } else {
+            double voucher = (double) (100 - discountvalue) / 100;
             int gia = option.getOptionProduct().getPrice();
-            double gia1 = gia*voucher;
-            holder.binding.tvQuantityPrice.setText(option.getQuantity() +  " x " + df.format(gia1)+"đ");
-
+            double gia1 = gia * voucher;
+            holder.binding.tvQuantityPrice.setText(option.getQuantity() + " x " + df.format(gia1) + "đ");
         }
+
         holder.binding.tvNameColor.setText("Loại: " + option.getOptionProduct().getNameColor());
 
         Glide.with(context)
