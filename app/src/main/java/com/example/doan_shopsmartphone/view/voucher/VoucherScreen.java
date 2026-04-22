@@ -56,19 +56,19 @@ public class VoucherScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ArrayList<Voucher> selectedVouchers = adapterr.getAllSelectedVouchers();
-                if (selectedVouchers != null && !selectedVouchers.isEmpty()) {
-                    // 2. Tạo intent để chứa dữ liệu trả về
-                    Intent resultIntent = new Intent();
-
-                    // Gửi cả danh sách đi thay vì gửi từng trường lẻ
-                    resultIntent.putExtra("LIST_VOUCHER_SELECTED", selectedVouchers);
-
-                    // 3. Đánh dấu thành công và gửi dữ liệu
-                    setResult(RESULT_OK, resultIntent);
-                    finish();
-                } else {
-                    Toast.makeText(VoucherScreen.this, "Chưa chọn mã nào!", Toast.LENGTH_SHORT).show();
+                if (selectedVouchers == null) {
+                    selectedVouchers = new ArrayList<>();
                 }
+                
+                // 2. Tạo intent để chứa dữ liệu trả về
+                Intent resultIntent = new Intent();
+
+                // Gửi cả danh sách đi (có thể rỗng nếu người dùng đã bỏ chọn)
+                resultIntent.putExtra("LIST_VOUCHER_SELECTED", selectedVouchers);
+
+                // 3. Đánh dấu thành công và gửi dữ liệu
+                setResult(RESULT_OK, resultIntent);
+                finish();
             }
         });
 

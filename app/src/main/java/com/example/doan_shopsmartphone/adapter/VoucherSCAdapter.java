@@ -95,7 +95,11 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
             }
             // GỬI DỮ LIỆU LÊN CHA
             if (listener != null) {
-                listener.onVoucherSelected(store);
+                if (selectedPosition == -1) {
+                    listener.onVoucherSelected(null);
+                } else {
+                    listener.onVoucherSelected(store);
+                }
             }
 
             notifyDataSetChanged();
