@@ -12,9 +12,9 @@ public class OptionOfListCart {
     @SerializedName("color_code")
     private String colorCode;
     private String image;
-    private int price;
+    private double price;
     @SerializedName("discount_value")
-    private int discountValue;
+    private double discountValue;
     private int quantity;
     private int soldQuantity;
     private boolean hot_option;
@@ -43,7 +43,7 @@ public class OptionOfListCart {
     public OptionOfListCart() {
     }
 
-    public OptionOfListCart(String id, Product product, String nameColor, String colorCode, String image, int price, int discount_value, int quantity, int soldQuantity,
+    public OptionOfListCart(String id, Product product, String nameColor, String colorCode, String image, double price, double discount_value, int quantity, int soldQuantity,
                             boolean hot_option, String createdAt, String updatedAt) {
         this.id = id;
         this.product = product;
@@ -115,19 +115,19 @@ public class OptionOfListCart {
         this.image = image;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public int getDiscountValue() {
+    public double getDiscountValue() {
         return discountValue;
     }
 
-    public void setDiscountValue(int discount_value) {
+    public void setDiscountValue(double discount_value) {
         this.discountValue = discount_value;
     }
 

@@ -13,7 +13,7 @@ public class Order {
     private Info info;
     private List<OptionAndQuantity> productsOrder;
     @SerializedName("total_price")
-    private int totalPrice;
+    private double totalPrice;
     private String status;
     @SerializedName("payment_status")
     private boolean payment_status;
@@ -22,7 +22,7 @@ public class Order {
     private String reason; // Thêm trường reason
 
 
-    public Order(String id, User user, Info info, List<OptionAndQuantity> productsOrder, int totalPrice, String status, boolean payment_status) {
+    public Order(String id, User user, Info info, List<OptionAndQuantity> productsOrder, double totalPrice, String status, boolean payment_status) {
         this.id = id;
         this.user = user;
         this.info = info;
@@ -83,11 +83,11 @@ public class Order {
         this.productsOrder = productsOrder;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(int totalPrice) {
+    public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
