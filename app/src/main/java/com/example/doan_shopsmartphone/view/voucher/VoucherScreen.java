@@ -83,6 +83,8 @@ public class VoucherScreen extends AppCompatActivity {
         // Tạo đối tượng request nếu API của bạn yêu cầu Body là một Object
         // VoucherRequest request = new VoucherRequest(productIds);
         VoucherRequest request = new VoucherRequest(productIds);
+        ArrayList<Voucher> preSelectedVouchers = (ArrayList<Voucher>) getIntent().getSerializableExtra("LIST_VOUCHER_SELECTED");
+
         // Gọi API (Lưu ý: Truyền productIds vào)
         BaseApi.API.getVouchersByList(request).enqueue(new Callback<VoucherResponse>() {
             @Override
@@ -96,7 +98,7 @@ public class VoucherScreen extends AppCompatActivity {
 
                         if (data != null && !data.isEmpty()) {
                             // Cài đặt Adapter cho RecyclerView chính (Cái nhìn thấy trên màn hình)
-                            setupRecyclerView(data);
+                            setupRecyclerView(data, preSelectedVouchers);
                         } else {
                             Toast.makeText(VoucherScreen.this, "Hiện không có voucher khả dụng", Toast.LENGTH_SHORT).show();
                         }
@@ -116,11 +118,11 @@ public class VoucherScreen extends AppCompatActivity {
         });
     }
 
-    private void setupRecyclerView(List<VoucherGroup> data) {
+    private void setupRecyclerView(List<VoucherGroup> data, List<Voucher> preSelectedVouchers) {
         binding.rcvVoucherStore.setLayoutManager(new LinearLayoutManager(this));
 
         // Khởi tạo Adapter cha (Chứa tên Sản phẩm và danh sách Voucher con)
-         adapterr = new CartParentAdapter( this,data);
+         adapterr = new CartParentAdapter( this, data, preSelectedVouchers);
         binding.rcvVoucherStore.setAdapter(adapterr);
     }
 }

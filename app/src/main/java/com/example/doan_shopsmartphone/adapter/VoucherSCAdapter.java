@@ -34,6 +34,19 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
         this.listener = listener;
     }
 
+    public VoucherSCAdapter(List<Voucher> voucherlist, String initialSelectedId, OnVoucherSelectedListener listener) {
+        this.voucherlist = voucherlist;
+        this.listener = listener;
+        if (initialSelectedId != null && voucherlist != null) {
+            for (int i = 0; i < voucherlist.size(); i++) {
+                if (initialSelectedId.equals(voucherlist.get(i).get_id())) {
+                    this.selectedPosition = i;
+                    break;
+                }
+            }
+        }
+    }
+
     public void setListOrder(List<Voucher> voucherList) {
         this.voucherlist = voucherList;
         notifyDataSetChanged();

@@ -36,6 +36,25 @@ public class CartParentAdapter extends RecyclerView.Adapter<CartParentAdapter.Vi
         this.cartItems = cartItems;
     }
 
+    public CartParentAdapter(Context context, List<VoucherGroup> cartItems, List<Voucher> preSelectedVouchers) {
+        this.context = context;
+        this.cartItems = cartItems;
+        if (preSelectedVouchers != null && cartItems != null) {
+            for (int i = 0; i < cartItems.size(); i++) {
+                VoucherGroup group = cartItems.get(i);
+                for (Voucher v : preSelectedVouchers) {
+                    // Kiểm tra xem voucher này có thuộc về nhóm sản phẩm này không
+                    for (Voucher gVoucher : group.getVouchers()) {
+                        if (v.get_id().equals(gVoucher.get_id())) {
+                            selectedVouchersMap.put(i, gVoucher);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void onVoucherSelected(Voucher voucher) {
         this.currentlySelectedVoucher = voucher;
@@ -59,8 +78,12 @@ public class CartParentAdapter extends RecyclerView.Adapter<CartParentAdapter.Vi
         VoucherGroup item = cartItems.get(position);
         holder.tvProductName.setText(item.getProductName());
 
+        // Tìm xem trong nhóm này có voucher nào đã được chọn trước đó không
+        Voucher preSelected = selectedVouchersMap.get(position);
+        String initialId = (preSelected != null) ? preSelected.get_id() : null;
+
         // Thiết lập RecyclerView con cho Voucher
-        VoucherSCAdapter childAdapter = new VoucherSCAdapter(item.getVouchers(), (Voucher voucher) -> {
+        VoucherSCAdapter childAdapter = new VoucherSCAdapter(item.getVouchers(), initialId, (Voucher voucher) -> {
             if (voucher != null) {
                 selectedVouchersMap.put(position, voucher);
             } else {

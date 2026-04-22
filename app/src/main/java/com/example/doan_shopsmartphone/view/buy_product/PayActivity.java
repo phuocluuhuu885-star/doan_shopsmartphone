@@ -73,6 +73,7 @@ public class PayActivity extends AppCompatActivity {
     private int totalPrice;
 
     private int paymentMethods;
+    private ArrayList<Voucher> selectedVouchersList = new ArrayList<>();
 
     private List<String> productIds;
     private static final int REQUEST_CODE_ORDER_SUCCESS = 1;
@@ -86,6 +87,7 @@ public class PayActivity extends AppCompatActivity {
                     ArrayList<Voucher> selectedList = (ArrayList<Voucher>) result.getData().getSerializableExtra("LIST_VOUCHER_SELECTED");
 
                     if (selectedList != null) {
+                        selectedVouchersList = selectedList; // Lưu lại danh sách đã chọn
                         if (!selectedList.isEmpty()) {
                             Log.e("voucher_selected", selectedList.toString());
                         }
@@ -237,6 +239,7 @@ public class PayActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(PayActivity.this, VoucherScreen.class);
                 intent.putStringArrayListExtra("LIST_PRODUCT_ID", (ArrayList<String>) productIds);
+                intent.putExtra("LIST_VOUCHER_SELECTED", selectedVouchersList); // Truyền danh sách đã chọn sang
                 voucherLauncher.launch(intent);
             }
         });
