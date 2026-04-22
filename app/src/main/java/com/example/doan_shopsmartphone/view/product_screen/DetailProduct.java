@@ -693,6 +693,9 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
             return;
         }
 
+        optionProduct = null;
+        quantityProduct = 1;
+
         BottomSheetDialog dialog1 = new BottomSheetDialog(DetailProduct.this);
         bindingOption = LayoutDialigOptionProductBinding.inflate(getLayoutInflater());
         dialog1.setContentView(bindingOption.getRoot());
@@ -853,6 +856,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
         } else {
             bindingoption.tvWarehouseQuantity.setText("No data");
         }
+        bindingoption.tvQuantity.setText(quantityProduct + "");
     }
 
 

@@ -43,6 +43,13 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.OptionView
     @SuppressLint("NotifyDataSetChanged")
     public void setDataListOptionProduct(List<OptionProduct> list){
         this.list=list;
+        this.selectedPosition = -1; // Reset selection on new data
+        notifyDataSetChanged();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void resetSelection() {
+        this.selectedPosition = -1;
         notifyDataSetChanged();
     }
 
