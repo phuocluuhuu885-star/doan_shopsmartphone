@@ -224,6 +224,9 @@ public class PayActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(PayActivity.this, AddressActivity.class);
+                if (info != null && info.getId() != null) {
+                    intent.putExtra("CURRENT_SELECTED_ADDR_ID", info.getId());
+                }
                 mActivityResultLauncher.launch(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
             }

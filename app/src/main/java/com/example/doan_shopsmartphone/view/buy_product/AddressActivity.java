@@ -40,12 +40,19 @@ public class AddressActivity extends AppCompatActivity implements InfoInterface 
     private ActivityAddressBinding binding;
     private List<Info> infoList;
     private InfoAdapter infoAdapter;
+    private String currentSelectedId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAddressBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("CURRENT_SELECTED_ADDR_ID")) {
+            currentSelectedId = intent.getStringExtra("CURRENT_SELECTED_ADDR_ID");
+        }
+
         urlGetAllInfo();
         initView();
         initController();
@@ -97,6 +104,7 @@ public class AddressActivity extends AppCompatActivity implements InfoInterface 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         binding.rcvInfo.setLayoutManager(layoutManager);
         infoAdapter = new InfoAdapter(this, infoList, this);
+        infoAdapter.setCurrentSelectedId(currentSelectedId);
         binding.rcvInfo.setAdapter(infoAdapter);
     }
 
