@@ -64,7 +64,6 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
         Voucher store = voucherlist.get(position);
 
         holder.select.setSelected(position == selectedPosition);
-        holder.select.setSelected(position == selectedPosition);
         holder.tvSale.setText(store.getCode());
         holder.tvprice.setText(store.getDiscountValue()+"Đ");
         holder.name.setText(store.getTitle());
@@ -90,7 +89,6 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
                 }
             }
         }
-        holder.select.setSelected(position == selectedPosition);
         if (store.getExpiryDate() != null) {
             String formattedDate = formatDate(store.getExpiryDate()); // Gọi hàm format ở trên
             holder.date.setText("HSD: " + formattedDate);
