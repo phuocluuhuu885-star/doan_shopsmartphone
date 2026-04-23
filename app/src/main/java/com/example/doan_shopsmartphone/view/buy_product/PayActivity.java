@@ -157,6 +157,7 @@ public class PayActivity extends AppCompatActivity {
                 .map(option -> option.getProduct())           // Lấy Object Product
                 .filter(Objects::nonNull)                     // Kiểm tra null tiếp
                 .map(product -> product.getId())              // Cuối cùng lấy Product ID
+                .distinct()                                   // Chỉ lấy các ID duy nhất để nhóm voucher
                 .collect(Collectors.toList());
         Log.e( "idPro: ",productIds.toString() );
         initView();
@@ -709,44 +710,81 @@ public class PayActivity extends AppCompatActivity {
             selectedVouchers = new ArrayList<>();
         }
 
-        // 1. Duyệt qua từng sản phẩm trong giỏ hàng
+        // 1. Nhóm các sản phẩm trong giỏ hàng theo Product ID
+        Map<String, List<OptionAndQuantity>> groupedItems = new HashMap<>();
         for (OptionAndQuantity item : CartUtil.listCartCheck) {
-            if (item == null || item.getOptionProduct() == null || item.getQuantity() <= 0) {
+            if (item == null || item.getOptionProduct() == null || item.getOptionProduct().getProduct() == null) {
+                // Trường hợp không có sản phẩm (có thể là lỗi dữ liệu)
                 continue;
             }
+            String pId = item.getOptionProduct().getProduct().getId();
+            if (!groupedItems.containsKey(pId)) {
+                groupedItems.put(pId, new ArrayList<>());
+            }
+            groupedItems.get(pId).add(item);
+        }
 
-            int unitPrice = (int) item.getOptionProduct().getPrice();
-            int itemOriginalPrice = unitPrice * item.getQuantity();
-            if (itemOriginalPrice <= 0) {
-                item.setDiscount_value(0);
-                continue;
+        // 2. Duyệt qua từng nhóm sản phẩm để áp dụng voucher
+        for (Map.Entry<String, List<OptionAndQuantity>> entry : groupedItems.entrySet()) {
+            List<OptionAndQuantity> itemsInGroup = entry.getValue();
+            if (itemsInGroup.isEmpty()) continue;
+
+            // Tìm voucher cho cả nhóm (dùng sản phẩm đầu tiên làm đại diện vì cùng Product ID)
+            Voucher matchedVoucher = findVoucherForItem(itemsInGroup.get(0), selectedVouchers);
+
+            // Tính tổng giá trị của nhóm sau khi trừ giảm giá mặc định của từng màu
+            int totalGroupBasePrice = 0;
+            Map<OptionAndQuantity, Integer> itemBasePriceMap = new HashMap<>();
+            Map<OptionAndQuantity, Integer> itemOptionDiscountMoneyMap = new HashMap<>();
+
+            for (OptionAndQuantity item : itemsInGroup) {
+                int unitPrice = (int) item.getOptionProduct().getPrice();
+                int itemOriginalPrice = unitPrice * item.getQuantity();
+                int optionDiscountPercent = Math.max(0, item.getOptionProduct().getDiscountValue());
+                int optionDiscountMoney = (itemOriginalPrice * optionDiscountPercent) / 100;
+                int priceAfterOptionDiscount = Math.max(itemOriginalPrice - optionDiscountMoney, 0);
+
+                totalGroupBasePrice += priceAfterOptionDiscount;
+                itemBasePriceMap.put(item, priceAfterOptionDiscount);
+                itemOptionDiscountMoneyMap.put(item, optionDiscountMoney);
             }
 
-            // Giảm giá mặc định theo option (giảm sản phẩm) trước khi áp voucher
-            int optionDiscountPercent = Math.max(0, item.getOptionProduct().getDiscountValue());
-            int optionDiscountMoney = (itemOriginalPrice * optionDiscountPercent) / 100;
-            int priceAfterOptionDiscount = Math.max(itemOriginalPrice - optionDiscountMoney, 0);
+            // Tính tổng tiền voucher giảm cho cả nhóm (không tính riêng từng option)
+            int totalVoucherDiscountForGroup = calculateVoucherMoney(matchedVoucher, totalGroupBasePrice);
 
-            Voucher matchedVoucher = findVoucherForItem(item, selectedVouchers);
-            int voucherDiscountMoney = calculateVoucherMoney(matchedVoucher, priceAfterOptionDiscount);
-
-            // Tích lũy tiền giảm theo mã voucher
-            if (matchedVoucher != null && voucherDiscountMoney > 0) {
+            // Tích lũy vào voucherMap để hiển thị trên UI
+            if (matchedVoucher != null && totalVoucherDiscountForGroup > 0) {
                 String code = matchedVoucher.getCode();
-                voucherMap.put(code, voucherMap.getOrDefault(code, 0) + voucherDiscountMoney);
+                voucherMap.put(code, voucherMap.getOrDefault(code, 0) + totalVoucherDiscountForGroup);
             }
 
-            int totalDiscountForThisItem = Math.min(optionDiscountMoney + voucherDiscountMoney, itemOriginalPrice);
-            int priceAfterDiscount = itemOriginalPrice - totalDiscountForThisItem;
-            if (priceAfterDiscount < 0) priceAfterDiscount = 0;
+            // Phân bổ tiền giảm của voucher cho từng item trong nhóm
+            for (OptionAndQuantity item : itemsInGroup) {
+                int itemBasePrice = itemBasePriceMap.get(item);
+                int itemOptionDiscountMoney = itemOptionDiscountMoneyMap.get(item);
+                int itemOriginalPrice = (int) item.getOptionProduct().getPrice() * item.getQuantity();
 
-            // Quy đổi tổng giảm thành % để backend tính lại đúng giá trị đã áp voucher
-            int mergedPercent = Math.round((totalDiscountForThisItem * 100f) / itemOriginalPrice);
-            mergedPercent = Math.max(0, Math.min(100, mergedPercent));
-            item.setDiscount_value(mergedPercent);
+                int itemVoucherDiscount = 0;
+                if (totalGroupBasePrice > 0) {
+                    // Phân bổ theo tỷ lệ giá trị của item trong nhóm
+                    itemVoucherDiscount = (int) ((long) totalVoucherDiscountForGroup * itemBasePrice / totalGroupBasePrice);
+                }
 
-            totalOrderPrice += priceAfterDiscount;
-            totalDiscount += totalDiscountForThisItem;
+                int totalDiscountForThisItem = Math.min(itemOptionDiscountMoney + itemVoucherDiscount, itemOriginalPrice);
+                int priceAfterDiscount = itemOriginalPrice - totalDiscountForThisItem;
+                if (priceAfterDiscount < 0) priceAfterDiscount = 0;
+
+                // Cập nhật % giảm giá cuối cùng để gửi lên backend
+                int mergedPercent = 0;
+                if (itemOriginalPrice > 0) {
+                    mergedPercent = Math.round((totalDiscountForThisItem * 100f) / itemOriginalPrice);
+                }
+                mergedPercent = Math.max(0, Math.min(100, mergedPercent));
+                item.setDiscount_value(mergedPercent);
+
+                totalOrderPrice += priceAfterDiscount;
+                totalDiscount += totalDiscountForThisItem;
+            }
         }
 
         // 2. Tạo chuỗi chi tiết voucher
