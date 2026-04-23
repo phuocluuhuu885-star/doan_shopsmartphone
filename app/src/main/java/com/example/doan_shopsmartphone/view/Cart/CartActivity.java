@@ -116,7 +116,7 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
         totalPrice = 0;
         for (int i = 0; i < CartUtil.listCartCheck.size(); i++) {
             double checkvoucher =  (double) (100 - CartUtil.listCartCheck.get(i).getOptionProduct().getDiscountValue()) /100;
-            int price = CartUtil.listCartCheck.get(i).getOptionProduct().getPrice();
+            int price = (int) CartUtil.listCartCheck.get(i).getOptionProduct().getPrice();
             Double price1 = price *checkvoucher;
             int quantity = CartUtil.listCartCheck.get(i).getQuantity();
             totalPrice += price1 * quantity;

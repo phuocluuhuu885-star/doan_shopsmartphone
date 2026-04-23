@@ -740,7 +740,7 @@ public class PayActivity extends AppCompatActivity {
             for (OptionAndQuantity item : itemsInGroup) {
                 int unitPrice = (int) item.getOptionProduct().getPrice();
                 int itemOriginalPrice = unitPrice * item.getQuantity();
-                int optionDiscountPercent = Math.max(0, item.getOptionProduct().getDiscountValue());
+                int optionDiscountPercent =(int) Math.max(0, item.getOptionProduct().getDiscountValue());
                 int optionDiscountMoney = (itemOriginalPrice * optionDiscountPercent) / 100;
                 int priceAfterOptionDiscount = Math.max(itemOriginalPrice - optionDiscountMoney, 0);
 

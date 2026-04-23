@@ -58,13 +58,13 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
         holder.binding.tvNameProduct.setText(productName);
 
         DecimalFormat df = new DecimalFormat("###,###,###");
-        int discountvalue = option.getDiscount_value();
+        int discountvalue = (int) option.getDiscount_value();
         
         if (discountvalue == 0) {
             holder.binding.tvQuantityPrice.setText(option.getQuantity() + " x " + df.format(option.getOptionProduct().getPrice()) + "đ");
         } else {
             double voucher = (double) (100 - discountvalue) / 100;
-            int gia = option.getOptionProduct().getPrice();
+            int gia = (int) option.getOptionProduct().getPrice();
             double gia1 = gia * voucher;
             holder.binding.tvQuantityPrice.setText(option.getQuantity() + " x " + df.format(gia1) + "đ");
         }
