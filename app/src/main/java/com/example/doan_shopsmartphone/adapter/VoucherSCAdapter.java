@@ -67,7 +67,7 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
         holder.tvSale.setText(store.getCode());
         holder.tvprice.setText(store.getDiscountValue()+"Đ");
         holder.name.setText(store.getTitle());
-        holder.count.setText("x"+store.getQuantity());
+        holder.count.setText("Số lượng: "+store.getQuantity());
         boolean isEligible = isVoucherValids(store);
         if (!isEligible) {
             // TRƯỜNG HỢP: Voucher không đủ điều kiện (Hết hạn hoặc hết lượt)

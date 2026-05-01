@@ -10,14 +10,17 @@
         android:layout_marginHorizontal="5dp"
         android:id="@+id/linearLayout"
         android:layout_width="100dp"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
+        android:minHeight="45dp"
         android:background="@drawable/custom_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
-        android:orientation="horizontal">
+        android:paddingVertical="4dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
 
         <TextView
@@ -26,11 +29,20 @@
             android:textColor="@color/white"
             android:textSize="@dimen/font_size_text_title_medium"
             android:gravity="center"
-            android:layout_gravity="center"
             android:text="ok"
             android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+            
+        <TextView
+            android:id="@+id/tvQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SL: 0"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"/>
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
