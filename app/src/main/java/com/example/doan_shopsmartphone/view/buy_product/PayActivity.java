@@ -157,7 +157,6 @@ public class PayActivity extends AppCompatActivity {
                 .map(option -> option.getProduct())           // Lấy Object Product
                 .filter(Objects::nonNull)                     // Kiểm tra null tiếp
                 .map(product -> product.getId())              // Cuối cùng lấy Product ID
-                .distinct()                                   // Chỉ lấy các ID duy nhất để nhóm voucher
                 .collect(Collectors.toList());
         Log.e( "idPro: ",productIds.toString() );
         initView();
@@ -710,18 +709,23 @@ public class PayActivity extends AppCompatActivity {
             selectedVouchers = new ArrayList<>();
         }
 
-        // 1. Nhóm các sản phẩm trong giỏ hàng theo Product ID
+        // 1. Nhóm các sản phẩm trong giỏ hàng theo Tên Sản Phẩm (Product Name)
         Map<String, List<OptionAndQuantity>> groupedItems = new HashMap<>();
         for (OptionAndQuantity item : CartUtil.listCartCheck) {
             if (item == null || item.getOptionProduct() == null || item.getOptionProduct().getProduct() == null) {
-                // Trường hợp không có sản phẩm (có thể là lỗi dữ liệu)
                 continue;
             }
-            String pId = item.getOptionProduct().getProduct().getId();
-            if (!groupedItems.containsKey(pId)) {
-                groupedItems.put(pId, new ArrayList<>());
+            String pName = item.getOptionProduct().getProduct().getName();
+            if (pName == null || pName.trim().isEmpty()) {
+                pName = "SẢN PHẨM";
+            } else {
+                pName = pName.trim().toUpperCase();
             }
-            groupedItems.get(pId).add(item);
+            
+            if (!groupedItems.containsKey(pName)) {
+                groupedItems.put(pName, new ArrayList<>());
+            }
+            groupedItems.get(pName).add(item);
         }
 
         // 2. Duyệt qua từng nhóm sản phẩm để áp dụng voucher
@@ -729,8 +733,8 @@ public class PayActivity extends AppCompatActivity {
             List<OptionAndQuantity> itemsInGroup = entry.getValue();
             if (itemsInGroup.isEmpty()) continue;
 
-            // Tìm voucher cho cả nhóm (dùng sản phẩm đầu tiên làm đại diện vì cùng Product ID)
-            Voucher matchedVoucher = findVoucherForItem(itemsInGroup.get(0), selectedVouchers);
+            // Tìm voucher cho cả nhóm (kiểm tra tất cả các item trong nhóm)
+            Voucher matchedVoucher = findVoucherForGroup(itemsInGroup, selectedVouchers);
 
             // Tính tổng giá trị của nhóm sau khi trừ giảm giá mặc định của từng màu
             int totalGroupBasePrice = 0;
@@ -800,24 +804,32 @@ public class PayActivity extends AppCompatActivity {
         updatePriceUI(totalOrderPrice, totalDiscount, details.toString());
     }
 
-    private Voucher findVoucherForItem(OptionAndQuantity item, List<Voucher> selectedVouchers) {
-        if (item == null || item.getOptionProduct() == null || item.getOptionProduct().getProduct() == null) {
+    private Voucher findVoucherForGroup(List<OptionAndQuantity> itemsInGroup, List<Voucher> selectedVouchers) {
+        if (itemsInGroup == null || itemsInGroup.isEmpty() || selectedVouchers == null || selectedVouchers.isEmpty()) {
             return null;
         }
-        String productId = item.getOptionProduct().getProduct().getId();
-        if (productId == null) return null;
 
         Voucher globalVoucher = null;
         for (Voucher voucher : selectedVouchers) {
             if (voucher == null) continue;
             List<Voucher.ProductObj> applicableProducts = voucher.getApplicableProducts();
+            
+            // Nếu là voucher toàn sàn
             if (applicableProducts == null || applicableProducts.isEmpty()) {
                 if (globalVoucher == null) globalVoucher = voucher;
                 continue;
             }
-            for (Voucher.ProductObj productObj : applicableProducts) {
-                if (productObj != null && productId.equals(productObj.get_id())) {
-                    return voucher;
+            
+            // Kiểm tra xem voucher có áp dụng cho BẤT KỲ sản phẩm nào trong nhóm không
+            for (OptionAndQuantity item : itemsInGroup) {
+                if (item == null || item.getOptionProduct() == null || item.getOptionProduct().getProduct() == null) continue;
+                String productId = item.getOptionProduct().getProduct().getId();
+                if (productId == null) continue;
+                
+                for (Voucher.ProductObj productObj : applicableProducts) {
+                    if (productObj != null && productId.equals(productObj.get_id())) {
+                        return voucher; // Tìm thấy voucher khớp với một trong các ID của nhóm
+                    }
                 }
             }
         }
