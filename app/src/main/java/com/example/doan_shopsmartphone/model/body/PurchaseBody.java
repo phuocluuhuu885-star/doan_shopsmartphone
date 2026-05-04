@@ -16,19 +16,22 @@ public class PurchaseBody {
     private int totalPrice;
     @SerializedName("info_id")
     private String infoId;
+    @SerializedName("voucher_ids")
+    private List<String> voucher_ids;
     //    @SerializedName("payment_status")
     private boolean payment_status = false;
 
     public PurchaseBody() {
     }
 
-    public PurchaseBody(String id, String userId, List<OptionAndQuantity> productsOrder, int totalPrice, String infoId, boolean payment_status) {
+    public PurchaseBody(String id, String userId, List<OptionAndQuantity> productsOrder, int totalPrice, String infoId, boolean payment_status, List<String> voucher_ids) {
         this.id = id;
         this.userId = userId;
         this.productsOrder = productsOrder;
         this.totalPrice = totalPrice;
         this.infoId = infoId;
         this.payment_status = payment_status;
+        this.voucher_ids = voucher_ids;
     }
 
     @Override
@@ -89,5 +92,13 @@ public class PurchaseBody {
 
     public void setPayment_status(boolean payment_status) {
         this.payment_status = payment_status;
+    }
+
+    public List<String> getVoucherIds() {
+        return voucher_ids;
+    }
+
+    public void setVoucherIds(List<String> voucher_ids) {
+        this.voucher_ids = voucher_ids;
     }
 }

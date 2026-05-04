@@ -328,6 +328,16 @@ public class PayActivity extends AppCompatActivity {
             purchaseBody.setInfoId(info.getId());
             purchaseBody.setUserId(AccountUltil.USER.getId());
             purchaseBody.setProductsOrder(CartUtil.listCartCheck);
+            
+            List<String> voucherIds = new ArrayList<>();
+            if (selectedVouchersList != null) {
+                for (Voucher v : selectedVouchersList) {
+                    if (v.get_id() != null) {
+                        voucherIds.add(v.get_id());
+                    }
+                }
+            }
+            purchaseBody.setVoucherIds(voucherIds);
 
             loadingDialog.show();
             BaseApi.API.createOrder(token, purchaseBody).enqueue(new Callback<ServerResponse>() {
@@ -519,6 +529,17 @@ public class PayActivity extends AppCompatActivity {
             purchaseBody.setUserId(AccountUltil.USER.getId());
             purchaseBody.setProductsOrder(CartUtil.listCartCheck);
             purchaseBody.setPayment_status(true);
+            
+            List<String> voucherIds = new ArrayList<>();
+            if (selectedVouchersList != null) {
+                for (Voucher v : selectedVouchersList) {
+                    if (v.get_id() != null) {
+                        voucherIds.add(v.get_id());
+                    }
+                }
+            }
+            purchaseBody.setVoucherIds(voucherIds);
+
             loadingDialog.show();
             BaseApi.API.createOrderByZalo(token, purchaseBody).enqueue(new Callback<ServerResponse>() {
                 @Override
