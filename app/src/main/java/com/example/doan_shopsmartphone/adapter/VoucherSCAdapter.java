@@ -17,6 +17,7 @@ import com.example.doan_shopsmartphone.model.Voucher;
 import com.example.doan_shopsmartphone.ultil.ObjectUtil;
 import com.example.doan_shopsmartphone.ultil.OnVoucherSelectedListener;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -68,6 +69,15 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
         holder.tvprice.setText(store.getDiscountValue()+"Đ");
         holder.name.setText(store.getTitle());
         holder.count.setText("Số lượng: "+store.getQuantity());
+
+        if (store.getMaxDiscountValue() > 0) {
+            DecimalFormat formatter = new DecimalFormat("###,###,###");
+            holder.tvMaxDiscount.setVisibility(View.VISIBLE);
+            holder.tvMaxDiscount.setText("Giảm tối đa: " + formatter.format(store.getMaxDiscountValue()) + "đ");
+        } else {
+            holder.tvMaxDiscount.setVisibility(View.GONE);
+        }
+
         boolean isEligible = isVoucherValids(store);
         if (!isEligible) {
             // TRƯỜNG HỢP: Voucher không đủ điều kiện (Hết hạn hoặc hết lượt)
@@ -153,7 +163,7 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
         }
     }
     public class VoucherViewHolder extends RecyclerView.ViewHolder {
-        TextView tvSale, tvprice, tvDate, name,count,date;
+        TextView tvSale, tvprice, tvDate, name,count,date, tvMaxDiscount;
         ConstraintLayout select;
         public VoucherViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -164,6 +174,7 @@ public class VoucherSCAdapter extends RecyclerView.Adapter<VoucherSCAdapter.Vouc
             select = itemView.findViewById(R.id.btnSelectVoucher);
             count = itemView.findViewById(R.id.count);
             date = itemView.findViewById(R.id.date);
+            tvMaxDiscount = itemView.findViewById(R.id.tvMaxDiscount);
         }
     }
 
