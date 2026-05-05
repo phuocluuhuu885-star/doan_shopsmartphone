@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -35,6 +36,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView rcvChat;
     private EditText edtMessage;
     private ImageButton btnSend, btnPickImage;
+    private ImageView ivBack;
     private ChatAdapter adapter;
     private DatabaseReference chatRef;
     private String currentUserId = AccountUltil.USER.getId();
@@ -124,6 +126,9 @@ public class ChatActivity extends AppCompatActivity {
         edtMessage = findViewById(R.id.edtMessage);
         btnSend = findViewById(R.id.btnSend);
         btnPickImage = findViewById(R.id.btnPickImage);
+        ivBack = findViewById(R.id.backDetailProduct);
+
+        ivBack.setOnClickListener(v -> finish());
 
         adapter = new ChatAdapter(list, currentUserId);
         rcvChat.setLayoutManager(new LinearLayoutManager(this));
