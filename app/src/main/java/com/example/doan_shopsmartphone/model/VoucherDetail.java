@@ -10,14 +10,16 @@ public class VoucherDetail {
     private int quantity;
     private int discountType; // 1: %, 2: Tiền mặt
     private int discountValue;
+    private int maxDiscountValue;
 
-    public VoucherDetail(String _id, String code, String title, int quantity, int discountType, int discountValue) {
+    public VoucherDetail(String _id, String code, String title, int quantity, int discountType, int discountValue, int maxDiscountValue) {
         this._id = _id;
         this.code = code;
         this.title = title;
         this.quantity = quantity;
         this.discountType = discountType;
         this.discountValue = discountValue;
+        this.maxDiscountValue = maxDiscountValue;
     }
 
     public String get_id() {
@@ -66,5 +68,13 @@ public class VoucherDetail {
 
     public void setDiscountValue(int discountValue) {
         this.discountValue = discountValue;
+    }
+
+    public int getMaxDiscountValue() {
+        return maxDiscountValue;
+    }
+
+    public void setMaxDiscountValue(int maxDiscountValue) {
+        this.maxDiscountValue = maxDiscountValue;
     }
 }

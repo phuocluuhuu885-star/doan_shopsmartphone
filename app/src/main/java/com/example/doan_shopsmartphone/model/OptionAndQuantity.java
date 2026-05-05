@@ -8,20 +8,20 @@ public class OptionAndQuantity {
     @SerializedName("option_id")
     private OptionOfListCart optionProduct;
     private int quantity;
-    private int discount_value;
+    private double discount_value;
 
-    public OptionAndQuantity(String id, OptionOfListCart optionProduct, int quantity, int discount_value) {
+    public OptionAndQuantity(String id, OptionOfListCart optionProduct, int quantity, double discount_value) {
         this.id = id;
         this.optionProduct = optionProduct;
         this.quantity = quantity;
         this.discount_value = discount_value;
     }
 
-    public int getDiscount_value() {
+    public double getDiscount_value() {
         return discount_value;
     }
 
-    public void setDiscount_value(int discount_value) {
+    public void setDiscount_value(double discount_value) {
         this.discount_value = discount_value;
     }
 

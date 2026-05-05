@@ -148,7 +148,10 @@ public interface BaseApi {
 
     @FormUrlEncoded
     @POST("login-with-google")
-    Call<LoginResponse> loginGoogle(@Field("idToken") String tokenGG);
+    Call<LoginResponse> loginGoogle(
+        @Field("idToken") String tokenGG,
+        @Field("fcmToken") String fcmToken
+    );
 
     @DELETE("cart/delete-cart-item/{idCart}")
     Call<ServerResponse> deleteCartItem(@Header("Authorization") String authorization,

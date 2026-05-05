@@ -21,6 +21,11 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
     private final Context context;
     private List<Info> infoList;
     private final InfoInterface infoInterface;
+    private String currentSelectedId = null;
+
+    public void setCurrentSelectedId(String id) {
+        this.currentSelectedId = id;
+    }
 
     public InfoAdapter(Context context, List<Info> infoList, InfoInterface infoInterface) {
         this.context = context;
@@ -31,6 +36,16 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
     @SuppressLint("NotifyDataSetChanged")
     public void setInfoList(List<Info> infoList) {
         this.infoList = infoList;
+        
+        // Cập nhật currentSelectedId nếu null (lần đầu trải nghiệm mua hàng - chọn địa chỉ mặc định)
+        if (this.currentSelectedId == null && infoList != null) {
+            for (Info info : infoList) {
+                if (Boolean.TRUE.equals(info.getChecked())) {
+                    this.currentSelectedId = info.getId();
+                    break;
+                }
+            }
+        }
         notifyDataSetChanged();
     }
 
@@ -51,29 +66,36 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
         holder.binding.tvName.setText(info.getName()  + " | ");
         holder.binding.tvAddress.setText(info.getAddress());
         holder.binding.tvPhoneNumber.setText(info.getPhoneNumber());
+        
         // 1. Xóa listener cũ trước khi set trạng thái để tránh việc gọi vòng lặp vô tận
         holder.binding.chkChooseInfo.setOnCheckedChangeListener(null);
 
-        // 2. Thiết lập trạng thái hiển thị
-        boolean checked = Boolean.TRUE.equals(info.getChecked());
-        if(checked) {
+        // 2. Thiết lập trạng thái Mặc định (Badge UI)
+        boolean isDefault = Boolean.TRUE.equals(info.getChecked());
+        if(isDefault) {
             holder.binding.tvDefault.setVisibility(View.VISIBLE);
-            holder.binding.chkChooseInfo.setChecked(true);
         } else {
             holder.binding.tvDefault.setVisibility(View.GONE);
-            holder.binding.chkChooseInfo.setChecked(false);
         }
 
-        // 3. Xử lý sự kiện chọn địa chỉ
+        // 3. Thiết lập Checkbox (Đang chọn)
+        boolean isSelected = false;
+        if (currentSelectedId != null && info.getId() != null) {
+            isSelected = currentSelectedId.equals(info.getId());
+        }
+        holder.binding.chkChooseInfo.setChecked(isSelected);
+
+        // 4. Xử lý sự kiện chọn địa chỉ
         holder.binding.chkChooseInfo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (!isChecked) return;
-
-                // Tránh gọi lại nếu checkbox này đã được chọn sẵn
-                if (!Boolean.TRUE.equals(info.getChecked())) {
-                    updateSingleSelection(position);
+                
+                // Cập nhật selected ID và báo lên Activity
+                if (!info.getId().equals(currentSelectedId)) {
+                    currentSelectedId = info.getId();
                     infoInterface.onclickObject(info);
+                    // notifyDataSetChanged() không cần thiết vì ta rời Activity ngay lập tức
                 }
             }
         });

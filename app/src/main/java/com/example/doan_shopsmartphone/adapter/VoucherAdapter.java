@@ -41,8 +41,8 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
         }else {
             holder.textSale.setText(voucher.getDiscountValue()+"K");
         }
-
-
+        
+        holder.tvQuantity.setText("SL: " + voucher.getQuantity());
     }
 
     @Override
@@ -55,9 +55,11 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView textSale;
+        TextView tvQuantity;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textSale = itemView.findViewById(R.id.textVoucher);
+            tvQuantity = itemView.findViewById(R.id.tvQuantity);
         }
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,8 @@ import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.CartUtil;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,6 +39,7 @@ public class DetailOderActivity extends AppCompatActivity {
     private View headerBackground;
     private RecyclerView rvProducts;
     private Button btnAction;
+    private ImageView backDetailProduct;
     private DetailOderItemAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,8 @@ public class DetailOderActivity extends AppCompatActivity {
         tvOrderId = findViewById(R.id.tvOrderId);
         tvTime = findViewById(R.id.tvCreateTime);
         rvProducts = findViewById(R.id.rvProductsOder);
+        backDetailProduct = findViewById(R.id.backDetailProduct);
+        backDetailProduct.setOnClickListener(v -> onBackPressed());
     }
 
     private void controler(){
@@ -71,10 +77,21 @@ public class DetailOderActivity extends AppCompatActivity {
             public void onResponse(Call<DetailBills> call, Response<DetailBills> response) {
                 if(response.isSuccessful()){
                     DetailBills detailBills = response.body();
+                    if (detailBills == null || detailBills.getResult() == null) {
+                        return;
+                    }
                     Order resultBuil = detailBills.getResult();
                     bindDataToUI(resultBuil);
 
-                    adapter = new DetailOderItemAdapter(DetailOderActivity.this, resultBuil.getProductsOrder());
+                    List<com.example.doan_shopsmartphone.model.OptionAndQuantity> safeProducts = new ArrayList<>();
+                    if (resultBuil.getProductsOrder() != null) {
+                        for (com.example.doan_shopsmartphone.model.OptionAndQuantity item : resultBuil.getProductsOrder()) {
+                            if (item != null && item.getOptionProduct() != null) {
+                                safeProducts.add(item);
+                            }
+                        }
+                    }
+                    adapter = new DetailOderItemAdapter(DetailOderActivity.this, safeProducts);
                     rvProducts.setAdapter(adapter);
                 }
             }
@@ -109,4 +126,9 @@ public class DetailOderActivity extends AppCompatActivity {
         Log.e( "iiii: ",order.getStatus() );
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+    }
 }

@@ -80,18 +80,29 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = orderList.get(position);
-            List<String> listName = new ArrayList<>();
-            List<String> listidProduct = new ArrayList<>();
-        for(int i=0;i<order.getProductsOrder().size();i++){
-            listName.add(order.getProductsOrder().get(i).getOptionProduct().getProduct().getName());
-            listidProduct.add(order.getProductsOrder().get(i).getOptionProduct().getProduct().getId());
+        if (order == null) return;
 
+        List<String> listName = new ArrayList<>();
+        List<String> listidProduct = new ArrayList<>();
+        
+        if (order.getProductsOrder() != null) {
+            for (int i = 0; i < order.getProductsOrder().size(); i++) {
+                OptionAndQuantity opq = order.getProductsOrder().get(i);
+                if (opq != null && opq.getOptionProduct() != null && opq.getOptionProduct().getProduct() != null) {
+                    listName.add(opq.getOptionProduct().getProduct().getName());
+                    listidProduct.add(opq.getOptionProduct().getProduct().getId());
+                } else {
+                    listName.add("Sản phẩm không xác định");
+                    listidProduct.add("");
+                }
+            }
         }
-        holder.binding.tvOrderId.setText("Đơn hàng: " + order.getId());
+
+        holder.binding.tvOrderId.setText("Đơn hàng: " + (order.getId() != null ? order.getId() : "N/A"));
         DecimalFormat df = new DecimalFormat("###,###,###");
-        holder.binding.tvTotalPrice.setText(df.format(order.getTotalPrice()) + "");
+        holder.binding.tvTotalPrice.setText(df.format(order.getTotalPrice()) + "đ");
         holder.binding.tvStatus.setText(order.getStatus());
-        holder.binding.tvQuantityTypeProduct.setText(order.getProductsOrder().size() + " loại sản phẩm");
+        holder.binding.tvQuantityTypeProduct.setText((order.getProductsOrder() != null ? order.getProductsOrder().size() : 0) + " loại sản phẩm");
 
         String statusText = order.getStatus();
         if (TAG.CANCELLED.equals(statusText) && !TextUtils.isEmpty(order.getReason())) {

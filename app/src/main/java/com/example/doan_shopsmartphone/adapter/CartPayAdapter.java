@@ -49,7 +49,7 @@ public class CartPayAdapter extends RecyclerView.Adapter<CartPayAdapter.CartPayV
         holder.binding.tvQuantity.setText("Số lương: x" + cart.getQuantity());
         DecimalFormat df = new DecimalFormat("###,###,###");
         double checkgia = (double) (100 - cart.getOptionProduct().getDiscountValue()) / 100;
-            int gia =(cart.getOptionProduct().getPrice());
+            int gia = (int) (cart.getOptionProduct().getPrice());
         Double gia1 = gia*checkgia;
         holder.binding.tvPrice.setText(df.format(gia1) + " đ");
         Glide.with(context).load(cart.getOptionProduct().getImage()).into(holder.binding.imgProduct);

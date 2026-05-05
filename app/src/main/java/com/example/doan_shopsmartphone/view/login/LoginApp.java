@@ -243,45 +243,52 @@ public class LoginApp extends AppCompatActivity {
                 // 1. Hiển thị loading trước khi gọi API
                 if (loadingDialog != null) loadingDialog.show();
 
-                BaseApi.API.loginGoogle(idToken).enqueue(new Callback<LoginResponse>() {
-                    @Override
-                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                        // 2. Tắt loading khi có kết quả trả về
-                        if (loadingDialog != null) loadingDialog.dismiss();
+                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                    String fcmToken = "";
+                    if (task.isSuccessful()) {
+                        fcmToken = task.getResult();
+                    }
 
-                        if (response.isSuccessful() && response.body() != null) {
-                            LoginResponse loginResponse = response.body();
-                            if (loginResponse.getCode() == 200) {
-                                String token = loginResponse.getToken();
+                    BaseApi.API.loginGoogle(idToken, fcmToken).enqueue(new Callback<LoginResponse>() {
+                        @Override
+                        public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                            // 2. Tắt loading khi có kết quả trả về
+                            if (loadingDialog != null) loadingDialog.dismiss();
 
-                                // Lưu token
-                                AccountUltil.saveToken(LoginApp.this, token);
-                                AccountUltil.TOKEN = token;
+                            if (response.isSuccessful() && response.body() != null) {
+                                LoginResponse loginResponse = response.body();
+                                if (loginResponse.getCode() == 200) {
+                                    String token = loginResponse.getToken();
 
-                                Log.d("JWT", "Login thành công, Token: " + token);
+                                    // Lưu token
+                                    AccountUltil.saveToken(LoginApp.this, token);
+                                    AccountUltil.TOKEN = token;
 
-                                // Lấy dữ liệu cần thiết
-                                ApiUtil.getDetailUser(LoginApp.this, null); // Truyền null nếu ko muốn hiện dialog lần nữa
-                                ApiUtil.getAllCart(LoginApp.this, null);
+                                    Log.d("JWT", "Login thành công, Token: " + token);
 
-                                screenSwitch(LoginApp.this, MainActivity.class);
-                                finish();
+                                    // Lấy dữ liệu cần thiết
+                                    ApiUtil.getDetailUser(LoginApp.this, null); // Truyền null nếu ko muốn hiện dialog lần nữa
+                                    ApiUtil.getAllCart(LoginApp.this, null);
+
+                                    screenSwitch(LoginApp.this, MainActivity.class);
+                                    finish();
+                                } else {
+                                    Toast.makeText(LoginApp.this, "Lỗi: " + loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-                                Toast.makeText(LoginApp.this, "Lỗi: " + loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                                // Xử lý lỗi từ Server (400, 401, 500...)
+                                parseErrorBody(response);
                             }
-                        } else {
-                            // Xử lý lỗi từ Server (400, 401, 500...)
-                            parseErrorBody(response);
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<LoginResponse> call, Throwable t) {
-                        // 3. Phải tắt loading và báo lỗi nếu rớt mạng/server sập
-                        if (loadingDialog != null) loadingDialog.dismiss();
-                        Log.e("API_ERROR", t.getMessage());
-                        Toast.makeText(LoginApp.this, "Lỗi kết nối Server!", Toast.LENGTH_SHORT).show();
-                    }
+                        @Override
+                        public void onFailure(Call<LoginResponse> call, Throwable t) {
+                            // 3. Phải tắt loading và báo lỗi nếu rớt mạng/server sập
+                            if (loadingDialog != null) loadingDialog.dismiss();
+                            Log.e("API_ERROR", t.getMessage());
+                            Toast.makeText(LoginApp.this, "Lỗi kết nối Server!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 });
             }
         } catch (ApiException e) {

@@ -3,6 +3,7 @@ package com.example.doan_shopsmartphone.view.buy_product;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -17,8 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -71,6 +75,7 @@ public class PayActivity extends AppCompatActivity {
     private int totalPrice;
 
     private int paymentMethods;
+    private ArrayList<Voucher> selectedVouchersList = new ArrayList<>();
 
     private List<String> productIds;
     private static final int REQUEST_CODE_ORDER_SUCCESS = 1;
@@ -84,8 +89,14 @@ public class PayActivity extends AppCompatActivity {
                     ArrayList<Voucher> selectedList = (ArrayList<Voucher>) result.getData().getSerializableExtra("LIST_VOUCHER_SELECTED");
 
                     if (selectedList != null) {
-                        Log.e( "da: ", selectedList.get(0).toString() );
+                        selectedVouchersList = selectedList; // Lưu lại danh sách đã chọn
+                        if (!selectedList.isEmpty()) {
+                            Log.e("voucher_selected", selectedList.toString());
+                        }
                         calculateMultiVoucher(selectedList);
+                        if (cartPayAdapter != null) {
+                            cartPayAdapter.notifyDataSetChanged();
+                        }
                         // Chạy hàm tính toán tổng tiền cho từng sản phẩm như mình đã hướng dẫn ở trên
                     }
                 }
@@ -108,7 +119,7 @@ public class PayActivity extends AppCompatActivity {
         if (paymentMethods == 1) {
             binding.txtPaymentMethods.setText("Thanh toán khi nhận hàng");
         } else if (paymentMethods == 2) {
-            binding.txtPaymentMethods.setText("Thanh toán qua ví ZaloPay");
+            binding.txtPaymentMethods.setText("Chuyển khoản ngân hàng");
         }
     }
 
@@ -194,11 +205,12 @@ public class PayActivity extends AppCompatActivity {
         });
     }
     private void setDataInfo() {
-        if(infoList.size() == 0) {
+        if(infoList == null || infoList.size() == 0) {
             binding.tvInfoUser.setText("Chưa có địa chỉ mời bạn tạo");
+            info = null;
             return;
         }
-        info = infoList.get(0);
+        info = null;
         for (int i = 0; i < infoList.size(); i++) {
             if(infoList.get(i).getChecked()) {
                 info = infoList.get(i);
@@ -208,7 +220,7 @@ public class PayActivity extends AppCompatActivity {
         if(info != null) {
             binding.tvInfoUser.setText(info.getName() + " | " + info.getPhoneNumber() + " | " + info.getAddress());
         } else {
-            binding.tvInfoUser.setText("Chưa có địa chỉ mời bạn tạo");
+            binding.tvInfoUser.setText("Vui lòng chọn địa chỉ giao hàng");
         }
     }
     private void initController() {
@@ -216,6 +228,9 @@ public class PayActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(PayActivity.this, AddressActivity.class);
+                if (info != null && info.getId() != null) {
+                    intent.putExtra("CURRENT_SELECTED_ADDR_ID", info.getId());
+                }
                 mActivityResultLauncher.launch(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
             }
@@ -226,6 +241,7 @@ public class PayActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(PayActivity.this, VoucherScreen.class);
                 intent.putStringArrayListExtra("LIST_PRODUCT_ID", (ArrayList<String>) productIds);
+                intent.putExtra("LIST_VOUCHER_SELECTED", selectedVouchersList); // Truyền danh sách đã chọn sang
                 voucherLauncher.launch(intent);
             }
         });
@@ -247,11 +263,11 @@ public class PayActivity extends AppCompatActivity {
                     Toast.makeText(PayActivity.this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
                 }
 
-                //---------------Zalo Pay----------------
+                //---------------Chuyển khoản ngân hàng----------------
                 if (paymentMethods == 2){
                     if(CartUtil.listCartCheck.size() > 0) {
-                        zaloRequest();
-                        Log.d("thanhtoan", "phuong thuc: zalopay ");
+                        showVietQRDialog();
+                        Log.d("thanhtoan", "phuong thuc: chuyen khoan ");
                         Log.d(TAG.toString, "onClick: paymentMethods "+paymentMethods);
 
                     } else {
@@ -312,6 +328,16 @@ public class PayActivity extends AppCompatActivity {
             purchaseBody.setInfoId(info.getId());
             purchaseBody.setUserId(AccountUltil.USER.getId());
             purchaseBody.setProductsOrder(CartUtil.listCartCheck);
+            
+            List<String> voucherIds = new ArrayList<>();
+            if (selectedVouchersList != null) {
+                for (Voucher v : selectedVouchersList) {
+                    if (v.get_id() != null) {
+                        voucherIds.add(v.get_id());
+                    }
+                }
+            }
+            purchaseBody.setVoucherIds(voucherIds);
 
             loadingDialog.show();
             BaseApi.API.createOrder(token, purchaseBody).enqueue(new Callback<ServerResponse>() {
@@ -365,15 +391,16 @@ public class PayActivity extends AppCompatActivity {
         // 1. Chuẩn bị dữ liệu (Ví dụ mẫu)
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
         // Chuẩn bị dữ liệu gửi lên
+        String productPreview = buildOrderProductPreview();
+        String content = "Bạn có đơn hàng mới: " + (productPreview.isEmpty() ? orderId : productPreview);
+
         NotificationBody body = new NotificationBody(
                 AccountUltil.USER.getId(),   // Người gửi (User)
                 AccountUltil.USER.getId(),           // ID Admin hoặc Shop (Receiver)
                 orderId,                     // ID đơn hàng vừa tạo
-                "Bạn có đơn hàng mới mã: " + orderId,
+                content,
                 "wfc"                        // Type: Chờ xác nhận
         );
-
-        // Đảm bảo Interface BaseApi định nghĩa: Call<NotificationResponse> createNotification(...)
 
         BaseApi.API.createNotification(token, body).enqueue(new Callback<NotificationResponse>() {
             @Override
@@ -399,6 +426,36 @@ public class PayActivity extends AppCompatActivity {
                 Log.e("DEBUG", "Lỗi mạng hoặc lổi Parse: " + t.getMessage());
             }
         });
+    }
+
+    private String buildOrderProductPreview() {
+        if (CartUtil.listCartCheck == null || CartUtil.listCartCheck.isEmpty()) {
+            return "";
+        }
+
+        List<String> productNames = new ArrayList<>();
+        for (OptionAndQuantity cartItem : CartUtil.listCartCheck) {
+            if (cartItem == null || cartItem.getOptionProduct() == null || cartItem.getOptionProduct().getProduct() == null) {
+                continue;
+            }
+            String name = cartItem.getOptionProduct().getProduct().getName();
+            if (name != null && !name.trim().isEmpty()) {
+                productNames.add(name.trim());
+            }
+            if (productNames.size() >= 2) {
+                break;
+            }
+        }
+
+        if (productNames.isEmpty()) {
+            return "";
+        }
+
+        if (CartUtil.listCartCheck.size() > 2) {
+            return TextUtils.join(", ", productNames) + ", ...";
+        }
+
+        return TextUtils.join(", ", productNames);
     }
 
     private void removeDataCart() {
@@ -472,6 +529,17 @@ public class PayActivity extends AppCompatActivity {
             purchaseBody.setUserId(AccountUltil.USER.getId());
             purchaseBody.setProductsOrder(CartUtil.listCartCheck);
             purchaseBody.setPayment_status(true);
+            
+            List<String> voucherIds = new ArrayList<>();
+            if (selectedVouchersList != null) {
+                for (Voucher v : selectedVouchersList) {
+                    if (v.get_id() != null) {
+                        voucherIds.add(v.get_id());
+                    }
+                }
+            }
+            purchaseBody.setVoucherIds(voucherIds);
+
             loadingDialog.show();
             BaseApi.API.createOrderByZalo(token, purchaseBody).enqueue(new Callback<ServerResponse>() {
                 @Override
@@ -517,6 +585,34 @@ public class PayActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+    private void showVietQRDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_vietqr, null);
+        builder.setView(dialogView);
+        
+        android.widget.ImageView imgQrCode = dialogView.findViewById(R.id.img_qr_code);
+        android.widget.TextView tvAmount = dialogView.findViewById(R.id.tv_amount);
+        android.widget.Button btnConfirm = dialogView.findViewById(R.id.btn_confirm_qr);
+        android.widget.Button btnCancel = dialogView.findViewById(R.id.btn_cancel_qr);
+        
+        DecimalFormat formatter = new DecimalFormat("###,###,###");
+        tvAmount.setText("Số tiền: " + formatter.format(totalPrice) + "đ");
+        
+        String url = "https://api.vietqr.io/image/971025-0911193469-lUyQ2FF.jpg?accountName=NGUYEN%20QUANG%20THANG&amount=" + totalPrice + "&addInfo=THANH%20TOAN%20DON%20HANG";
+        
+        com.bumptech.glide.Glide.with(this).load(url).into(imgQrCode);
+        
+        android.app.AlertDialog dialog = builder.create();
+        dialog.show();
+        
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        
+        btnConfirm.setOnClickListener(v -> {
+            dialog.dismiss();
+            urlCreateOrderZalo(); // Tạo đơn hàng trên server
+            removeDataCartZalo(); // Chuyển sang màn hình thành công
+        });
     }
     private void zaloRequest(){
         CreateOrder orderApi = new CreateOrder();
@@ -655,51 +751,179 @@ public class PayActivity extends AppCompatActivity {
 
     private void calculateMultiVoucher(ArrayList<Voucher> selectedVouchers) {
         int totalOrderPrice = 0; // Tổng tiền cuối cùng của cả hóa đơn
-        int totalDiscount = 0;   // Tổng số tiền được giảm giá
+        int totalVoucherDiscountAll = 0;   // Tổng số tiền được giảm giá TỪ VOUCHER
+        Map<String, Integer> productVoucherMap = new HashMap<>(); // Lưu trữ tiền giảm từ voucher cho từng tên sản phẩm
 
-        // 1. Duyệt qua từng sản phẩm trong giỏ hàng của bạn
-        for (OptionAndQuantity item : CartUtil.listCartCheck) {
-            // Tính giá gốc của dòng sản phẩm này (Giá x Số lượng)
-            int itemOriginalPrice = (int) item.getOptionProduct().getPrice() * item.getQuantity();
-            int discountForThisItem = 0;
-
-            // 2. Tìm xem trong danh sách Voucher đã chọn, cái nào áp dụng cho sản phẩm này
-            for (Voucher v : selectedVouchers) {
-                // Kiểm tra: Nếu voucher này có chứa ID của sản phẩm hiện tại
-
-                    if (v.getDiscountType() == 1) { // Loại 1: Giảm theo %
-                        discountForThisItem = (itemOriginalPrice * v.getDiscountValue()) / 100;
-
-
-                    } else { // Loại 2: Giảm thẳng tiền mặt
-                        discountForThisItem = v.getDiscountValue();
-                    }
-
-                    // Vì mỗi sản phẩm thường chỉ áp dụng 1 voucher, nên tìm thấy là thoát vòng lặp voucher
-            }
-
-            // 3. Tính giá sau khi giảm cho sản phẩm này
-            int priceAfterDiscount = itemOriginalPrice - discountForThisItem;
-            if (priceAfterDiscount < 0) priceAfterDiscount = 0;
-
-            // 4. Cộng dồn vào tổng hóa đơn
-            totalOrderPrice += priceAfterDiscount;
-            totalDiscount += discountForThisItem;
-            updatePriceUI(totalOrderPrice, totalDiscount);
+        if (selectedVouchers == null) {
+            selectedVouchers = new ArrayList<>();
         }
 
-        // 5. Cập nhật lên giao diện (UI)
+        // 1. Nhóm các sản phẩm trong giỏ hàng theo Tên Sản Phẩm (Product Name)
+        Map<String, List<OptionAndQuantity>> groupedItems = new HashMap<>();
+        for (OptionAndQuantity item : CartUtil.listCartCheck) {
+            if (item == null || item.getOptionProduct() == null || item.getOptionProduct().getProduct() == null) {
+                continue;
+            }
+            String pName = item.getOptionProduct().getProduct().getName();
+            if (pName == null || pName.trim().isEmpty()) {
+                pName = "SẢN PHẨM";
+            } else {
+                pName = pName.trim().toUpperCase();
+            }
+            
+            if (!groupedItems.containsKey(pName)) {
+                groupedItems.put(pName, new ArrayList<>());
+            }
+            groupedItems.get(pName).add(item);
+        }
+
+        // 2. Duyệt qua từng nhóm sản phẩm để áp dụng voucher
+        for (Map.Entry<String, List<OptionAndQuantity>> entry : groupedItems.entrySet()) {
+            List<OptionAndQuantity> itemsInGroup = entry.getValue();
+            if (itemsInGroup.isEmpty()) continue;
+
+            // Tìm voucher cho cả nhóm (kiểm tra tất cả các item trong nhóm)
+            Voucher matchedVoucher = findVoucherForGroup(itemsInGroup, selectedVouchers);
+
+            // Tính tổng giá trị của nhóm sau khi trừ giảm giá mặc định của từng màu
+            int totalGroupBasePrice = 0;
+            Map<OptionAndQuantity, Integer> itemBasePriceMap = new HashMap<>();
+            Map<OptionAndQuantity, Integer> itemOptionDiscountMoneyMap = new HashMap<>();
+
+            for (OptionAndQuantity item : itemsInGroup) {
+                int unitPrice = (int) item.getOptionProduct().getPrice();
+                int itemOriginalPrice = unitPrice * item.getQuantity();
+                int optionDiscountPercent =(int) Math.max(0, item.getOptionProduct().getDiscountValue());
+                int optionDiscountMoney = (itemOriginalPrice * optionDiscountPercent) / 100;
+                int priceAfterOptionDiscount = Math.max(itemOriginalPrice - optionDiscountMoney, 0);
+
+                totalGroupBasePrice += priceAfterOptionDiscount;
+                itemBasePriceMap.put(item, priceAfterOptionDiscount);
+                itemOptionDiscountMoneyMap.put(item, optionDiscountMoney);
+            }
+
+            // Tính tổng tiền voucher giảm cho cả nhóm (không tính riêng từng option)
+            int totalVoucherDiscountForGroup = calculateVoucherMoney(matchedVoucher, totalGroupBasePrice);
+
+            // Tích lũy vào productVoucherMap để hiển thị trên UI
+            if (matchedVoucher != null && totalVoucherDiscountForGroup > 0) {
+                productVoucherMap.put(entry.getKey(), productVoucherMap.getOrDefault(entry.getKey(), 0) + totalVoucherDiscountForGroup);
+            }
+
+            // Phân bổ tiền giảm của voucher cho từng item trong nhóm
+            for (OptionAndQuantity item : itemsInGroup) {
+                int itemBasePrice = itemBasePriceMap.get(item);
+                int itemOptionDiscountMoney = itemOptionDiscountMoneyMap.get(item);
+                int itemOriginalPrice = (int) item.getOptionProduct().getPrice() * item.getQuantity();
+
+                int itemVoucherDiscount = 0;
+                if (totalGroupBasePrice > 0) {
+                    // Phân bổ theo tỷ lệ giá trị của item trong nhóm
+                    itemVoucherDiscount = (int) ((long) totalVoucherDiscountForGroup * itemBasePrice / totalGroupBasePrice);
+                }
+
+                int totalDiscountForThisItem = Math.min(itemOptionDiscountMoney + itemVoucherDiscount, itemOriginalPrice);
+                int priceAfterDiscount = itemOriginalPrice - totalDiscountForThisItem;
+                if (priceAfterDiscount < 0) priceAfterDiscount = 0;
+
+                // Cập nhật % giảm giá cuối cùng để gửi lên backend
+                int mergedPercent = 0;
+                if (itemOriginalPrice > 0) {
+                    mergedPercent = Math.round((totalDiscountForThisItem * 100f) / itemOriginalPrice);
+                }
+                mergedPercent = Math.max(0, Math.min(100, mergedPercent));
+                item.setDiscount_value(mergedPercent);
+
+                totalOrderPrice += priceAfterDiscount;
+                totalVoucherDiscountAll += itemVoucherDiscount;
+            }
+        }
+
+        // 2. Tạo chuỗi chi tiết voucher theo sản phẩm
+        StringBuilder details = new StringBuilder();
+        DecimalFormat formatter = new DecimalFormat("###,###,###");
+        for (Map.Entry<String, Integer> entry : productVoucherMap.entrySet()) {
+            if (details.length() > 0) details.append("\n");
+            details.append(entry.getKey()).append(": -")
+                    .append(formatter.format(entry.getValue())).append("đ");
+        }
+
+        // 3. Cập nhật lên giao diện
+        updatePriceUI(totalOrderPrice, totalVoucherDiscountAll, details.toString());
     }
 
-    private void updatePriceUI(int totalPay, int totalDiscount) {
+    private Voucher findVoucherForGroup(List<OptionAndQuantity> itemsInGroup, List<Voucher> selectedVouchers) {
+        if (itemsInGroup == null || itemsInGroup.isEmpty() || selectedVouchers == null || selectedVouchers.isEmpty()) {
+            return null;
+        }
+
+        Voucher globalVoucher = null;
+        for (Voucher voucher : selectedVouchers) {
+            if (voucher == null) continue;
+            List<Voucher.ProductObj> applicableProducts = voucher.getApplicableProducts();
+            
+            // Nếu là voucher toàn sàn
+            if (applicableProducts == null || applicableProducts.isEmpty()) {
+                if (globalVoucher == null) globalVoucher = voucher;
+                continue;
+            }
+            
+            // Kiểm tra xem voucher có áp dụng cho BẤT KỲ sản phẩm nào trong nhóm không
+            for (OptionAndQuantity item : itemsInGroup) {
+                if (item == null || item.getOptionProduct() == null || item.getOptionProduct().getProduct() == null) continue;
+                String productId = item.getOptionProduct().getProduct().getId();
+                if (productId == null) continue;
+                
+                for (Voucher.ProductObj productObj : applicableProducts) {
+                    if (productObj != null && productId.equals(productObj.get_id())) {
+                        return voucher; // Tìm thấy voucher khớp với một trong các ID của nhóm
+                    }
+                }
+            }
+        }
+        return globalVoucher;
+    }
+
+    private int calculateVoucherMoney(Voucher voucher, int basePriceAfterOptionDiscount) {
+        if (voucher == null || basePriceAfterOptionDiscount <= 0) {
+            return 0;
+        }
+
+        if (voucher.getMinOrderValue() > 0 && basePriceAfterOptionDiscount < voucher.getMinOrderValue()) {
+            return 0;
+        }
+
+        int voucherDiscountMoney;
+        if (voucher.getDiscountType() == 1) { // giảm theo %
+            voucherDiscountMoney = (basePriceAfterOptionDiscount * voucher.getDiscountValue()) / 100;
+            if (voucher.getMaxDiscountValue() > 0) {
+                voucherDiscountMoney = Math.min(voucherDiscountMoney, voucher.getMaxDiscountValue());
+            }
+        } else { // giảm tiền trực tiếp
+            voucherDiscountMoney = voucher.getDiscountValue();
+        }
+        return Math.max(0, Math.min(voucherDiscountMoney, basePriceAfterOptionDiscount));
+    }
+
+    private void updatePriceUI(int totalPay, int totalVoucherDiscountAll, String voucherDetails) {
         // Định dạng số có dấu phân cách nghìn (1,000,000)
         DecimalFormat formatter = new DecimalFormat("###,###,###");
 
         binding.tvTotalPrice.setText(formatter.format(totalPay) + " Đ");
-        binding.disscount.setText(formatter.format(totalDiscount) + " Đ");
-        binding.totalOder.setText(formatter.format(totalPay) + " Đ");
-        binding.totalDisscount.setText(formatter.format(totalDiscount) + " Đ");
-        // Lưu giá trị cuối cùng vào một biến toàn cục để gửi lên Server khi bấm "Mua hàng"
+        binding.disscount.setText(formatter.format(totalVoucherDiscountAll) + " Đ");
+        binding.totalOder.setText(formatter.format(totalPay + totalVoucherDiscountAll) + " Đ"); // Tổng tiền hàng (đã giảm option)
+        binding.totalDisscount.setText(formatter.format(totalVoucherDiscountAll) + " Đ");
+        
+        // Hiển thị chi tiết voucher
+        if (voucherDetails != null && !voucherDetails.isEmpty()) {
+            binding.tvVoucherDetails.setVisibility(View.VISIBLE);
+            binding.tvVoucherDetails.setText(voucherDetails);
+        } else {
+            binding.tvVoucherDetails.setVisibility(View.GONE);
+        }
+        
+        // Dùng cho luồng tạo đơn Zalo
+        totalPrice = totalPay;
     }
     @Override
     public void onBackPressed() {

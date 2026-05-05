@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.doan_shopsmartphone.fragment.tab.FragmentPageDiscount;
 import com.example.doan_shopsmartphone.fragment.tab.FragmentPageOutStanding;
 import com.example.doan_shopsmartphone.fragment.tab.FragmentPageSelling;
 
@@ -21,18 +20,16 @@ public class ViewPageHomeAdapter extends FragmentStateAdapter {
             case 0:
                 return new FragmentPageSelling();
             case 1:
-                return new FragmentPageDiscount();
-            case 2:
                 return new FragmentPageOutStanding();
             default:
-                return null;
+                return new FragmentPageSelling();
         }
 
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 2;
     }
 }
 

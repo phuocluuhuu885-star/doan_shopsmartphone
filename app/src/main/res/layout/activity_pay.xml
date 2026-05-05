@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:paddingBottom="15dp"
-                    android:text="Nguyễn Thế Ngọc | 0389111525 Xóm 1  Yên Nội, Đồng Quang huyện Quốc Oai - Hà Nội" />
+                    android:text="Nguyễn Quang Thắng" />
             </LinearLayout>
 
             <LinearLayout
@@ -180,11 +180,21 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="8dp"
+                android:text="Phương thức thanh toán"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutPaymentMethods"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:background="@color/white"
                 android:orientation="horizontal"
                 android:paddingVertical="15dp">
@@ -289,7 +299,15 @@
                         android:textSize="17sp" />
 
                 </LinearLayout>
-
+                <TextView
+                    android:id="@+id/tvVoucherDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="30dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="#888888"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>
