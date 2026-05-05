@@ -723,8 +723,8 @@ public class PayActivity extends AppCompatActivity {
 
     private void calculateMultiVoucher(ArrayList<Voucher> selectedVouchers) {
         int totalOrderPrice = 0; // Tổng tiền cuối cùng của cả hóa đơn
-        int totalDiscount = 0;   // Tổng số tiền được giảm giá
-        Map<String, Integer> voucherMap = new HashMap<>(); // Lưu trữ tiền giảm cho từng mã code
+        int totalVoucherDiscountAll = 0;   // Tổng số tiền được giảm giá TỪ VOUCHER
+        Map<String, Integer> productVoucherMap = new HashMap<>(); // Lưu trữ tiền giảm từ voucher cho từng tên sản phẩm
 
         if (selectedVouchers == null) {
             selectedVouchers = new ArrayList<>();
@@ -777,10 +777,9 @@ public class PayActivity extends AppCompatActivity {
             // Tính tổng tiền voucher giảm cho cả nhóm (không tính riêng từng option)
             int totalVoucherDiscountForGroup = calculateVoucherMoney(matchedVoucher, totalGroupBasePrice);
 
-            // Tích lũy vào voucherMap để hiển thị trên UI
+            // Tích lũy vào productVoucherMap để hiển thị trên UI
             if (matchedVoucher != null && totalVoucherDiscountForGroup > 0) {
-                String code = matchedVoucher.getCode();
-                voucherMap.put(code, voucherMap.getOrDefault(code, 0) + totalVoucherDiscountForGroup);
+                productVoucherMap.put(entry.getKey(), productVoucherMap.getOrDefault(entry.getKey(), 0) + totalVoucherDiscountForGroup);
             }
 
             // Phân bổ tiền giảm của voucher cho từng item trong nhóm
@@ -808,21 +807,21 @@ public class PayActivity extends AppCompatActivity {
                 item.setDiscount_value(mergedPercent);
 
                 totalOrderPrice += priceAfterDiscount;
-                totalDiscount += totalDiscountForThisItem;
+                totalVoucherDiscountAll += itemVoucherDiscount;
             }
         }
 
-        // 2. Tạo chuỗi chi tiết voucher
+        // 2. Tạo chuỗi chi tiết voucher theo sản phẩm
         StringBuilder details = new StringBuilder();
         DecimalFormat formatter = new DecimalFormat("###,###,###");
-        for (Map.Entry<String, Integer> entry : voucherMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : productVoucherMap.entrySet()) {
             if (details.length() > 0) details.append("\n");
-            details.append("[").append(entry.getKey()).append("]: -")
+            details.append(entry.getKey()).append(": -")
                     .append(formatter.format(entry.getValue())).append("đ");
         }
 
         // 3. Cập nhật lên giao diện
-        updatePriceUI(totalOrderPrice, totalDiscount, details.toString());
+        updatePriceUI(totalOrderPrice, totalVoucherDiscountAll, details.toString());
     }
 
     private Voucher findVoucherForGroup(List<OptionAndQuantity> itemsInGroup, List<Voucher> selectedVouchers) {
@@ -878,14 +877,14 @@ public class PayActivity extends AppCompatActivity {
         return Math.max(0, Math.min(voucherDiscountMoney, basePriceAfterOptionDiscount));
     }
 
-    private void updatePriceUI(int totalPay, int totalDiscount, String voucherDetails) {
+    private void updatePriceUI(int totalPay, int totalVoucherDiscountAll, String voucherDetails) {
         // Định dạng số có dấu phân cách nghìn (1,000,000)
         DecimalFormat formatter = new DecimalFormat("###,###,###");
 
         binding.tvTotalPrice.setText(formatter.format(totalPay) + " Đ");
-        binding.disscount.setText(formatter.format(totalDiscount) + " Đ");
-        binding.totalOder.setText(formatter.format(totalPay + totalDiscount) + " Đ"); // Tổng tiền hàng chưa giảm
-        binding.totalDisscount.setText(formatter.format(totalDiscount) + " Đ");
+        binding.disscount.setText(formatter.format(totalVoucherDiscountAll) + " Đ");
+        binding.totalOder.setText(formatter.format(totalPay + totalVoucherDiscountAll) + " Đ"); // Tổng tiền hàng (đã giảm option)
+        binding.totalDisscount.setText(formatter.format(totalVoucherDiscountAll) + " Đ");
         
         // Hiển thị chi tiết voucher
         if (voucherDetails != null && !voucherDetails.isEmpty()) {
