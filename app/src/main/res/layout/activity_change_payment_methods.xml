@@ -115,7 +115,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chuyển khoản ngân hàng"
+                android:text="Ví ZaloPay"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -124,7 +124,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Chuyển khoản qua mã VietQR"
+                android:text="Thanh toán an toàn, nhanh chóng"
                 android:textColor="#757575"
                 android:textSize="13sp" />
         </LinearLayout>

@@ -119,7 +119,7 @@ public class PayActivity extends AppCompatActivity {
         if (paymentMethods == 1) {
             binding.txtPaymentMethods.setText("Thanh toán khi nhận hàng");
         } else if (paymentMethods == 2) {
-            binding.txtPaymentMethods.setText("Chuyển khoản ngân hàng");
+            binding.txtPaymentMethods.setText("Thanh toán qua ví ZaloPay");
         }
     }
 
@@ -263,11 +263,11 @@ public class PayActivity extends AppCompatActivity {
                     Toast.makeText(PayActivity.this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
                 }
 
-                //---------------Chuyển khoản ngân hàng----------------
+                //---------------Zalo Pay----------------
                 if (paymentMethods == 2){
                     if(CartUtil.listCartCheck.size() > 0) {
-                        showVietQRDialog();
-                        Log.d("thanhtoan", "phuong thuc: chuyen khoan ");
+                        zaloRequest();
+                        Log.d("thanhtoan", "phuong thuc: zalopay ");
                         Log.d(TAG.toString, "onClick: paymentMethods "+paymentMethods);
 
                     } else {
@@ -585,34 +585,6 @@ public class PayActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-    private void showVietQRDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_vietqr, null);
-        builder.setView(dialogView);
-        
-        android.widget.ImageView imgQrCode = dialogView.findViewById(R.id.img_qr_code);
-        android.widget.TextView tvAmount = dialogView.findViewById(R.id.tv_amount);
-        android.widget.Button btnConfirm = dialogView.findViewById(R.id.btn_confirm_qr);
-        android.widget.Button btnCancel = dialogView.findViewById(R.id.btn_cancel_qr);
-        
-        DecimalFormat formatter = new DecimalFormat("###,###,###");
-        tvAmount.setText("Số tiền: " + formatter.format(totalPrice) + "đ");
-        
-        String url = "https://api.vietqr.io/image/971025-0911193469-lUyQ2FF.jpg?accountName=NGUYEN%20QUANG%20THANG&amount=" + totalPrice + "&addInfo=THANH%20TOAN%20DON%20HANG";
-        
-        com.bumptech.glide.Glide.with(this).load(url).into(imgQrCode);
-        
-        android.app.AlertDialog dialog = builder.create();
-        dialog.show();
-        
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-        
-        btnConfirm.setOnClickListener(v -> {
-            dialog.dismiss();
-            urlCreateOrderZalo(); // Tạo đơn hàng trên server
-            removeDataCartZalo(); // Chuyển sang màn hình thành công
-        });
     }
     private void zaloRequest(){
         CreateOrder orderApi = new CreateOrder();
