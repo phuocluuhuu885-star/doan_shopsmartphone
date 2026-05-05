@@ -349,9 +349,10 @@ public class PayActivity extends AppCompatActivity {
                         Log.d(TAG.toString, "onResponse-createOrder: " + serverResponse.toString());
                         if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
                             Toast.makeText(PayActivity.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            String productPreview = buildOrderProductPreview();
                             removeDataCart();
                             OrderResult orderData = serverResponse.getResult();
-                            urlCreateNotification(orderData.getId());
+                            urlCreateNotification(orderData.getId(), productPreview);
                             if (orderData != null) {
                                 String id = orderData.getId();
                                 String transId = orderData.getAppTransId();
@@ -387,11 +388,10 @@ public class PayActivity extends AppCompatActivity {
         }
     }
 
-    private void urlCreateNotification(String orderId) {
+    private void urlCreateNotification(String orderId, String productPreview) {
         // 1. Chuẩn bị dữ liệu (Ví dụ mẫu)
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
         // Chuẩn bị dữ liệu gửi lên
-        String productPreview = buildOrderProductPreview();
         String content = "Bạn có đơn hàng mới: " + (productPreview.isEmpty() ? orderId : productPreview);
 
         NotificationBody body = new NotificationBody(
