@@ -23,7 +23,7 @@
                 android:layout_height="35dp"
                 android:padding="5dp"
                 android:src="@drawable/back"
-                app:tint="@color/primary"
+                app:tint="@color/white"
                 />
 
             <TextView
