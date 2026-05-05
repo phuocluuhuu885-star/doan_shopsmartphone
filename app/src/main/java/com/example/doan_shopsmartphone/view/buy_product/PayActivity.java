@@ -349,13 +349,15 @@ public class PayActivity extends AppCompatActivity {
                         Log.d(TAG.toString, "onResponse-createOrder: " + serverResponse.toString());
                         if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
                             Toast.makeText(PayActivity.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            // Lấy tên sản phẩm TRƯỚC khi cart bị xóa (tránh race condition)
+                            String productPreview = buildOrderProductPreview();
                             removeDataCart();
                             OrderResult orderData = serverResponse.getResult();
-                            urlCreateNotification(orderData.getId());
                             if (orderData != null) {
                                 String id = orderData.getId();
                                 String transId = orderData.getAppTransId();
                                 Log.d("DEBUG", "ID nhận được: " + serverResponse.toString()+"  id"+ id);
+                                urlCreateNotification(id, productPreview);
                             } else {
                                 Log.d("DEBUG", "Đối tượng Result bị null!");
                             }
@@ -387,12 +389,10 @@ public class PayActivity extends AppCompatActivity {
         }
     }
 
-    private void urlCreateNotification(String orderId) {
-        // 1. Chuẩn bị dữ liệu (Ví dụ mẫu)
+    private void urlCreateNotification(String orderId, String productPreview) {
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
-        // Chuẩn bị dữ liệu gửi lên
-        String productPreview = buildOrderProductPreview();
-        String content = "Bạn có đơn hàng mới: " + (productPreview.isEmpty() ? orderId : productPreview);
+        // productPreview đã được chuẩn bị từ bên ngoài, tránh race condition
+        String content = "Bạn có đơn hàng mới: " + (productPreview == null || productPreview.isEmpty() ? orderId : productPreview);
 
         NotificationBody body = new NotificationBody(
                 AccountUltil.USER.getId(),   // Người gửi (User)
