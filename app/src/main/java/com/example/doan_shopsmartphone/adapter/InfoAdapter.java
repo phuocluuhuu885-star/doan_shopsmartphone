@@ -85,17 +85,16 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
         }
         holder.binding.chkChooseInfo.setChecked(isSelected);
 
-        // 4. Xử lý sự kiện chọn địa chỉ
-        holder.binding.chkChooseInfo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        // 4. Xử lý sự kiện chọn địa chỉ (bấm vào cả dòng)
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (!isChecked) return;
-                
-                // Cập nhật selected ID và báo lên Activity
+            public void onClick(View view) {
                 if (!info.getId().equals(currentSelectedId)) {
                     currentSelectedId = info.getId();
+                    // Gọi notifyDataSetChanged() để RadioButton UI cập nhật trạng thái chọn duy nhất
+                    notifyDataSetChanged();
+                    // Trả kết quả về cho Activity
                     infoInterface.onclickObject(info);
-                    // notifyDataSetChanged() không cần thiết vì ta rời Activity ngay lập tức
                 }
             }
         });
