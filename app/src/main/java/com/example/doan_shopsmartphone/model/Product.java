@@ -17,9 +17,14 @@ public class Product implements Serializable {
     private int review;
     private int soldQuantity;
     private int reviewCount;
-
-
-
+    @SerializedName("condition_percent")
+    private String conditionPercent;
+    @SerializedName("battery_health")
+    private String batteryHealth;
+    @SerializedName("is_original")
+    private String isOriginal;
+    @SerializedName("warranty_time")
+    private String warrantyTime;
     public Product(String id, String name, String status, boolean discounted, String image, double minPrice, double averageRate, int review, int soldQuantity, int reviewcount) {
         this.id = id;
         this.name = name;
@@ -142,5 +147,36 @@ public class Product implements Serializable {
 
     public void setSoldQuantity(int soldQuantity) {
         this.soldQuantity = soldQuantity;
+    }
+    public String getConditionPercent() {
+        return conditionPercent;
+    }
+
+    public void setConditionPercent(String conditionPercent) {
+        this.conditionPercent = conditionPercent;
+    }
+
+    public String getBatteryHealth() {
+        return batteryHealth;
+    }
+
+    public void setBatteryHealth(String batteryHealth) {
+        this.batteryHealth = batteryHealth;
+    }
+
+    public String getIsOriginal() {
+        return isOriginal;
+    }
+
+    public void setIsOriginal(String isOriginal) {
+        this.isOriginal = isOriginal;
+    }
+
+    public String getWarrantyTime() {
+        return warrantyTime;
+    }
+
+    public void setWarrantyTime(String warrantyTime) {
+        this.warrantyTime = warrantyTime;
     }
 }

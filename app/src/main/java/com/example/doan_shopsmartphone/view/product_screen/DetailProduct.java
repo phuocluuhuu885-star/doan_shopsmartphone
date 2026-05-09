@@ -387,6 +387,36 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
             strDetailProduct += productDetail.getDescription() + "\n";
             strDetailProduct += "...";
             binding.tvProductDetail.setText(strDetailProduct);
+            
+            // Show condition fields for used products
+            boolean hasConditionInfo = false;
+            if (productDetail.getConditionPercent() != null && !productDetail.getConditionPercent().isEmpty()) {
+                binding.tvConditionPercent.setText("Độ mới: " + productDetail.getConditionPercent() + "%");
+                binding.tvConditionPercent.setVisibility(View.VISIBLE);
+                hasConditionInfo = true;
+            }
+            if (productDetail.getBatteryHealth() != null && !productDetail.getBatteryHealth().isEmpty()) {
+                binding.tvBatteryHealth.setText("Pin: " + productDetail.getBatteryHealth());
+                binding.tvBatteryHealth.setVisibility(View.VISIBLE);
+                hasConditionInfo = true;
+            }
+            if (productDetail.getIsOriginal() != null && !productDetail.getIsOriginal().isEmpty()) {
+                binding.tvIsOriginal.setText(productDetail.getIsOriginal());
+                binding.tvIsOriginal.setVisibility(View.VISIBLE);
+                hasConditionInfo = true;
+            }
+            if (productDetail.getWarrantyTime() != null && !productDetail.getWarrantyTime().isEmpty()) {
+                binding.tvWarrantyTime.setText("Bảo hành: " + productDetail.getWarrantyTime());
+                binding.tvWarrantyTime.setVisibility(View.VISIBLE);
+                hasConditionInfo = true;
+            }
+            
+            if (hasConditionInfo) {
+                binding.llConditionParams.setVisibility(View.VISIBLE);
+            } else {
+                binding.llConditionParams.setVisibility(View.GONE);
+            }
+
             YeuthichRequestBody yeuthichids = new YeuthichRequestBody(AccountUltil.USER.getId(),detailProductResponse.getResult().getId());
             binding.progressBarFavourite.setVisibility(View.VISIBLE);
 
