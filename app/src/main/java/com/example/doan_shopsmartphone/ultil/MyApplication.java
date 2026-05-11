@@ -9,7 +9,7 @@ import com.example.doan_shopsmartphone.R;
 
 
 public class MyApplication extends Application {
-    public static final String CHANNEL_ID = "CHANNEL_1";
+    public static final String CHANNEL_ID = "shop_notification_channel";
 
     @Override
     public void onCreate() {
