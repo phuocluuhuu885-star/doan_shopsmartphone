@@ -2,6 +2,7 @@ package com.example.doan_shopsmartphone.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,23 @@ public class FragmentNotification extends Fragment {
     private List<Notifi> notifiList;
     private Socket mSocket;
     SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+    
+    private final Handler autoRefreshHandler = new Handler();
+    private final Runnable autoRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            getListNotify();
+            setNumberCart();
+            updateUnreadCountInActivity(); // Cập nhật số thông báo chưa đọc ở dưới menu
+            autoRefreshHandler.postDelayed(this, 5000); // Tự động làm mới mỗi 5 giây
+        }
+    };
+
+    private void updateUnreadCountInActivity() {
+        if (isAdded() && getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).fetchUnreadCount();
+        }
+    }
 
     public FragmentNotification() {
         // Required empty public constructor
@@ -89,31 +107,51 @@ public class FragmentNotification extends Fragment {
             public void onRefresh() {
                 getListNotify();
                 setNumberCart();
-                binding.swipeRefreshLayout.setRefreshing(false);
             }
         });
 
     }
 
-    private void getListNotify() {
-        Log.e("APIR", "Token is missing!");
-        String rawToken = AccountUltil.getToken(requireContext());
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Bắt đầu tự động làm mới khi Fragment hiển thị
+        autoRefreshHandler.post(autoRefreshRunnable);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Dừng tự động làm mới khi người dùng chuyển sang tab khác hoặc đóng app
+        autoRefreshHandler.removeCallbacks(autoRefreshRunnable);
+    }
+
+    private void getListNotify() {
+        if (AccountUltil.USER == null) {
+            binding.swipeRefreshLayout.setRefreshing(false);
+            return;
+        }
+
+        // Chỉ hiện progressBar nếu list đang trống (lần đầu load)
+        if (notifiList == null || notifiList.isEmpty()) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+        }
+
+        String rawToken = AccountUltil.getToken(requireContext());
         String token = AccountUltil.BEARER + rawToken;
-        binding.progressBar.setVisibility(View.VISIBLE);
-        Log.d("poas", "getListNotify: "+ AccountUltil.USER.getId());
+
         BaseApi.API.getNotifiList(token, AccountUltil.USER.getId()).enqueue(new Callback<ListNotifiReponse>() {
             @Override
             public void onResponse(Call<ListNotifiReponse> call, Response<ListNotifiReponse> response) {
-                binding.progressBar.setVisibility(View.GONE); // Luôn ẩn khi có phản hồi
+                binding.progressBar.setVisibility(View.GONE);
+                binding.swipeRefreshLayout.setRefreshing(false);
 
-                if(response.isSuccessful() && response.body() != null){
+                if (response.isSuccessful() && response.body() != null) {
                     ListNotifiReponse res = response.body();
-                    if(res.getCode() == 200 || res.getCode() == 201) {
+                    if (res.getCode() == 200 || res.getCode() == 201) {
                         notifiList.clear();
                         notifiList.addAll(res.getResult());
                         notificationAdapter.notifyDataSetChanged();
-
                     }
                 } else {
                     Log.e("API_ERROR", "Error code: " + response.code());
@@ -123,6 +161,7 @@ public class FragmentNotification extends Fragment {
             @Override
             public void onFailure(Call<ListNotifiReponse> call, Throwable t) {
                 binding.progressBar.setVisibility(View.GONE);
+                binding.swipeRefreshLayout.setRefreshing(false);
                 Log.e("API_ERROR", "Failure: " + t.getMessage());
             }
         });
