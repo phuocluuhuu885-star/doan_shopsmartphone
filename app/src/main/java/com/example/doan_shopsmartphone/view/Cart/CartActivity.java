@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -82,6 +83,16 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
             @Override
             public void onClick(View view) {
                 if(CartUtil.listCartCheck.size() > 0) {
+                    // Kiểm tra giới hạn số lượng và tiền
+                    int totalQuantity = 0;
+                    for (OptionAndQuantity item : CartUtil.listCartCheck) {
+                        totalQuantity += item.getQuantity();
+                    }
+
+                    if (totalQuantity > 4 || totalPrice > 150000000) {
+                        showErrorDialog(totalQuantity, totalPrice);
+                        return;
+                    }
 
                     updateCart();
                     overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
@@ -91,6 +102,25 @@ public class CartActivity extends AppCompatActivity implements CartInterface, It
             }
         });
 
+    }
+
+    private void showErrorDialog(int totalQuantity, int totalPrice) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Không thể thanh toán");
+
+        StringBuilder message = new StringBuilder("Đơn hàng của bạn không hợp lệ vì:\n");
+        if (totalQuantity > 4) {
+            message.append("- Số lượng sản phẩm (").append(totalQuantity).append(") vượt quá giới hạn 4 sản phẩm.\n");
+        }
+        if (totalPrice > 150000000) {
+            DecimalFormat df = new DecimalFormat("###,###,###");
+            message.append("- Tổng số tiền (").append(df.format(totalPrice)).append(" đ) vượt quá giới hạn 150 triệu VNĐ.");
+        }
+
+        builder.setMessage(message.toString());
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.setCancelable(false);
+        builder.create().show();
     }
     private void initView() {
         // Xóa toàn bộ list đc chọn cũ

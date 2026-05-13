@@ -750,8 +750,17 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
                 if (optionProduct != null) {
                     if (isCheck) {
 
+                        // Tính toán tổng tiền thực tế (Giá sau khi trừ khuyến mãi)
+                        double checkvoucher = (double) (100 - optionProduct.getDiscountValue()) / 100;
+                        int currentTotalPrice = (int) (optionProduct.getPrice() * checkvoucher * quantityProduct);
+
+                        if (quantityProduct > 4 || currentTotalPrice > 150000000) {
+                            showErrorDialog(quantityProduct, currentTotalPrice);
+                            return;
+                        }
+
                         Intent intent = new Intent(DetailProduct.this, PayActivity.class);
-                        intent.putExtra("totalPrice", totalPrice);
+                        intent.putExtra("totalPrice", currentTotalPrice);
                         startActivity(intent);
 //                    } else if (quantityProduct > optionProduct.getSoldQuantity()) {
 //                        Toast.makeText(DetailProduct.this, "Không thể thêm quá số lượng sản phẩm trong kho", Toast.LENGTH_SHORT).show();
@@ -793,6 +802,25 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
                 }
             }
         });
+    }
+
+    private void showErrorDialog(int totalQuantity, int totalPrice) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Không thể thanh toán");
+
+        StringBuilder message = new StringBuilder("Đơn hàng của bạn không hợp lệ vì:\n");
+        if (totalQuantity > 4) {
+            message.append("- Số lượng sản phẩm (").append(totalQuantity).append(") vượt quá giới hạn 4 sản phẩm.\n");
+        }
+        if (totalPrice > 150000000) {
+            DecimalFormat df = new DecimalFormat("###,###,###");
+            message.append("- Tổng số tiền (").append(df.format(totalPrice)).append(" đ) vượt quá giới hạn 150 triệu VNĐ.");
+        }
+
+        builder.setMessage(message.toString());
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.setCancelable(false);
+        builder.create().show();
     }
 
     private void urlCartAdd(LayoutDialigOptionProductBinding bindingOption) {
