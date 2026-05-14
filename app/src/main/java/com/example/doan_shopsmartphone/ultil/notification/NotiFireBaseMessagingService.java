@@ -18,6 +18,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.example.doan_shopsmartphone.MainActivity;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.view.oder.DetailOderActivity;
+import com.example.doan_shopsmartphone.view.product_screen.DetailProduct;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -25,8 +26,12 @@ public class NotiFireBaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         String orderId = "";
+        String type = "";
+        String productId = "";
         if (remoteMessage.getData().size() > 0) {
             orderId = remoteMessage.getData().get("order_id");
+            type = remoteMessage.getData().get("type");
+            productId = remoteMessage.getData().get("product_id");
         }
 
         // 2. Lấy tiêu đề và nội dung
@@ -43,10 +48,10 @@ public class NotiFireBaseMessagingService extends FirebaseMessagingService {
         }
 
         // 3. Hiển thị thông báo
-        sendNotification(title, messageBody, orderId);
+        sendNotification(title, messageBody, orderId, type, productId);
     }
 
-    private void sendNotification(String title, String messageBody, String orderId) {
+    private void sendNotification(String title, String messageBody, String orderId, String type, String productId) {
         String channelId = "shop_notification_channel";
 
         // 1. Tạo Intent thông minh: Nhấn vào sẽ mở màn hình chi tiết (nếu có ID)
@@ -55,6 +60,9 @@ public class NotiFireBaseMessagingService extends FirebaseMessagingService {
             // Thay 'OrderDetailActivity' bằng tên Activity chi tiết đơn hàng của bạn
             intent = new Intent(this, DetailOderActivity.class);
             intent.putExtra("ORDER_ID_KEY", orderId); // Truyền ID sang để Activity xử lý
+        } else if ("NEW_PRODUCT".equals(type) && productId != null && !productId.isEmpty()) {
+            intent = new Intent(this, DetailProduct.class);
+            intent.putExtra("id_product", productId);
         } else {
             intent = new Intent(this, MainActivity.class);
         }
