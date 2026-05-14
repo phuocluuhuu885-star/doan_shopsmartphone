@@ -16,7 +16,8 @@ import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.ActivityOptionSelectionBinding;
 import com.example.doan_shopsmartphone.model.OptionProduct;
 import com.example.doan_shopsmartphone.model.Product;
-import com.example.doan_shopsmartphone.model.ServerResponse;
+import com.example.doan_shopsmartphone.model.ProductDetail;
+import com.example.doan_shopsmartphone.model.response.ServerResponse;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.google.gson.Gson;
 
@@ -34,7 +35,7 @@ import retrofit2.Response;
 public class OptionSelectionActivity extends AppCompatActivity {
 
     private ActivityOptionSelectionBinding binding;
-    private Product product;
+    private ProductDetail product;
     private List<OptionProduct> allOptions;
     
     private AttributeAdapter colorAdapter, storageAdapter, conditionAdapter, batteryAdapter, integrityAdapter, warrantyAdapter;
@@ -56,7 +57,7 @@ public class OptionSelectionActivity extends AppCompatActivity {
     private void initData() {
         String productJson = getIntent().getStringExtra("product_json");
         if (productJson != null) {
-            product = new Gson().fromJson(productJson, Product.class);
+            product = new Gson().fromJson(productJson, ProductDetail.class);
             allOptions = product.getOption();
         } else {
             finish();

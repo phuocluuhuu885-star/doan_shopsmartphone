@@ -43,6 +43,7 @@ import com.example.doan_shopsmartphone.adapter.OptionAdapter;
 import com.example.doan_shopsmartphone.model.VoucherDetail;
 import com.example.doan_shopsmartphone.model.response.VoucherDetaiResponse;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
