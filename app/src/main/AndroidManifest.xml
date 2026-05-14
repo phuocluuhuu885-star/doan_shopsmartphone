@@ -122,6 +122,9 @@
             android:name=".view.product_screen.DetailProduct"
             android:exported="false" />
         <activity
+            android:name=".view.product_screen.OptionSelectionActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.find_product.FindProduct"
             android:exported="false" />
         <activity
