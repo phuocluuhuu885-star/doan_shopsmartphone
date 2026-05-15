@@ -38,7 +38,7 @@ public class OptionSelectionActivity extends AppCompatActivity {
     private ProductDetail product;
     private List<OptionProduct> allOptions;
     
-    private AttributeAdapter colorAdapter, ramAdapter, storageAdapter, integrityAdapter;
+    private AttributeAdapter colorAdapter, ramAdapter, storageAdapter, conditionAdapter, integrityAdapter;
     
     private OptionProduct selectedOptionMatch = null;
 
@@ -76,14 +76,16 @@ public class OptionSelectionActivity extends AppCompatActivity {
 
     private void setupAdapters() {
         // Extract unique values
-        List<String> colors = getUniqueValues(allOptions, "color");
-        List<String> rams = getUniqueValues(allOptions, "ram");
-        List<String> storages = getUniqueValues(allOptions, "storage");
-        List<String> integrities = getUniqueValues(allOptions, "integrity");
+        List<String> colors = getUniqueValues("color");
+        List<String> rams = getUniqueValues("ram");
+        List<String> storages = getUniqueValues("storage");
+        List<String> conditions = getUniqueValues("condition");
+        List<String> integrities = getUniqueValues("integrity");
 
         colorAdapter = createAdapter(colors);
         ramAdapter = createAdapter(rams);
         storageAdapter = createAdapter(storages);
+        conditionAdapter = createAdapter(conditions);
         integrityAdapter = createAdapter(integrities);
 
         binding.rvColors.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -95,59 +97,64 @@ public class OptionSelectionActivity extends AppCompatActivity {
         binding.rvStorage.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.rvStorage.setAdapter(storageAdapter);
 
+        binding.rvCondition.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        binding.rvCondition.setAdapter(conditionAdapter);
+
         binding.rvIntegrity.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.rvIntegrity.setAdapter(integrityAdapter);
         
         binding.btnConfirm.setOnClickListener(v -> handleConfirm());
     }
 
-    private List<String> getUniqueValues(List<OptionProduct> options, String type) {
-        Set<String> set = new HashSet<>();
-        for (OptionProduct op : options) {
-            String val = "";
-            switch (type) {
-                case "color": val = op.getNameColor(); break;
-                case "ram": val = op.getRam(); break;
-                case "storage": val = op.getStorageCapacity(); break;
-                case "integrity": val = op.getIsOriginal(); break;
-            }
-            if (val != null && !val.isEmpty()) set.add(val);
-        }
-        return new ArrayList<>(set);
+    private List<String> getUniqueValues(String type) {
+        return allOptions.stream()
+            .map(op -> {
+                switch (type) {
+                    case "color": return op.getNameColor();
+                    case "ram": return op.getRam();
+                    case "storage": return op.getStorageCapacity();
+                    case "condition": return op.getConditionPercent();
+                    case "integrity": return op.getIsOriginal();
+                    default: return "";
+                }
+            })
+            .filter(val -> val != null && !val.isEmpty())
+            .distinct()
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     private AttributeAdapter createAdapter(List<String> values) {
-        return new AttributeAdapter(values, value -> {
-            evaluateStates();
+        return new AttributeAdapter(values, selectedValue -> {
+            updateOptionsAvailability();
+            findMatch(
+                    colorAdapter.getSelectedValue(),
+                    ramAdapter.getSelectedValue(),
+                    storageAdapter.getSelectedValue(),
+                    conditionAdapter.getSelectedValue(),
+                    integrityAdapter.getSelectedValue()
+            );
             updateUI();
         });
     }
 
-    private void evaluateStates() {
-        String selColor = colorAdapter.getSelectedValue();
-        String selRam = ramAdapter.getSelectedValue();
-        String selStorage = storageAdapter.getSelectedValue();
-        String selIntegrity = integrityAdapter.getSelectedValue();
-
-        // Dynamic Filtering
-        colorAdapter.updateStates(getViableValues("color", selRam, selStorage, selIntegrity));
-        ramAdapter.updateStates(getViableValues("ram", selColor, selStorage, selIntegrity));
-        storageAdapter.updateStates(getViableValues("storage", selColor, selRam, selIntegrity));
-        integrityAdapter.updateStates(getViableValues("integrity", selColor, selRam, selStorage));
-
-        // Try to find a perfect match
-        findMatch(selColor, selRam, selStorage, selIntegrity);
+    private void updateOptionsAvailability() {
+        colorAdapter.updateStates(getViableValues("color"));
+        ramAdapter.updateStates(getViableValues("ram"));
+        storageAdapter.updateStates(getViableValues("storage"));
+        conditionAdapter.updateStates(getViableValues("condition"));
+        integrityAdapter.updateStates(getViableValues("integrity"));
     }
 
-    private List<String> getViableValues(String targetType, String... otherSelections) {
-        // Logic: Filter allOptions where they match all non-null otherSelections
+    private List<String> getViableValues(String targetType) {
         return allOptions.stream()
-                .filter(op -> matchesOther(op, targetType, otherSelections))
+                .filter(op -> matchesOther(op, targetType))
                 .map(op -> {
                     switch (targetType) {
                         case "color": return op.getNameColor();
                         case "ram": return op.getRam();
                         case "storage": return op.getStorageCapacity();
+                        case "condition": return op.getConditionPercent();
                         case "integrity": return op.getIsOriginal();
                         default: return "";
                     }
@@ -156,33 +163,32 @@ public class OptionSelectionActivity extends AppCompatActivity {
                 .collect(Collectors.toList());
     }
 
-    private boolean matchesOther(OptionProduct op, String targetType, String[] others) {
-        // indices mapping: 0:color, 1:storage, 2:condition, 3:battery, 4:integrity, 5:warranty
-        // But the input 'others' depends on which targetType we are evaluating.
-        // This is a bit tricky, let's use the explicit selection variables.
-        
+    private boolean matchesOther(OptionProduct op, String targetType) {
         String selColor = colorAdapter.getSelectedValue();
         String selRam = ramAdapter.getSelectedValue();
         String selStorage = storageAdapter.getSelectedValue();
+        String selCondition = conditionAdapter.getSelectedValue();
         String selIntegrity = integrityAdapter.getSelectedValue();
 
         if (!targetType.equals("color") && selColor != null && !selColor.equals(op.getNameColor())) return false;
         if (!targetType.equals("ram") && selRam != null && !selRam.equals(op.getRam())) return false;
         if (!targetType.equals("storage") && selStorage != null && !selStorage.equals(op.getStorageCapacity())) return false;
+        if (!targetType.equals("condition") && selCondition != null && !selCondition.equals(op.getConditionPercent())) return false;
         if (!targetType.equals("integrity") && selIntegrity != null && !selIntegrity.equals(op.getIsOriginal())) return false;
         
         return true;
     }
 
-    private void findMatch(String color, String ram, String storage, String integrity) {
+    private void findMatch(String color, String ram, String storage, String condition, String integrity) {
         selectedOptionMatch = null;
         for (OptionProduct op : allOptions) {
-            boolean mColor = (color == null && (op.getNameColor() == null || op.getNameColor().isEmpty())) || (color != null && color.equals(op.getNameColor()));
-            boolean mRam = (ram == null && (op.getRam() == null || op.getRam().isEmpty())) || (ram != null && ram.equals(op.getRam()));
-            boolean mStorage = (storage == null && (op.getStorageCapacity() == null || op.getStorageCapacity().isEmpty())) || (storage != null && storage.equals(op.getStorageCapacity()));
-            boolean mIntegrity = (integrity == null && (op.getIsOriginal() == null || op.getIsOriginal().isEmpty())) || (integrity != null && integrity.equals(op.getIsOriginal()));
+            boolean mColor = (color == null) || color.equals(op.getNameColor());
+            boolean mRam = (ram == null) || ram.equals(op.getRam());
+            boolean mStorage = (storage == null) || storage.equals(op.getStorageCapacity());
+            boolean mCondition = (condition == null) || condition.equals(op.getConditionPercent());
+            boolean mIntegrity = (integrity == null) || integrity.equals(op.getIsOriginal());
 
-            if (mColor && mRam && mStorage && mIntegrity) {
+            if (mColor && mRam && mStorage && mCondition && mIntegrity) {
                 selectedOptionMatch = op;
                 break;
             }
