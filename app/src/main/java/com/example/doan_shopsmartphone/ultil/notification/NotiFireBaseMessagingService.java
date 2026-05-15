@@ -54,16 +54,27 @@ public class NotiFireBaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(String title, String messageBody, String orderId, String type, String productId) {
         String channelId = "shop_notification_channel";
 
-        // 1. Tạo Intent thông minh: Nhấn vào sẽ mở màn hình chi tiết (nếu có ID)
+        // 1. Tạo Intent thông minh: Ưu tiên theo Loại và ID thực tế
         Intent intent;
-        if (orderId != null && !orderId.isEmpty()) {
-            // Thay 'OrderDetailActivity' bằng tên Activity chi tiết đơn hàng của bạn
+        
+        // Kiểm tra tính hợp lệ của ID và Loại
+        boolean isPromotion = "promotion".equalsIgnoreCase(type) || "voucher".equalsIgnoreCase(type) || "system".equalsIgnoreCase(type);
+        boolean hasOrderId = orderId != null && !orderId.trim().isEmpty() && !"null".equalsIgnoreCase(orderId) && !"undefined".equalsIgnoreCase(orderId);
+        boolean hasProductId = productId != null && !productId.trim().isEmpty() && !"null".equalsIgnoreCase(productId) && !"undefined".equalsIgnoreCase(productId);
+
+        if (isPromotion && !hasProductId) {
+            // Đây chắc chắn là Voucher hoặc thông báo hệ thống -> Về trang chủ
+            intent = new Intent(this, MainActivity.class);
+        } else if (hasOrderId) {
+            // Chỉ mở đơn hàng nếu thực sự có ID đơn hàng hợp lệ
             intent = new Intent(this, DetailOderActivity.class);
-            intent.putExtra("ORDER_ID_KEY", orderId); // Truyền ID sang để Activity xử lý
-        } else if (("NEW_PRODUCT".equals(type) || "promotion".equals(type)) && productId != null && !productId.isEmpty()) {
+            intent.putExtra("ORDER_ID_KEY", orderId);
+        } else if (hasProductId) {
+            // Mở chi tiết sản phẩm
             intent = new Intent(this, DetailProduct.class);
             intent.putExtra("id_product", productId);
         } else {
+            // Mặc định về trang chủ cho mọi trường hợp khác
             intent = new Intent(this, MainActivity.class);
         }
 

@@ -133,12 +133,22 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             @Override
             public void onClick(View v) {
                 Intent intent;
-                if ("promotion".equals(notification.getType()) && notification.getProduct_id() != null && !notification.getProduct_id().isEmpty()) {
+                boolean isPromotion = "promotion".equalsIgnoreCase(notification.getType()) || "voucher".equalsIgnoreCase(notification.getType()) || "system".equalsIgnoreCase(notification.getType());
+                boolean hasProductId = notification.getProduct_id() != null && !notification.getProduct_id().trim().isEmpty() && !"null".equalsIgnoreCase(notification.getProduct_id()) && !"undefined".equalsIgnoreCase(notification.getProduct_id());
+                boolean hasOrderId = notification.getOrder_id() != null && !notification.getOrder_id().trim().isEmpty() && !"null".equalsIgnoreCase(notification.getOrder_id()) && !"undefined".equalsIgnoreCase(notification.getOrder_id());
+
+                if (isPromotion && !hasProductId) {
+                    // Voucher mới hoặc khuyến mãi -> Về trang chủ
+                    intent = new Intent(context, MainActivity.class);
+                } else if (hasProductId) {
                     intent = new Intent(context, DetailProduct.class);
                     intent.putExtra("id_product", notification.getProduct_id());
-                } else {
+                } else if (hasOrderId) {
                     intent = new Intent(context, DetailOderActivity.class);
                     intent.putExtra("ORDER_ID_KEY", notification.getOrder_id());
+                } else {
+                    // Mặc định về trang chủ
+                    intent = new Intent(context, MainActivity.class);
                 }
 
                 BaseApi.API.updateStatusNotifi(notification.getId()).enqueue(new Callback<UpdateStatusResponse>() {
