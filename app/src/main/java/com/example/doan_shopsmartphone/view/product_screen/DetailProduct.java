@@ -336,9 +336,18 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
                 String linkImg = detailProductResponse.getResult().getImage().get(i);
                 listImg.add(new SlideModel(linkImg, ScaleTypes.FIT));
             }
-            if (detailProductResponse.getResult().getOption().size() != 0) {
+            if (detailProductResponse.getResult().getOption() != null && detailProductResponse.getResult().getOption().size() != 0) {
+                double calculatedMinPrice = Double.MAX_VALUE;
+                for (com.example.doan_shopsmartphone.model.OptionProduct opt : detailProductResponse.getResult().getOption()) {
+                    double discount = (double) (100 - opt.getDiscountValue()) / 100;
+                    double actualPrice = opt.getPrice() * discount;
+                    if (actualPrice < calculatedMinPrice) {
+                        calculatedMinPrice = actualPrice;
+                    }
+                }
+                if (calculatedMinPrice == Double.MAX_VALUE) calculatedMinPrice = 0;
                 DecimalFormat df = new DecimalFormat("###,###,###");
-                String price = df.format(minPrice) + " đ";
+                String price = df.format(calculatedMinPrice) + " đ";
                 binding.tvPrice.setText(price);
             } else {
                 binding.tvPrice.setText("Không có dữ liệu trả về");

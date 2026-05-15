@@ -207,10 +207,25 @@ public class OptionSelectionActivity extends AppCompatActivity {
                 binding.btnConfirm.setText("Xác nhận");
             }
         } else {
-            binding.tvPrice.setText("Vui lòng chọn cấu hình");
-            binding.tvStock.setText("Kho: --");
+            double calculatedMinPrice = Double.MAX_VALUE;
+            int totalQuantity = 0;
+            if (allOptions != null && allOptions.size() > 0) {
+                for (OptionProduct op : allOptions) {
+                    double discount = (double) (100 - op.getDiscountValue()) / 100;
+                    double actualPrice = op.getPrice() * discount;
+                    if (actualPrice < calculatedMinPrice) {
+                        calculatedMinPrice = actualPrice;
+                    }
+                    totalQuantity += op.getQuantity();
+                }
+            }
+            if (calculatedMinPrice == Double.MAX_VALUE) calculatedMinPrice = 0;
+            
+            DecimalFormat df = new DecimalFormat("###,###,###");
+            binding.tvPrice.setText(df.format(calculatedMinPrice) + " đ");
+            binding.tvStock.setText("Kho: " + totalQuantity);
             binding.btnConfirm.setEnabled(false);
-            binding.btnConfirm.setText("Xác nhận");
+            binding.btnConfirm.setText("Chọn cấu hình");
             
             if (allOptions.size() > 0) {
                 Glide.with(this).load(allOptions.get(0).getImage()).into(binding.imgOption);
