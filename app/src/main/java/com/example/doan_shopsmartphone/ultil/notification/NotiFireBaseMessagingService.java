@@ -60,7 +60,7 @@ public class NotiFireBaseMessagingService extends FirebaseMessagingService {
             // Thay 'OrderDetailActivity' bằng tên Activity chi tiết đơn hàng của bạn
             intent = new Intent(this, DetailOderActivity.class);
             intent.putExtra("ORDER_ID_KEY", orderId); // Truyền ID sang để Activity xử lý
-        } else if ("NEW_PRODUCT".equals(type) && productId != null && !productId.isEmpty()) {
+        } else if (("NEW_PRODUCT".equals(type) || "promotion".equals(type)) && productId != null && !productId.isEmpty()) {
             intent = new Intent(this, DetailProduct.class);
             intent.putExtra("id_product", productId);
         } else {

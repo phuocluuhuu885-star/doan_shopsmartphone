@@ -17,8 +17,10 @@ public class Notifi implements Serializable {
     private String updatedAt;
     @SerializedName("order_id")
     private  String order_id;
+    @SerializedName("product_id")
+    private  String product_id;
 
-    public Notifi(String id, User sender, User receiver, String content, String status, String type, String createdAt, String updatedAt, String order_id) {
+    public Notifi(String id, User sender, User receiver, String content, String status, String type, String createdAt, String updatedAt, String order_id, String product_id) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -28,6 +30,15 @@ public class Notifi implements Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.order_id = order_id;
+        this.product_id = product_id;
+    }
+
+    public String getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
     }
 
     public String getOrder_id() {

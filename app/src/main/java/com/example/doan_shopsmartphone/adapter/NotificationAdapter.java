@@ -27,6 +27,7 @@ import com.example.doan_shopsmartphone.model.response.UpdateStatusResponse;
 import com.example.doan_shopsmartphone.model.response.store.DetailBills;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.view.oder.DetailOderActivity;
+import com.example.doan_shopsmartphone.view.product_screen.DetailProduct;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -131,9 +132,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, DetailOderActivity.class);
-                // Truyền ID đơn hàng đi
-                intent.putExtra("ORDER_ID_KEY", notification.getOrder_id());
+                Intent intent;
+                if ("promotion".equals(notification.getType()) && notification.getProduct_id() != null && !notification.getProduct_id().isEmpty()) {
+                    intent = new Intent(context, DetailProduct.class);
+                    intent.putExtra("id_product", notification.getProduct_id());
+                } else {
+                    intent = new Intent(context, DetailOderActivity.class);
+                    intent.putExtra("ORDER_ID_KEY", notification.getOrder_id());
+                }
 
                 BaseApi.API.updateStatusNotifi(notification.getId()).enqueue(new Callback<UpdateStatusResponse>() {
                     @Override
