@@ -38,7 +38,7 @@ public class OptionSelectionActivity extends AppCompatActivity {
     private ProductDetail product;
     private List<OptionProduct> allOptions;
     
-    private AttributeAdapter colorAdapter, storageAdapter, conditionAdapter, batteryAdapter, integrityAdapter, warrantyAdapter;
+    private AttributeAdapter colorAdapter, ramAdapter, storageAdapter, integrityAdapter;
     
     private OptionProduct selectedOptionMatch = null;
 
@@ -77,36 +77,26 @@ public class OptionSelectionActivity extends AppCompatActivity {
     private void setupAdapters() {
         // Extract unique values
         List<String> colors = getUniqueValues(allOptions, "color");
+        List<String> rams = getUniqueValues(allOptions, "ram");
         List<String> storages = getUniqueValues(allOptions, "storage");
-        List<String> conditions = getUniqueValues(allOptions, "condition");
-        List<String> batteries = getUniqueValues(allOptions, "battery");
         List<String> integrities = getUniqueValues(allOptions, "integrity");
-        List<String> warranties = getUniqueValues(allOptions, "warranty");
 
         colorAdapter = createAdapter(colors);
+        ramAdapter = createAdapter(rams);
         storageAdapter = createAdapter(storages);
-        conditionAdapter = createAdapter(conditions);
-        batteryAdapter = createAdapter(batteries);
         integrityAdapter = createAdapter(integrities);
-        warrantyAdapter = createAdapter(warranties);
 
         binding.rvColors.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.rvColors.setAdapter(colorAdapter);
 
+        binding.rvRam.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        binding.rvRam.setAdapter(ramAdapter);
+
         binding.rvStorage.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.rvStorage.setAdapter(storageAdapter);
 
-        binding.rvCondition.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        binding.rvCondition.setAdapter(conditionAdapter);
-
-        binding.rvBattery.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        binding.rvBattery.setAdapter(batteryAdapter);
-
         binding.rvIntegrity.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.rvIntegrity.setAdapter(integrityAdapter);
-
-        binding.rvWarranty.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        binding.rvWarranty.setAdapter(warrantyAdapter);
         
         binding.btnConfirm.setOnClickListener(v -> handleConfirm());
     }
@@ -117,11 +107,9 @@ public class OptionSelectionActivity extends AppCompatActivity {
             String val = "";
             switch (type) {
                 case "color": val = op.getNameColor(); break;
+                case "ram": val = op.getRam(); break;
                 case "storage": val = op.getStorageCapacity(); break;
-                case "condition": val = op.getConditionPercent(); break;
-                case "battery": val = op.getBatteryHealth(); break;
                 case "integrity": val = op.getIsOriginal(); break;
-                case "warranty": val = op.getWarrantyTime(); break;
             }
             if (val != null && !val.isEmpty()) set.add(val);
         }
@@ -137,24 +125,18 @@ public class OptionSelectionActivity extends AppCompatActivity {
 
     private void evaluateStates() {
         String selColor = colorAdapter.getSelectedValue();
+        String selRam = ramAdapter.getSelectedValue();
         String selStorage = storageAdapter.getSelectedValue();
-        String selCondition = conditionAdapter.getSelectedValue();
-        String selBattery = batteryAdapter.getSelectedValue();
         String selIntegrity = integrityAdapter.getSelectedValue();
-        String selWarranty = warrantyAdapter.getSelectedValue();
 
-        // Dynamic Filtering Logic: 
-        // For each group, calculate which values are "viable" given the selections in OTHER groups.
-        
-        colorAdapter.updateStates(getViableValues("color", selStorage, selCondition, selBattery, selIntegrity, selWarranty));
-        storageAdapter.updateStates(getViableValues("storage", selColor, selCondition, selBattery, selIntegrity, selWarranty));
-        conditionAdapter.updateStates(getViableValues("condition", selColor, selStorage, selBattery, selIntegrity, selWarranty));
-        batteryAdapter.updateStates(getViableValues("battery", selColor, selStorage, selCondition, selIntegrity, selWarranty));
-        integrityAdapter.updateStates(getViableValues("integrity", selColor, selStorage, selCondition, selBattery, selWarranty));
-        warrantyAdapter.updateStates(getViableValues("warranty", selColor, selStorage, selCondition, selBattery, selIntegrity));
+        // Dynamic Filtering
+        colorAdapter.updateStates(getViableValues("color", selRam, selStorage, selIntegrity));
+        ramAdapter.updateStates(getViableValues("ram", selColor, selStorage, selIntegrity));
+        storageAdapter.updateStates(getViableValues("storage", selColor, selRam, selIntegrity));
+        integrityAdapter.updateStates(getViableValues("integrity", selColor, selRam, selStorage));
 
         // Try to find a perfect match
-        findMatch(selColor, selStorage, selCondition, selBattery, selIntegrity, selWarranty);
+        findMatch(selColor, selRam, selStorage, selIntegrity);
     }
 
     private List<String> getViableValues(String targetType, String... otherSelections) {
@@ -164,11 +146,9 @@ public class OptionSelectionActivity extends AppCompatActivity {
                 .map(op -> {
                     switch (targetType) {
                         case "color": return op.getNameColor();
+                        case "ram": return op.getRam();
                         case "storage": return op.getStorageCapacity();
-                        case "condition": return op.getConditionPercent();
-                        case "battery": return op.getBatteryHealth();
                         case "integrity": return op.getIsOriginal();
-                        case "warranty": return op.getWarrantyTime();
                         default: return "";
                     }
                 })
@@ -182,37 +162,27 @@ public class OptionSelectionActivity extends AppCompatActivity {
         // This is a bit tricky, let's use the explicit selection variables.
         
         String selColor = colorAdapter.getSelectedValue();
+        String selRam = ramAdapter.getSelectedValue();
         String selStorage = storageAdapter.getSelectedValue();
-        String selCondition = conditionAdapter.getSelectedValue();
-        String selBattery = batteryAdapter.getSelectedValue();
         String selIntegrity = integrityAdapter.getSelectedValue();
-        String selWarranty = warrantyAdapter.getSelectedValue();
 
         if (!targetType.equals("color") && selColor != null && !selColor.equals(op.getNameColor())) return false;
+        if (!targetType.equals("ram") && selRam != null && !selRam.equals(op.getRam())) return false;
         if (!targetType.equals("storage") && selStorage != null && !selStorage.equals(op.getStorageCapacity())) return false;
-        if (!targetType.equals("condition") && selCondition != null && !selCondition.equals(op.getConditionPercent())) return false;
-        if (!targetType.equals("battery") && selBattery != null && !selBattery.equals(op.getBatteryHealth())) return false;
         if (!targetType.equals("integrity") && selIntegrity != null && !selIntegrity.equals(op.getIsOriginal())) return false;
-        if (!targetType.equals("warranty") && selWarranty != null && !selWarranty.equals(op.getWarrantyTime())) return false;
         
         return true;
     }
 
-    private void findMatch(String color, String storage, String condition, String battery, String integrity, String warranty) {
-        // Only match if all required fields are selected
-        // Note: some products might not have all 6 attributes. 
-        // We only care about matching what exists in the schema for that product.
-        
+    private void findMatch(String color, String ram, String storage, String integrity) {
         selectedOptionMatch = null;
         for (OptionProduct op : allOptions) {
             boolean mColor = (color == null && (op.getNameColor() == null || op.getNameColor().isEmpty())) || (color != null && color.equals(op.getNameColor()));
+            boolean mRam = (ram == null && (op.getRam() == null || op.getRam().isEmpty())) || (ram != null && ram.equals(op.getRam()));
             boolean mStorage = (storage == null && (op.getStorageCapacity() == null || op.getStorageCapacity().isEmpty())) || (storage != null && storage.equals(op.getStorageCapacity()));
-            boolean mCondition = (condition == null && (op.getConditionPercent() == null || op.getConditionPercent().isEmpty())) || (condition != null && condition.equals(op.getConditionPercent()));
-            boolean mBattery = (battery == null && (op.getBatteryHealth() == null || op.getBatteryHealth().isEmpty())) || (battery != null && battery.equals(op.getBatteryHealth()));
             boolean mIntegrity = (integrity == null && (op.getIsOriginal() == null || op.getIsOriginal().isEmpty())) || (integrity != null && integrity.equals(op.getIsOriginal()));
-            boolean mWarranty = (warranty == null && (op.getWarrantyTime() == null || op.getWarrantyTime().isEmpty())) || (warranty != null && warranty.equals(op.getWarrantyTime()));
 
-            if (mColor && mStorage && mCondition && mBattery && mIntegrity && mWarranty) {
+            if (mColor && mRam && mStorage && mIntegrity) {
                 selectedOptionMatch = op;
                 break;
             }

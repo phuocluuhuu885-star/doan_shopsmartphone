@@ -29,6 +29,10 @@ public class OptionProduct {
     @SerializedName("warranty_time")
     private String warrantyTime;
 
+    private String ram;
+    private String screen;
+
+
     public String getStorageCapacity() {
         return storageCapacity;
     }
@@ -69,20 +73,43 @@ public class OptionProduct {
         this.warrantyTime = warrantyTime;
     }
 
+    public String getRam() {
+        return ram;
+    }
+
+    public void setRam(String ram) {
+        this.ram = ram;
+    }
+
+    public String getScreen() {
+        return screen;
+    }
+
+    public void setScreen(String screen) {
+        this.screen = screen;
+    }
+
     public OptionProduct() {
     }
 
-    public OptionProduct(String id, String productId, String nameColor, String colorCode, String image, int price, int discount_value, int quantity, int soldQuantity, boolean hot_option) {
+    public OptionProduct(String id, String productId, String nameColor, String colorCode, String image, int price, int discountValue, int quantity, int soldQuantity, boolean hot_option, String storageCapacity, String conditionPercent, String batteryHealth, String isOriginal, String warrantyTime, String ram, String screen) {
         this.id = id;
         this.productId = productId;
         this.nameColor = nameColor;
         this.colorCode = colorCode;
         this.image = image;
         this.price = price;
-        this.discountValue = discount_value;
+        this.discountValue = discountValue;
         this.quantity = quantity;
         this.soldQuantity = soldQuantity;
         this.hot_option = hot_option;
+        this.storageCapacity = storageCapacity;
+        this.conditionPercent = conditionPercent;
+        this.batteryHealth = batteryHealth;
+        this.isOriginal = isOriginal;
+        this.warrantyTime = warrantyTime;
+        this.ram = ram;
+        this.screen = screen;
     }
 
     @Override

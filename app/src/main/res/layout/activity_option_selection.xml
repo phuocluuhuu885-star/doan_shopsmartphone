@@ -97,7 +97,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dung lượng"
+                android:text="RAM"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dung lượng (ROM)"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
             <androidx.recyclerview.widget.RecyclerView
@@ -109,47 +121,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Độ mới (Ngoại hình)"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvCondition"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tình trạng Pin"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvBattery"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tính toàn vẹn phần cứng"
+                android:text="Nguồn gốc (Zin/Không zin)"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvIntegrity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chính sách bảo hành"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvWarranty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="100dp" />
