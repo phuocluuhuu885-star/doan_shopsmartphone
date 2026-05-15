@@ -394,11 +394,68 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
 //            }
 
 
-            strDetailProduct += productDetail.getDescription() + "\n";
-            strDetailProduct += "...";
-            binding.tvProductDetail.setText(strDetailProduct);
-            
-            // Show condition fields for used products
+            // Populate Specs Table
+            if (productDetail.getManufacturer() != null && !productDetail.getManufacturer().isEmpty()) {
+                binding.tvSpecManufacturer.setText(productDetail.getManufacturer());
+                binding.rowManufacturer.setVisibility(View.VISIBLE);
+            } else {
+                binding.rowManufacturer.setVisibility(View.GONE);
+            }
+
+            if (productDetail.getOperatingSystem() != null && !productDetail.getOperatingSystem().isEmpty()) {
+                binding.tvSpecOS.setText(productDetail.getOperatingSystem());
+                binding.rowOS.setVisibility(View.VISIBLE);
+            } else {
+                binding.rowOS.setVisibility(View.GONE);
+            }
+
+            if (productDetail.getStatus() != null && !productDetail.getStatus().isEmpty()) {
+                binding.tvSpecStatus.setText(productDetail.getStatus());
+                binding.rowStatus.setVisibility(View.VISIBLE);
+            } else {
+                binding.rowStatus.setVisibility(View.GONE);
+            }
+
+            if (productDetail.getCategory_id() != null && productDetail.getCategory_id().getName() != null) {
+                binding.tvSpecCategory.setText(productDetail.getCategory_id().getName());
+                binding.rowCategory.setVisibility(View.VISIBLE);
+            } else {
+                binding.rowCategory.setVisibility(View.GONE);
+            }
+
+            if (productDetail.getScreen() != null && !productDetail.getScreen().isEmpty()) {
+                binding.tvSpecScreen.setText(productDetail.getScreen());
+                binding.rowScreen.setVisibility(View.VISIBLE);
+            } else {
+                binding.rowScreen.setVisibility(View.GONE);
+            }
+
+            if (productDetail.getCamera() != null && !productDetail.getCamera().isEmpty()) {
+                binding.tvSpecCamera.setText(productDetail.getCamera());
+                binding.rowCamera.setVisibility(View.VISIBLE);
+            } else {
+                binding.rowCamera.setVisibility(View.GONE);
+            }
+
+            if (productDetail.getChipset() != null && !productDetail.getChipset().isEmpty()) {
+                binding.tvSpecChipset.setText(productDetail.getChipset());
+                binding.rowChipset.setVisibility(View.VISIBLE);
+            } else {
+                binding.rowChipset.setVisibility(View.GONE);
+            }
+
+            if (productDetail.getBattery() != null && !productDetail.getBattery().isEmpty()) {
+                binding.tvSpecBattery.setText(productDetail.getBattery());
+                binding.rowBattery.setVisibility(View.VISIBLE);
+            } else {
+                binding.rowBattery.setVisibility(View.GONE);
+            }
+
+            // Hide old description-related UI elements as they are replaced by the table
+            // binding.tvProductDetail.setVisibility(View.GONE);
+            // binding.btnShowDetailProduct.setVisibility(View.GONE);
+
+            // Keep condition fields for used products if they exist
             boolean hasConditionInfo = false;
             if (productDetail.getConditionPercent() != null && !productDetail.getConditionPercent().isEmpty()) {
                 binding.tvConditionPercent.setText("Độ mới: " + productDetail.getConditionPercent() + "%");
@@ -426,6 +483,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
             } else {
                 binding.llConditionParams.setVisibility(View.GONE);
             }
+
 
             YeuthichRequestBody yeuthichids = new YeuthichRequestBody(AccountUltil.USER.getId(),detailProductResponse.getResult().getId());
             binding.progressBarFavourite.setVisibility(View.VISIBLE);
@@ -521,90 +579,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
 
     }
 
-    private void setDetailProduct() {
-        if (isShowDetail) {
-            strDetailProduct = "";
-            strDetailProduct += productDetail.getDescription() + "\n";
-            strDetailProduct += "...";
-            binding.tvProductDetail.setText(strDetailProduct);
-            binding.btnShowDetailProduct.setText("Xem thêm");
-            isShowDetail = false;
-        } else {
-            if (productDetail.getDescription() != null) {
-                strDetailProduct += productDetail.getDescription() + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-                isShowDetail = true;
-            }
-//            if (productDetail.getScreen() != null) {
-//                strDetailProduct += "Screen: " + productDetail.getScreen() + "\n" + "\n";
-//                isShowDetail = false;
-//            } else {
-//                strDetailProduct = "";
-//            }
-//            if (productDetail.getCamera() != null) {
-//                strDetailProduct += "Camera: " + productDetail.getCamera() + "\n" + "\n";
-//                isShowDetail = false;
-//            } else {
-//                strDetailProduct = "";
-//                isShowDetail = true;
-//            }
-//            if (productDetail.getChipset() != null) {
-//                strDetailProduct += "Chipset: " + productDetail.getChipset() + "\n" + "\n";
-//                isShowDetail = false;
-//            } else {
-//                strDetailProduct = "";
-//                isShowDetail = true;
-//            }
-//
-//            if (productDetail.getRam() != 0) {
-//                strDetailProduct += "Ram: " + productDetail.getRam() + "GB" + "\n" + "\n";
-//                isShowDetail = false;
-//            } else {
-//                strDetailProduct = "";
-//                isShowDetail = true;
-//            }
-//            if (productDetail.getRom() != 0) {
-//                strDetailProduct += "Rom: " + productDetail.getRom() + "GB" + "\n" + "\n";
-//                isShowDetail = false;
-//            } else {
-//                strDetailProduct = "";
-//                isShowDetail = true;
-//            }
-//            if (productDetail.getOperatingSystem() != null) {
-//                strDetailProduct += "OperatingSystem: " + productDetail.getOperatingSystem() + "\n" + "\n";
-//                isShowDetail = false;
-//            } else {
-//                strDetailProduct = "";
-//                isShowDetail = true;
-//            }
-//            if (productDetail.getBattery() != null) {
-//                strDetailProduct += "Battery: " + productDetail.getBattery() + "\n" + "\n";
-//                isShowDetail = false;
-//            } else {
-//                strDetailProduct = "";
-//                isShowDetail = true;
-//            }
-//            if (productDetail.getWeight() != 0) {
-//                strDetailProduct += "Weight: " + productDetail.getWeight() + "\n" + "\n";
-//                isShowDetail = false;
-//            } else {
-//                strDetailProduct = "";
-//                isShowDetail = true;
-//            }
-            if (productDetail.getManufacturer() != null) {
-                strDetailProduct += "Manufacturer: " + productDetail.getManufacturer() + "\n" + "\n";
-                isShowDetail = false;
-            } else {
-                strDetailProduct = "";
-                isShowDetail = true;
-            }
-            binding.tvProductDetail.setText(strDetailProduct);
-            binding.btnShowDetailProduct.setText("Thu gọn");
-            isShowDetail = true;
-        }
-    }
+
     public void setDataSimilarProduct() {
         dialog.show();
         Intent intent = getIntent();
@@ -699,12 +674,7 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
 //            startActivity(intent);
 //            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
 //        });
-        binding.btnShowDetailProduct.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setDetailProduct();
-            }
-        });
+
     }
     private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
