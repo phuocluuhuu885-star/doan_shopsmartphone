@@ -451,6 +451,13 @@ public class DetailProduct extends AppCompatActivity implements ObjectUtil {
                 binding.rowBattery.setVisibility(View.GONE);
             }
 
+            if (productDetail.getConnection() != null && !productDetail.getConnection().isEmpty()) {
+                binding.tvSpecConnection.setText(productDetail.getConnection());
+                binding.rowConnection.setVisibility(View.VISIBLE);
+            } else {
+                binding.rowConnection.setVisibility(View.GONE);
+            }
+
             // Hide old description-related UI elements as they are replaced by the table
             // binding.tvProductDetail.setVisibility(View.GONE);
             // binding.btnShowDetailProduct.setVisibility(View.GONE);

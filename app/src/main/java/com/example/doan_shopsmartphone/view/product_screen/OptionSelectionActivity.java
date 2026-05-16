@@ -28,6 +28,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,6 +48,7 @@ public class OptionSelectionActivity extends AppCompatActivity {
     private AttributeAdapter colorAdapter, ramAdapter, storageAdapter, conditionAdapter, integrityAdapter;
     
     private OptionProduct selectedOptionMatch = null;
+    private int currentQuantity = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -241,16 +249,108 @@ public class OptionSelectionActivity extends AppCompatActivity {
 
     private void handleConfirm() {
         if (selectedOptionMatch == null) return;
+        showSummaryDialog();
+    }
+
+    private void showSummaryDialog() {
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.layout_dialog_option_summary, null);
+        dialog.setContentView(dialogView);
+
+        ImageView imgOption = dialogView.findViewById(R.id.imgDialogOption);
+        TextView tvPrice = dialogView.findViewById(R.id.tvDialogPrice);
+        TextView tvStock = dialogView.findViewById(R.id.tvDialogStock);
+        TextView tvSummaryTitle = dialogView.findViewById(R.id.tvSummaryTitle);
+        TextView tvSummaryRam = dialogView.findViewById(R.id.tvSummaryRam);
+        TextView tvSummaryIntegrity = dialogView.findViewById(R.id.tvSummaryIntegrity);
+        TextView tvSummaryStorage = dialogView.findViewById(R.id.tvSummaryStorage);
+        TextView tvSummaryCondition = dialogView.findViewById(R.id.tvSummaryCondition);
+        TextView tvSummaryBattery = dialogView.findViewById(R.id.tvSummaryBattery);
+        TextView btnMoreSpecs = dialogView.findViewById(R.id.btnMoreSpecs);
+        TableLayout tableGeneralSpecs = dialogView.findViewById(R.id.tableGeneralSpecs);
         
+        TextView tvSpecScreen = dialogView.findViewById(R.id.tvDialogSpecScreen);
+        TextView tvSpecCamera = dialogView.findViewById(R.id.tvDialogSpecCamera);
+        TextView tvSpecChipset = dialogView.findViewById(R.id.tvDialogSpecChipset);
+        TextView tvSpecOS = dialogView.findViewById(R.id.tvDialogSpecOS);
+        TextView tvSpecBattery = dialogView.findViewById(R.id.tvDialogSpecBattery);
+        TextView tvSpecConnection = dialogView.findViewById(R.id.tvDialogSpecConnection);
+
+        TextView btnMinus = dialogView.findViewById(R.id.btnMinus);
+        TextView btnPlus = dialogView.findViewById(R.id.btnPlus);
+        TextView tvQuantity = dialogView.findViewById(R.id.tvQuantity);
+        Button btnAddToCart = dialogView.findViewById(R.id.btnAddToCart);
+
+        // Populate data
+        DecimalFormat df = new DecimalFormat("###,###,###");
+        double discount = (double) (100 - selectedOptionMatch.getDiscountValue()) / 100;
+        int finalPrice = (int) (selectedOptionMatch.getPrice() * discount);
+        
+        tvPrice.setText(df.format(finalPrice) + " đ");
+        tvStock.setText("Kho: " + selectedOptionMatch.getQuantity());
+        Glide.with(this).load(selectedOptionMatch.getImage()).into(imgOption);
+
+        tvSummaryTitle.setText("Chi tiết sản phẩm (" + selectedOptionMatch.getNameColor() + "):");
+        tvSummaryRam.setText("RAM: " + (selectedOptionMatch.getRam() != null ? selectedOptionMatch.getRam() : "--"));
+        tvSummaryStorage.setText("Bộ nhớ: " + (selectedOptionMatch.getStorageCapacity() != null ? selectedOptionMatch.getStorageCapacity() : "--"));
+        tvSummaryIntegrity.setText("Zin: " + (selectedOptionMatch.getIsOriginal() != null ? selectedOptionMatch.getIsOriginal() : "--"));
+        tvSummaryCondition.setText("Ngoại hình: " + (selectedOptionMatch.getConditionPercent() != null ? selectedOptionMatch.getConditionPercent() + "%" : "--"));
+        tvSummaryBattery.setText("Pin: " + (selectedOptionMatch.getBatteryHealth() != null ? selectedOptionMatch.getBatteryHealth() : "--"));
+
+        // General specs
+        tvSpecScreen.setText(product.getScreen() != null ? product.getScreen() : "N/A");
+        tvSpecCamera.setText(product.getCamera() != null ? product.getCamera() : "N/A");
+        tvSpecChipset.setText(product.getChipset() != null ? product.getChipset() : "N/A");
+        tvSpecOS.setText(product.getOperatingSystem() != null ? product.getOperatingSystem() : "N/A");
+        tvSpecBattery.setText(product.getBattery() != null ? product.getBattery() : "N/A");
+        tvSpecConnection.setText(product.getConnection() != null ? product.getConnection() : "N/A");
+
+        // Handlers
+        btnMoreSpecs.setOnClickListener(v -> {
+            if (tableGeneralSpecs.getVisibility() == View.GONE) {
+                tableGeneralSpecs.setVisibility(View.VISIBLE);
+                btnMoreSpecs.setText("Thu gọn thông số ▴");
+            } else {
+                tableGeneralSpecs.setVisibility(View.GONE);
+                btnMoreSpecs.setText("Xem thêm thông số ▾");
+            }
+        });
+
+        currentQuantity = 1;
+        tvQuantity.setText(String.valueOf(currentQuantity));
+
+        btnMinus.setOnClickListener(v -> {
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                tvQuantity.setText(String.valueOf(currentQuantity));
+            }
+        });
+
+        btnPlus.setOnClickListener(v -> {
+            if (currentQuantity < selectedOptionMatch.getQuantity()) {
+                currentQuantity++;
+                tvQuantity.setText(String.valueOf(currentQuantity));
+            } else {
+                Toast.makeText(this, "Vượt quá số lượng trong kho", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnAddToCart.setOnClickListener(v -> {
+            addToCart(selectedOptionMatch.getId(), currentQuantity, dialog);
+        });
+
+        dialog.show();
+    }
+
+    private void addToCart(String optionId, int quantity, BottomSheetDialog dialog) {
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
-        String optionId = selectedOptionMatch.getId();
-        int quantity = 1; // Default to 1 for this flow, or add a counter if needed
         
         BaseApi.API.createCartItem(token, optionId, quantity).enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(OptionSelectionActivity.this, "Thêm vào giỏ hàng thành công!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
                     finish();
                 } else {
                     Toast.makeText(OptionSelectionActivity.this, "Lỗi khi thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();

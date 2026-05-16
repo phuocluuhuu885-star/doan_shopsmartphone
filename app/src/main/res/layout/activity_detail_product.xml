@@ -528,6 +528,24 @@
                                 android:textColor="@color/black" />
                         </TableRow>
 
+                        <!-- Connection -->
+                        <TableRow android:id="@+id/rowConnection" android:background="@color/white">
+                            <TextView
+                                android:layout_width="120dp"
+                                android:layout_height="wrap_content"
+                                android:padding="10dp"
+                                android:background="#F2F2F2"
+                                android:text="SIM &amp; Kết nối"
+                                android:textStyle="bold"
+                                android:textColor="@color/black" />
+                            <TextView
+                                android:id="@+id/tvSpecConnection"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="10dp"
+                                android:textColor="@color/black" />
+                        </TableRow>
+
                     </TableLayout>
                 </LinearLayout>
 
