@@ -65,9 +65,9 @@ import vn.zalopay.sdk.Environment;
 import vn.zalopay.sdk.ZaloPayError;
 import vn.zalopay.sdk.ZaloPaySDK;
 import vn.zalopay.sdk.listeners.PayOrderListener;
-
 public class PayActivity extends AppCompatActivity {
     private ActivityPayBinding binding;
+
     private ProgressLoadingDialog loadingDialog;
     private List<Info> infoList;
     private Info info;
@@ -132,14 +132,15 @@ public class PayActivity extends AppCompatActivity {
             CartUtil.listCartCheck.get(i).setDiscount_value(CartUtil.listCartCheck.get(i).getOptionProduct().getDiscountValue());
         }
 
-
         //ZaloPay create
         StrictMode.ThreadPolicy policy = new
                 StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         // ZaloPay SDK Init
-        ZaloPaySDK.init(2554, Environment.SANDBOX);
+        ZaloPaySDK.init(2553, Environment.SANDBOX);
+
+        ZaloPaySDK.getInstance().onResult(getIntent());
 
         //Take paymentMethods
         paymentMethods = getIntent().getIntExtra("paymentMethods", 0);
@@ -266,7 +267,7 @@ public class PayActivity extends AppCompatActivity {
                 //---------------Chuyển khoản ngân hàng----------------
                 if (paymentMethods == 2){
                     if(CartUtil.listCartCheck.size() > 0) {
-                        showVietQRDialog();
+                        zaloRequest();
                         Log.d("thanhtoan", "phuong thuc: chuyen khoan ");
                         Log.d(TAG.toString, "onClick: paymentMethods "+paymentMethods);
 
@@ -328,7 +329,7 @@ public class PayActivity extends AppCompatActivity {
             purchaseBody.setInfoId(info.getId());
             purchaseBody.setUserId(AccountUltil.USER.getId());
             purchaseBody.setProductsOrder(CartUtil.listCartCheck);
-            
+
             List<String> voucherIds = new ArrayList<>();
             if (selectedVouchersList != null) {
                 for (Voucher v : selectedVouchersList) {
@@ -357,6 +358,7 @@ public class PayActivity extends AppCompatActivity {
                                 String id = orderData.getId();
                                 String transId = orderData.getAppTransId();
                                 Log.d("DEBUG", "ID nhận được: " + serverResponse.toString()+"  id"+ id);
+
                                 urlCreateNotification(id, productPreview);
                             } else {
                                 Log.d("DEBUG", "Đối tượng Result bị null!");
@@ -529,7 +531,7 @@ public class PayActivity extends AppCompatActivity {
             purchaseBody.setUserId(AccountUltil.USER.getId());
             purchaseBody.setProductsOrder(CartUtil.listCartCheck);
             purchaseBody.setPayment_status(true);
-            
+
             List<String> voucherIds = new ArrayList<>();
             if (selectedVouchersList != null) {
                 for (Voucher v : selectedVouchersList) {
@@ -547,11 +549,19 @@ public class PayActivity extends AppCompatActivity {
                     loadingDialog.dismiss();
                     if(response.isSuccessful()){ // chỉ nhận đầu status 200
                         ServerResponse serverResponse = response.body();
-
+                        String productPreview = buildOrderProductPreview();
                         if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
                             Toast.makeText(PayActivity.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                            //zaloRequest();
+                            OrderResult orderData = serverResponse.getResult();
+                            if (orderData != null) {
+                                String id = orderData.getId();
+                                String transId = orderData.getAppTransId();
+                                Log.d("DEBUG", "ID nhận được: " + serverResponse.toString()+"  id"+ id);
 
+                                urlCreateNotification(id, productPreview);
+                            } else {
+                                Log.d("DEBUG", "Đối tượng Result bị null!");
+                            }
 //                            String orderId = serverResponse.getOrder().getId(); // Lấy ID của đơn hàng từ serverResponse
 //                           Log.d(TAG.toString, "onResponse: "+orderId);
 //                                            Intent intent = new Intent(PayActivity.this, OrderSuccessActivity.class);
@@ -590,24 +600,24 @@ public class PayActivity extends AppCompatActivity {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_vietqr, null);
         builder.setView(dialogView);
-        
+
         android.widget.ImageView imgQrCode = dialogView.findViewById(R.id.img_qr_code);
         android.widget.TextView tvAmount = dialogView.findViewById(R.id.tv_amount);
         android.widget.Button btnConfirm = dialogView.findViewById(R.id.btn_confirm_qr);
         android.widget.Button btnCancel = dialogView.findViewById(R.id.btn_cancel_qr);
-        
+
         DecimalFormat formatter = new DecimalFormat("###,###,###");
         tvAmount.setText("Số tiền: " + formatter.format(totalPrice) + "đ");
-        
+
         String url = "https://api.vietqr.io/image/971025-0911193469-lUyQ2FF.jpg?accountName=NGUYEN%20QUANG%20THANG&amount=" + totalPrice + "&addInfo=THANH%20TOAN%20DON%20HANG";
-        
+
         com.bumptech.glide.Glide.with(this).load(url).into(imgQrCode);
-        
+
         android.app.AlertDialog dialog = builder.create();
         dialog.show();
-        
+
         btnCancel.setOnClickListener(v -> dialog.dismiss());
-        
+
         btnConfirm.setOnClickListener(v -> {
             dialog.dismiss();
             urlCreateOrderZalo(); // Tạo đơn hàng trên server
@@ -661,6 +671,29 @@ public class PayActivity extends AppCompatActivity {
         }
     }
 
+//    private void momoRequest() {
+//        AppMoMoLib.getInstance().setEnvironment(AppMoMoLib.ENVIRONMENT.DEVELOPMENT); // Chế độ TEST
+//
+//        AppMoMoLib.getInstance().setAction(AppMoMoLib.ACTION.PAYMENT);
+//        AppMoMoLib.getInstance().setMerchantName("Tên Cửa Hàng Của Bạn");
+//        AppMoMoLib.getInstance().setMerchantCode("MOMOCXX"); // Thay bằng Partner Code của bạn
+//        AppMoMoLib.getInstance().setAppScheme("momocxx"); // Phải trùng với Manifest
+//
+//        Map<String, Object> eventValue = new HashMap<>();
+//        // Các tham số bắt buộc
+//        eventValue.put("merchantname", "Tên Cửa Hàng");
+//        eventValue.put("merchantcode", "MOMOCXX");
+//        eventValue.put("amount", totalPrice); // Số tiền (Long hoặc Double)
+//        eventValue.put("orderId", "order_" + System.currentTimeMillis());
+//        eventValue.put("orderLabel", "Thanh toán đơn hàng");
+//
+//        // Tham số cấu hình bổ sung (tùy chọn)
+//        eventValue.put("merchantNameLabel", "Nhà cung cấp");
+//        eventValue.put("fee", 0);
+//        eventValue.put("description", "Mô tả đơn hàng");
+//
+//        AppMoMoLib.getInstance().requestMoMoCallBack(PayActivity.this, eventValue);
+//    }
     private void removeDataCartZalo() {
         ExecutorService executorService = Executors.newCachedThreadPool();
         for (int i = 0; i < CartUtil.listCartCheck.size(); i++) {
@@ -770,7 +803,7 @@ public class PayActivity extends AppCompatActivity {
             } else {
                 pName = pName.trim().toUpperCase();
             }
-            
+
             if (!groupedItems.containsKey(pName)) {
                 groupedItems.put(pName, new ArrayList<>());
             }
@@ -861,19 +894,19 @@ public class PayActivity extends AppCompatActivity {
         for (Voucher voucher : selectedVouchers) {
             if (voucher == null) continue;
             List<Voucher.ProductObj> applicableProducts = voucher.getApplicableProducts();
-            
+
             // Nếu là voucher toàn sàn
             if (applicableProducts == null || applicableProducts.isEmpty()) {
                 if (globalVoucher == null) globalVoucher = voucher;
                 continue;
             }
-            
+
             // Kiểm tra xem voucher có áp dụng cho BẤT KỲ sản phẩm nào trong nhóm không
             for (OptionAndQuantity item : itemsInGroup) {
                 if (item == null || item.getOptionProduct() == null || item.getOptionProduct().getProduct() == null) continue;
                 String productId = item.getOptionProduct().getProduct().getId();
                 if (productId == null) continue;
-                
+
                 for (Voucher.ProductObj productObj : applicableProducts) {
                     if (productObj != null && productId.equals(productObj.get_id())) {
                         return voucher; // Tìm thấy voucher khớp với một trong các ID của nhóm
@@ -913,7 +946,7 @@ public class PayActivity extends AppCompatActivity {
         binding.disscount.setText(formatter.format(totalVoucherDiscountAll) + " Đ");
         binding.totalOder.setText(formatter.format(totalPay + totalVoucherDiscountAll) + " Đ"); // Tổng tiền hàng (đã giảm option)
         binding.totalDisscount.setText(formatter.format(totalVoucherDiscountAll) + " Đ");
-        
+
         // Hiển thị chi tiết voucher
         if (voucherDetails != null && !voucherDetails.isEmpty()) {
             binding.tvVoucherDetails.setVisibility(View.VISIBLE);
@@ -921,7 +954,7 @@ public class PayActivity extends AppCompatActivity {
         } else {
             binding.tvVoucherDetails.setVisibility(View.GONE);
         }
-        
+
         // Dùng cho luồng tạo đơn Zalo
         totalPrice = totalPay;
     }
@@ -933,6 +966,7 @@ public class PayActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        setIntent(intent);
         ZaloPaySDK.getInstance().onResult(intent);
     }
 }
