@@ -148,6 +148,7 @@ public class FragmentProfile extends Fragment {
 
     private void initController() {
         HistoryDon();//theo dõi đơn hàng
+        myVouchers(); // voucher của tôi
         phanHoiKhieuNai();//phan hoi khieu nai
         resetPass();
         profile();
@@ -181,6 +182,15 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), OrderProductScreen.class));
+                requireActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            }
+        });
+    }
+    private void myVouchers() {
+        binding.layoutVoucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), com.example.doan_shopsmartphone.view.voucher.MyVoucherActivity.class));
                 requireActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
             }
         });

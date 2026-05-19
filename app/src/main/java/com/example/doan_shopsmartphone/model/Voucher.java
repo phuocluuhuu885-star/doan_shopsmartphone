@@ -22,13 +22,13 @@ public class Voucher implements Serializable, Cloneable {
     private boolean selected;
     private int maxDiscountValue;
     private String expiryDate;
-    private boolean status;
+    private int status;
 
-    public boolean isStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -58,6 +58,7 @@ public class Voucher implements Serializable, Cloneable {
     public static class ProductObj implements Serializable {
         @SerializedName("_id")
         private String _id;
+        private String name;
 
         public String get_id() {
             return _id;
@@ -65,6 +66,14 @@ public class Voucher implements Serializable, Cloneable {
 
         public void set_id(String _id) {
             this._id = _id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
     }
 

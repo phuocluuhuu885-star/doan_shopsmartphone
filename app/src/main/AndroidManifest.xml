@@ -77,6 +77,12 @@
             android:name=".view.voucher.VoucherScreen"
             android:exported="false" />
         <activity
+            android:name=".view.voucher.MyVoucherActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.voucher.VoucherDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.product_screen.CommentActivity"
             android:exported="false" />
         <activity
