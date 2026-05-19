@@ -98,11 +98,32 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 //        }
 
         // image
-        Glide.with(context)
-                .load(R.drawable.avatar1)
-                .placeholder(com.example.doan_shopsmartphone.R.drawable.loading)
-                .error(R.drawable.error)
-                .into(holder.binding.imgAvartar);
+
+        boolean isPromotion = "promotion".equalsIgnoreCase(notification.getType()) || "voucher".equalsIgnoreCase(notification.getType()) || "system".equalsIgnoreCase(notification.getType());
+        boolean hasProductId = notification.getProduct_id() != null && !notification.getProduct_id().trim().isEmpty() && !"null".equalsIgnoreCase(notification.getProduct_id()) && !"undefined".equalsIgnoreCase(notification.getProduct_id());
+        boolean hasOrderId = notification.getOrder_id() != null && !notification.getOrder_id().trim().isEmpty() && !"null".equalsIgnoreCase(notification.getOrder_id()) && !"undefined".equalsIgnoreCase(notification.getOrder_id());
+
+        if (isPromotion && !hasProductId) {
+            Glide.with(context)
+                    .load(R.drawable.voucher1)
+                    .placeholder(com.example.doan_shopsmartphone.R.drawable.loading)
+                    .error(R.drawable.error)
+                    .into(holder.binding.imgAvartar);
+        } else if (hasProductId) {
+            Glide.with(context)
+                    .load(R.drawable.img)
+                    .placeholder(com.example.doan_shopsmartphone.R.drawable.loading)
+                    .error(R.drawable.error)
+                    .into(holder.binding.imgAvartar);
+        } else if (hasOrderId) {
+            Glide.with(context)
+                    .load(R.drawable.logofm)
+                    .placeholder(com.example.doan_shopsmartphone.R.drawable.loading)
+                    .error(R.drawable.error)
+                    .into(holder.binding.imgAvartar);
+        }
+
+
 
         // date
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");

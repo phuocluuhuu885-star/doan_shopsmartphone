@@ -76,7 +76,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Kho: --"
-                        android:textColor="@color/gray"
+                        android:textColor="@color/red"
                         android:layout_marginTop="4dp" />
                 </LinearLayout>
             </LinearLayout>
@@ -93,54 +93,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="RAM"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRam"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dung lượng (ROM)"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvStorage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Độ mới"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvCondition"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tình trạng máy"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvIntegrity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="100dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

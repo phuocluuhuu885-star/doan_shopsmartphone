@@ -70,33 +70,33 @@ public class MyVoucherActivity extends AppCompatActivity {
 
         String authHeader = AccountUltil.BEARER + AccountUltil.TOKEN;
 
-        BaseApi.API.getListVoucher(authHeader).enqueue(new Callback<ListVoucherResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ListVoucherResponse> call, @NonNull Response<ListVoucherResponse> response) {
-                progressBar.setVisibility(View.GONE);
-                if (response.isSuccessful() && response.body() != null) {
-                    ListVoucherResponse listVoucherResponse = response.body();
-                    if (listVoucherResponse.getCode() == 200 && listVoucherResponse.getData() != null) {
-                        filterValidVouchers(listVoucherResponse.getData());
-                    } else {
-                        Toast.makeText(MyVoucherActivity.this, "Không thể tải dữ liệu voucher", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Log.e("MyVoucherActivity", "Response code: " + response.code());
-                    Toast.makeText(MyVoucherActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
-                }
-
-                updateUIState();
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ListVoucherResponse> call, @NonNull Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Log.e("MyVoucherActivity", "Failure: " + t.getMessage(), t);
-                Toast.makeText(MyVoucherActivity.this, "Lỗi mạng, vui lòng thử lại", Toast.LENGTH_SHORT).show();
-                updateUIState();
-            }
-        });
+//        BaseApi.API.getListVoucher(authHeader).enqueue(new Callback<ListVoucherResponse>() {
+//            @Override
+//            public void onResponse(@NonNull Call<ListVoucherResponse> call, @NonNull Response<ListVoucherResponse> response) {
+//                progressBar.setVisibility(View.GONE);
+//                if (response.isSuccessful() && response.body() != null) {
+//                    ListVoucherResponse listVoucherResponse = response.body();
+//                    if (listVoucherResponse.getCode() == 200 && listVoucherResponse.getData() != null) {
+//                        filterValidVouchers(listVoucherResponse.getData());
+//                    } else {
+//                        Toast.makeText(MyVoucherActivity.this, "Không thể tải dữ liệu voucher", Toast.LENGTH_SHORT).show();
+//                    }
+//                } else {
+//                    Log.e("MyVoucherActivity", "Response code: " + response.code());
+//                    Toast.makeText(MyVoucherActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                updateUIState();
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<ListVoucherResponse> call, @NonNull Throwable t) {
+//                progressBar.setVisibility(View.GONE);
+//                Log.e("MyVoucherActivity", "Failure: " + t.getMessage(), t);
+//                Toast.makeText(MyVoucherActivity.this, "Lỗi mạng, vui lòng thử lại", Toast.LENGTH_SHORT).show();
+//                updateUIState();
+//            }
+//        });
     }
 
     private void filterValidVouchers(List<Voucher> allVouchers) {
