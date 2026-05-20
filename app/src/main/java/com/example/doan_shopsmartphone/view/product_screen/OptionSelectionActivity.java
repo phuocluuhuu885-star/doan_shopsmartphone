@@ -293,7 +293,7 @@ public class OptionSelectionActivity extends AppCompatActivity {
         tvSummaryTitle.setText("Chi tiết sản phẩm (" + selectedOptionMatch.getNameColor() + "):");
         tvSummaryRam.setText("RAM: " + (selectedOptionMatch.getRam() != null ? selectedOptionMatch.getRam() : "--"));
         tvSummaryStorage.setText("Bộ nhớ: " + (selectedOptionMatch.getStorageCapacity() != null ? selectedOptionMatch.getStorageCapacity() : "--"));
-        tvSummaryIntegrity.setText("Zin: " + (selectedOptionMatch.getIsOriginal() != null ? selectedOptionMatch.getIsOriginal() : "--"));
+        tvSummaryIntegrity.setText("Tình trạng máy: " + (selectedOptionMatch.getIsOriginal() != null ? selectedOptionMatch.getIsOriginal() : "--"));
         tvSummaryCondition.setText("Ngoại hình: " + (selectedOptionMatch.getConditionPercent() != null ? selectedOptionMatch.getConditionPercent() + "%" : "--"));
         tvSummaryBattery.setText("Pin: " + (selectedOptionMatch.getBatteryHealth() != null ? selectedOptionMatch.getBatteryHealth() : "--"));
 
