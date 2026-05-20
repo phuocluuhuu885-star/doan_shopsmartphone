@@ -113,9 +113,17 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
 
         if (status == 0) {
-            holder.binding.btnItem.setText("Hủy hàng");
-            int color = Color.parseColor("#FFCC00");
-            holder.binding.tvStatus.setTextColor(color);
+            // Tab "Chờ xử lý" chứa cả "Chờ xác nhận" và "Đã thanh toán"
+            if ("Đã thanh toán".equals(statusText)) {
+                // Đơn đã thanh toán QR: không cho phép hủy
+                holder.binding.btnItem.setVisibility(View.GONE);
+                holder.binding.tvStatus.setTextColor(Color.parseColor("#00897B")); // teal
+            } else {
+                holder.binding.btnItem.setText("Hủy hàng");
+                holder.binding.btnItem.setVisibility(View.VISIBLE);
+                int color = Color.parseColor("#FFCC00");
+                holder.binding.tvStatus.setTextColor(color);
+            }
             holder.binding.btnreview.setVisibility(View.GONE);
 
         } else if (status == 1) {

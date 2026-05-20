@@ -35,6 +35,7 @@ import com.example.doan_shopsmartphone.model.body.NotificationBody;
 import com.example.doan_shopsmartphone.model.response.NotificationResponse;
 import com.example.doan_shopsmartphone.model.response.NotificationResult;
 import com.example.doan_shopsmartphone.view.success_screen.OrderSuccessActivity;
+import com.example.doan_shopsmartphone.view.buy_product.QRCodePaymentActivity;
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.adapter.CartPayAdapter;
 import com.example.doan_shopsmartphone.api.BaseApi;
@@ -120,6 +121,8 @@ public class PayActivity extends AppCompatActivity {
             binding.txtPaymentMethods.setText("Thanh toán khi nhận hàng");
         } else if (paymentMethods == 2) {
             binding.txtPaymentMethods.setText("Chuyển khoản ngân hàng");
+        } else if (paymentMethods == 3) {
+            binding.txtPaymentMethods.setText("Thanh toán bằng cách tạo mã QR");
         }
     }
 
@@ -262,29 +265,28 @@ public class PayActivity extends AppCompatActivity {
                 //---------------Chưa chọn phương thức thanh toán---------------------
                 if (paymentMethods == 0){
                     Toast.makeText(PayActivity.this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                //---------------Chuyển khoản ngân hàng----------------
+                if (CartUtil.listCartCheck.size() == 0) {
+                    Toast.makeText(PayActivity.this, "Chưa có sản phẩm nào", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //---------------Chuyển khoản ngân hàng (ZaloPay)----------------
                 if (paymentMethods == 2){
-                    if(CartUtil.listCartCheck.size() > 0) {
-                        zaloRequest();
-                        Log.d("thanhtoan", "phuong thuc: chuyen khoan ");
-                        Log.d(TAG.toString, "onClick: paymentMethods "+paymentMethods);
-
-                    } else {
-                        Toast.makeText(PayActivity.this, "Chưa có sản phẩm nào", Toast.LENGTH_SHORT).show();
-                    }
-
+                    zaloRequest();
+                    Log.d("thanhtoan", "phuong thuc: chuyen khoan ");
                 }
                 //-----------------Thanh toán khi nhận hàng-----------------
                 else if (paymentMethods == 1) {
                     Log.d("thanhtoan", "phuong thuc: nhan hang ");
-
-                    if(CartUtil.listCartCheck.size() > 0) {
-                        urlCreateOrder();
-                    } else {
-                        Toast.makeText(PayActivity.this, "Chưa có sản phẩm nào", Toast.LENGTH_SHORT).show();
-                    }
+                    urlCreateOrder();
+                }
+                //-----------------Thanh toán QR-----------------
+                else if (paymentMethods == 3) {
+                    Log.d("thanhtoan", "phuong thuc: QR code");
+                    urlCreateOrderForQR();
                 }
             }
         });
@@ -389,6 +391,62 @@ public class PayActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void urlCreateOrderForQR() {
+        if (!validatePurchare()) return;
+
+        String token = AccountUltil.BEARER + AccountUltil.getToken(this);
+
+        PurchaseBody purchaseBody = new PurchaseBody();
+        purchaseBody.setInfoId(info.getId());
+        purchaseBody.setUserId(AccountUltil.USER.getId());
+        purchaseBody.setProductsOrder(CartUtil.listCartCheck);
+        purchaseBody.setPayment_method(3); // QR
+
+        List<String> voucherIds = new ArrayList<>();
+        if (selectedVouchersList != null) {
+            for (Voucher v : selectedVouchersList) {
+                if (v.get_id() != null) voucherIds.add(v.get_id());
+            }
+        }
+        purchaseBody.setVoucherIds(voucherIds);
+
+        loadingDialog.show();
+        BaseApi.API.createOrderQR(token, purchaseBody).enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                loadingDialog.dismiss();
+                if (response.isSuccessful() && response.body() != null
+                        && (response.body().getCode() == 200 || response.body().getCode() == 201)) {
+                    OrderResult orderData = response.body().getResult();
+                    if (orderData != null) {
+                        Intent intent = new Intent(PayActivity.this, QRCodePaymentActivity.class);
+                        intent.putExtra("orderId", orderData.getId());
+                        intent.putExtra("totalPrice", totalPrice);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                    } else {
+                        Toast.makeText(PayActivity.this, "Tạo đơn thất bại, thử lại!", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    try {
+                        String errBody = response.errorBody() != null ? response.errorBody().string() : "";
+                        JSONObject errJson = new JSONObject(errBody);
+                        Toast.makeText(PayActivity.this, errJson.getString("message"), Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Toast.makeText(PayActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                loadingDialog.dismiss();
+                Toast.makeText(PayActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG.toString, "onFailure-createOrderQR: " + t.toString());
+            }
+        });
     }
 
     private void urlCreateNotification(String orderId, String productPreview) {

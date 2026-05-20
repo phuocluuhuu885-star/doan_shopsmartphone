@@ -123,6 +123,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".view.buy_product.QRCodePaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.product_screen.DetailProduct"
             android:exported="false" />
         <activity

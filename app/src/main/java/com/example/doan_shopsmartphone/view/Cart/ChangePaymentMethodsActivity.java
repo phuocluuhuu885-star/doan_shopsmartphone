@@ -17,8 +17,8 @@ import com.example.doan_shopsmartphone.R;
 
 public class ChangePaymentMethodsActivity extends AppCompatActivity {
 
-    private LinearLayout layoutCod, layoutZalopay;
-    private ImageView ivCheckCod, ivCheckZaloPay, imgBack;
+    private LinearLayout layoutCod, layoutZalopay, layoutQr;
+    private ImageView ivCheckCod, ivCheckZaloPay, ivCheckQr, imgBack;
     private AppCompatButton btnConfirm;
     private int paymentMethods = 0;
 
@@ -35,8 +35,10 @@ public class ChangePaymentMethodsActivity extends AppCompatActivity {
 
         layoutCod = findViewById(R.id.layout_cod);
         layoutZalopay = findViewById(R.id.layout_zalopay);
+        layoutQr = findViewById(R.id.layout_qr);
         ivCheckCod = findViewById(R.id.iv_check_cod);
         ivCheckZaloPay = findViewById(R.id.iv_check_zalopay);
+        ivCheckQr = findViewById(R.id.iv_check_qr);
         btnConfirm = findViewById(R.id.btn_confirm);
         imgBack = findViewById(R.id.imgBack);
 
@@ -67,6 +69,14 @@ public class ChangePaymentMethodsActivity extends AppCompatActivity {
             }
         });
 
+        layoutQr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paymentMethods = 3;
+                updateSelectionUI();
+            }
+        });
+
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,12 +92,19 @@ public class ChangePaymentMethodsActivity extends AppCompatActivity {
         if (paymentMethods == 1) {
             ivCheckCod.setImageResource(R.drawable.ic_check_circle_primary);
             ivCheckZaloPay.setImageResource(R.drawable.ic_circle_outline);
+            ivCheckQr.setImageResource(R.drawable.ic_circle_outline);
         } else if (paymentMethods == 2) {
             ivCheckCod.setImageResource(R.drawable.ic_circle_outline);
             ivCheckZaloPay.setImageResource(R.drawable.ic_check_circle_primary);
+            ivCheckQr.setImageResource(R.drawable.ic_circle_outline);
+        } else if (paymentMethods == 3) {
+            ivCheckCod.setImageResource(R.drawable.ic_circle_outline);
+            ivCheckZaloPay.setImageResource(R.drawable.ic_circle_outline);
+            ivCheckQr.setImageResource(R.drawable.ic_check_circle_primary);
         } else {
             ivCheckCod.setImageResource(R.drawable.ic_circle_outline);
             ivCheckZaloPay.setImageResource(R.drawable.ic_circle_outline);
+            ivCheckQr.setImageResource(R.drawable.ic_circle_outline);
         }
     }
 }

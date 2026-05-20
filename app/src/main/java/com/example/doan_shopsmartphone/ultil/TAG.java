@@ -8,4 +8,5 @@ public class TAG {
 
     public static String DELIVERED = "Đã giao hàng";
     public static String CANCELLED = "Đã hủy";
+    public static String PAID = "Đã thanh toán";
 }

@@ -20,6 +20,8 @@ public class PurchaseBody {
     private List<String> voucher_ids;
     //    @SerializedName("payment_status")
     private boolean payment_status = false;
+    @SerializedName("payment_method")
+    private int payment_method = 1;
 
     public PurchaseBody() {
     }
@@ -100,5 +102,13 @@ public class PurchaseBody {
 
     public void setVoucherIds(List<String> voucher_ids) {
         this.voucher_ids = voucher_ids;
+    }
+
+    public int getPayment_method() {
+        return payment_method;
+    }
+
+    public void setPayment_method(int payment_method) {
+        this.payment_method = payment_method;
     }
 }
