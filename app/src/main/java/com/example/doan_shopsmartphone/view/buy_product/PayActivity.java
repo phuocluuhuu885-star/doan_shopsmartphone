@@ -550,13 +550,14 @@ public class PayActivity extends AppCompatActivity {
                     if(response.isSuccessful()){ // chỉ nhận đầu status 200
                         ServerResponse serverResponse = response.body();
                         String productPreview = buildOrderProductPreview();
-                        if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
+                       // if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
                             Toast.makeText(PayActivity.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
                             OrderResult orderData = serverResponse.getResult();
+                             Log.e("RESULT", new Gson().toJson(serverResponse.getResult()));
                             if (orderData != null) {
                                 String id = orderData.getId();
-                                String transId = orderData.getAppTransId();
-                                Log.d("DEBUG", "ID nhận được: " + serverResponse.toString()+"  id"+ id);
+//                                String transId = orderData.getAppTransId();
+//                                Log.d("DEBUG", "ID nhận được: " + serverResponse.toString()+"  id"+ id);
 
                                 urlCreateNotification(id, productPreview);
                             } else {
@@ -569,7 +570,7 @@ public class PayActivity extends AppCompatActivity {
 //                            CartUtil.listCartCheck.clear();
                             //Order order = serverResponse.getOrder();
 //                            Log.d("Don hang vua tao", "onResponse-createOrder: " + order);
-                        }
+             //           }
 
                     } else { // nhận các đầu status #200
                         try {
