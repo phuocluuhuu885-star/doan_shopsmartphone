@@ -295,6 +295,12 @@ public class PayActivity extends AppCompatActivity {
             finish();
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
         });
+
+        binding.cbAgreeTerm.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            binding.btnOrder.setEnabled(isChecked);
+            binding.btnOrder.setAlpha(isChecked ? 1.0f : 0.5f);
+            binding.btnOrder.setClickable(isChecked);
+        });
     }
     private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -825,6 +831,29 @@ public class PayActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    private void showPolicyDialog() {
+        android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_policy);
+        
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                (int) (getResources().getDisplayMetrics().widthPixels * 0.95),
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        android.widget.Button btnAccept = dialog.findViewById(R.id.btnAcceptPolicy);
+        btnAccept.setOnClickListener(v -> {
+            binding.cbAgreeTerm.setChecked(true);
+            dialog.dismiss();
+        });
+        
+        dialog.show();
+    }
+
     private void initView() {
         DecimalFormat formatter = new DecimalFormat("###,###,###");
         totalPrice = getIntent().getIntExtra("totalPrice", 0);
@@ -839,6 +868,36 @@ public class PayActivity extends AppCompatActivity {
         cartPayAdapter = new CartPayAdapter(this, CartUtil.listCartCheck);
         Log.e( "qwep: ",""+CartUtil.listCartCheck.toString() );
         binding.rcvProduct.setAdapter(cartPayAdapter);
+
+        // Mặc định nút Mua Hàng bị disable
+        binding.btnOrder.setEnabled(false);
+        binding.btnOrder.setAlpha(0.5f);
+        binding.btnOrder.setClickable(false);
+
+        // Thiết lập text chính sách
+        String fullText = "Tôi đồng ý với chính sách của cửa hàng";
+        String clickablePart = "chính sách của cửa hàng";
+        android.text.SpannableString spannableString = new android.text.SpannableString(fullText);
+        int startIndex = fullText.indexOf(clickablePart);
+        if (startIndex >= 0) {
+            int endIndex = startIndex + clickablePart.length();
+            android.text.style.ClickableSpan clickableSpan = new android.text.style.ClickableSpan() {
+                @Override
+                public void onClick(android.view.View widget) {
+                    showPolicyDialog();
+                }
+
+                @Override
+                public void updateDrawState(android.text.TextPaint ds) {
+                    super.updateDrawState(ds);
+                    ds.setColor(getResources().getColor(R.color.color_chudao));
+                    ds.setUnderlineText(true);
+                }
+            };
+            spannableString.setSpan(clickableSpan, startIndex, endIndex, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        binding.tvPolicyLink.setText(spannableString);
+        binding.tvPolicyLink.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
     }
 
     private void calculateMultiVoucher(ArrayList<Voucher> selectedVouchers) {

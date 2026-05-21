@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="20dp"
+    android:background="@drawable/custom_bg_logout"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tvPolicyTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="CHÍNH SÁCH CỬA HÀNG FMOBILE"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="15dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"
+        android:layout_marginBottom="10dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:scrollbars="vertical"
+        android:layout_marginBottom="15dp">
+
+        <TextView
+            android:id="@+id/tvPolicyContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp"
+            android:text="1. CHÍNH SÁCH MUA HÀNG\n- Sản phẩm tại FMobile được kiểm tra kỹ lưỡng trước khi giao đến tay khách hàng.\n- Cam kết sản phẩm đúng mô tả, hình ảnh và thông số kỹ thuật thực tế đăng tải trên ứng dụng.\n- Khách hàng được quyền kiểm tra ngoại quan sản phẩm trước khi thanh toán nhận hàng.\n\n2. CHÍNH SÁCH ĐỔI TRẢ\n- Hỗ trợ đổi trả sản phẩm trong vòng 7 ngày kể từ ngày nhận hàng nếu phát sinh lỗi kỹ thuật từ nhà sản xuất.\n- Sản phẩm đổi trả phải còn nguyên vẹn tem bảo hành, không có dấu hiệu móp méo, trầy xước, dính nước hoặc các tác động vật lý khác từ phía người dùng.\n\n3. CHÍNH SÁCH BẢO HÀNH\n- Thời gian bảo hành được áp dụng theo thỏa thuận cụ thể tại thời điểm mua hàng.\n- Không bảo hành đối với các bộ phận hao mòn tự nhiên hoặc hỏng hóc do sử dụng sai cách như: pin chai, màn hình vỡ, nguồn cháy nổ do dùng sai bộ sạc.\n- Từ chối bảo hành nếu thiết bị đã bị can thiệp phần cứng hoặc tự ý sửa chữa tại các cơ sở khác.\n\n4. CHÍNH SÁCH THANH TOÁN\n- FMobile hỗ trợ đa dạng hình thức thanh toán bao gồm: Thanh toán khi nhận hàng (COD), Chuyển khoản ngân hàng trực tiếp, và các ví điện tử liên kết.\n- Đơn hàng sau khi đã xác nhận thanh toán thành công sẽ không được hủy trừ trường hợp bất khả kháng.\n\n5. BẢO MẬT THÔNG TIN\n- Cam kết bảo mật tuyệt đối mọi thông tin cá nhân của khách hàng.\n- Không chia sẻ thông tin khách hàng cho bất kỳ bên thứ ba nào ngoại trừ các đơn vị vận chuyển nhằm mục đích hoàn tất giao nhận đơn hàng." />
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"
+        android:layout_marginBottom="15dp" />
+
+    <Button
+        android:id="@+id/btnAcceptPolicy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đã hiểu và Đồng ý"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/custom_button_rectangular"
+        app:backgroundTint="@null" />
+
+</LinearLayout>

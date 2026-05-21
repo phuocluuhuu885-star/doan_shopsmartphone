@@ -310,6 +310,33 @@
                     android:visibility="gone" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="10dp"
+                android:gravity="center_vertical">
+
+                <CheckBox
+                    android:id="@+id/cbAgreeTerm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/color_chudao"
+                    android:checked="false" />
+
+                <TextView
+                    android:id="@+id/tvPolicyLink"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
         </LinearLayout>
 
 
