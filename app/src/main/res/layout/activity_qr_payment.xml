@@ -125,22 +125,56 @@
                     android:contentDescription="Mã QR thanh toán"
                     android:scaleType="fitCenter" />
 
-                <TextView
+                <!-- Nút Lưu QR -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_save_qr"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_marginTop="12dp"
-                    android:text="NGUYEN QUANG THANG"
-                    android:textColor="#212121"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:background="@drawable/bg_button_outline"
+                    android:text="Lưu QR"
+                    android:textColor="#2196F3"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="MB Bank - 0911193469"
+                    android:layout_marginTop="16dp"
+                    android:text="Thông tin chuyển khoản"
+                    android:textColor="#212121"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Chủ tài khoản: Nguyen Quang Thang"
+                    android:textColor="#212121"
+                    android:textSize="14sp"
+                    android:textIsSelectable="false"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Số tài khoản: 0911193469 (MB Bank)"
                     android:textColor="#757575"
-                    android:textSize="13sp" />
+                    android:textSize="14sp"
+                    android:textIsSelectable="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Nội dung: THANH TOAN DON HANG"
+                    android:textColor="#757575"
+                    android:textSize="14sp"
+                    android:textIsSelectable="false" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -207,6 +241,30 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:text="Trạng thái"
+                        android:textColor="#757575"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tv_order_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chờ thanh toán"
+                        android:textColor="#FF9800"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="Nội dung chuyển khoản"
                         android:textColor="#757575"
                         android:textSize="14sp" />
@@ -219,6 +277,29 @@
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#EEEEEE" />
+
+                <!-- Danh sách sản phẩm -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Thông tin sản phẩm"
+                    android:textColor="#212121"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/layout_products"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
 
                 <View
                     android:layout_width="match_parent"
