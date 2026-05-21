@@ -297,8 +297,14 @@ public class OptionSelectionActivity extends AppCompatActivity {
         tvSummaryCondition.setText("Ngoại hình: " + (selectedOptionMatch.getConditionPercent() != null ? selectedOptionMatch.getConditionPercent() + "%" : "--"));
         tvSummaryBattery.setText("Pin: " + (selectedOptionMatch.getBatteryHealth() != null ? selectedOptionMatch.getBatteryHealth() : "--"));
 
-        // General specs
-        tvSpecScreen.setText(product.getScreen() != null ? product.getScreen() : "N/A");
+        // Hiển thị màn hình: ưu tiên màn hình đặc thù của option (nếu đã thay màn),
+        // ngược lại dùng màn hình chung của sản phẩm
+        String optionScreen = selectedOptionMatch.getScreen();
+        if (optionScreen != null && !optionScreen.trim().isEmpty()) {
+            tvSpecScreen.setText(optionScreen);
+        } else {
+            tvSpecScreen.setText(product.getScreen() != null ? product.getScreen() : "N/A");
+        }
         tvSpecCamera.setText(product.getCamera() != null ? product.getCamera() : "N/A");
         tvSpecChipset.setText(product.getChipset() != null ? product.getChipset() : "N/A");
         tvSpecOS.setText(product.getOperatingSystem() != null ? product.getOperatingSystem() : "N/A");
