@@ -11,12 +11,27 @@ public class OrderResult implements Serializable {
     @SerializedName("app_trans_id")
     private String appTransId;
 
+    @SerializedName("savedOrder")
+    private OrderResult savedOrder;
+
     // Getter cho app_trans_id
     public String getAppTransId() {
-        return appTransId;
+        if (appTransId != null) {
+            return appTransId;
+        }
+        if (savedOrder != null) {
+            return savedOrder.getAppTransId();
+        }
+        return null;
     }
 
     public String getId() {
-        return id;
+        if (id != null) {
+            return id;
+        }
+        if (savedOrder != null) {
+            return savedOrder.getId();
+        }
+        return null;
     }
 }

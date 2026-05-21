@@ -457,15 +457,27 @@ public class PayActivity extends AppCompatActivity {
 
     private void urlCreateNotification(String orderId, String productPreview) {
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
-        // productPreview đã được chuẩn bị từ bên ngoài, tránh race condition
-        String content = "Bạn có đơn hàng mới: " + (productPreview == null || productPreview.isEmpty() ? orderId : productPreview);
+        
+        String previewStr = "";
+        if (productPreview != null && !productPreview.trim().isEmpty() && !"null".equalsIgnoreCase(productPreview)) {
+            previewStr = productPreview.trim();
+        } else if (orderId != null && !orderId.trim().isEmpty() && !"null".equalsIgnoreCase(orderId)) {
+            previewStr = "Mã đơn: #" + orderId.trim();
+        }
+
+        String content;
+        if (!previewStr.isEmpty()) {
+            content = "Đặt đơn hàng thành công: " + previewStr;
+        } else {
+            content = "Đặt đơn hàng thành công! Đang chờ cửa hàng xác nhận.";
+        }
 
         NotificationBody body = new NotificationBody(
-                AccountUltil.USER.getId(),   // Người gửi (User)
-                AccountUltil.USER.getId(),           // ID Admin hoặc Shop (Receiver)
-                orderId,                     // ID đơn hàng vừa tạo
+                AccountUltil.USER.getId(),
+                AccountUltil.USER.getId(),
+                orderId != null && !"null".equalsIgnoreCase(orderId) ? orderId : "",
                 content,
-                "wfc"                        // Type: Chờ xác nhận
+                "wfc"
         );
 
         BaseApi.API.createNotification(token, body).enqueue(new Callback<NotificationResponse>() {
@@ -607,56 +619,45 @@ public class PayActivity extends AppCompatActivity {
             purchaseBody.setVoucherIds(voucherIds);
 
             loadingDialog.show();
+            // Lấy productPreview an toàn trước khi xóa giỏ hàng
+            final String productPreview = buildOrderProductPreview();
+
             BaseApi.API.createOrderByZalo(token, purchaseBody).enqueue(new Callback<ServerResponse>() {
                 @Override
                 public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
                     loadingDialog.dismiss();
-                    if(response.isSuccessful()){ // chỉ nhận đầu status 200
+                    if (response.isSuccessful() && response.body() != null) {
                         ServerResponse serverResponse = response.body();
-                        String productPreview = buildOrderProductPreview();
-                       // if(serverResponse.getCode() == 200 || serverResponse.getCode() == 201) {
-                            Toast.makeText(PayActivity.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                            OrderResult orderData = serverResponse.getResult();
-                             Log.e("RESULT", new Gson().toJson(serverResponse.getResult()));
-                            if (orderData != null) {
-                                String id = orderData.getId();
-//                                String transId = orderData.getAppTransId();
-//                                Log.d("DEBUG", "ID nhận được: " + serverResponse.toString()+"  id"+ id);
-
-                                urlCreateNotification(id, productPreview);
-                            } else {
-                                Log.d("DEBUG", "Đối tượng Result bị null!");
-                            }
-//                            String orderId = serverResponse.getOrder().getId(); // Lấy ID của đơn hàng từ serverResponse
-//                           Log.d(TAG.toString, "onResponse: "+orderId);
-//                                            Intent intent = new Intent(PayActivity.this, OrderSuccessActivity.class);
-//                                            startActivity(intent);
-//                            CartUtil.listCartCheck.clear();
-                            //Order order = serverResponse.getOrder();
-//                            Log.d("Don hang vua tao", "onResponse-createOrder: " + order);
-             //           }
-
-                    } else { // nhận các đầu status #200
+                        Toast.makeText(PayActivity.this, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        
+                        String orderId = null;
+                        OrderResult orderData = serverResponse.getResult();
+                        if (orderData != null) {
+                            orderId = orderData.getId();
+                        }
+                        
+                        // Tạo thông báo thành công
+                        urlCreateNotification(orderId, productPreview);
+                        
+                        // CHỈ xóa giỏ hàng sau khi tạo đơn hàng thành công trên Server
+                        removeDataCartZalo();
+                    } else {
                         try {
-                            String errorBody = response.errorBody().string();
+                            String errorBody = response.errorBody() != null ? response.errorBody().string() : "";
                             JSONObject errorJson = new JSONObject(errorBody);
                             String errorMessage = errorJson.getString("message");
                             Log.d(TAG.toString, "onResponse-createOrder: " + errorMessage);
                             Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                        }catch (IOException e){
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Tạo đơn hàng thất bại", Toast.LENGTH_SHORT).show();
                         }
                     }
-                    loadingDialog.dismiss();
                 }
 
                 @Override
                 public void onFailure(Call<ServerResponse> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG.toString, "onFailure-createOrder: " + t.toString());
                     loadingDialog.dismiss();
+                    Toast.makeText(PayActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -686,7 +687,6 @@ public class PayActivity extends AppCompatActivity {
         btnConfirm.setOnClickListener(v -> {
             dialog.dismiss();
             urlCreateOrderZalo(); // Tạo đơn hàng trên server
-            removeDataCartZalo(); // Chuyển sang màn hình thành công
         });
     }
     private void zaloRequest(){
@@ -701,10 +701,7 @@ public class PayActivity extends AppCompatActivity {
                     @Override
                     public void onPaymentSucceeded(String s, String s1, String s2) {
                         Log.d(TAG.toString, "onPaymentSucceeded: Thanh toan thanh cong");
-                        removeDataCartZalo();
                         urlCreateOrderZalo();
-//                        Intent intent = new Intent(PayActivity.this, OrderSuccessActivity.class);
-//                        startActivityForResult(intent, REQUEST_CODE_ORDER_SUCCESS);
                     }
 
                     @Override
