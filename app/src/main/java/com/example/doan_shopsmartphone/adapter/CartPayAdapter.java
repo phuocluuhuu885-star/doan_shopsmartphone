@@ -14,6 +14,9 @@ import com.example.doan_shopsmartphone.databinding.LayoutItemCartPayBinding;
 import com.example.doan_shopsmartphone.model.OptionAndQuantity;
 import com.example.doan_shopsmartphone.view.Cart.CartActivity;
 import com.example.doan_shopsmartphone.view.voucher.VoucherScreen;
+import com.example.doan_shopsmartphone.model.Product;
+import com.example.doan_shopsmartphone.view.product_screen.DetailProduct;
+import com.example.doan_shopsmartphone.R;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -57,7 +60,19 @@ public class CartPayAdapter extends RecyclerView.Adapter<CartPayAdapter.CartPayV
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Product product = cart.getOptionProduct().getProduct();
+                if (product != null) {
+                    Intent intent = new Intent(context, DetailProduct.class);
+                    intent.putExtra("id_product", product.getId());
+                    intent.putExtra("sold_quantity", String.valueOf(product.getSoldQuantity()));
+                    intent.putExtra("rating_start", String.valueOf(product.getAverageRate()));
+                    intent.putExtra("review_count", String.valueOf(product.getReviewCount()));
+                    intent.putExtra("minPrice", product.getMinPrice());
+                    context.startActivity(intent);
+                    if (context instanceof android.app.Activity) {
+                        ((android.app.Activity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                    }
+                }
             }
         });
     }
