@@ -176,6 +176,19 @@ public interface BaseApi {
     Call<ServerResponse> createOrderByZalo(@Header("Authorization") String authorization,
                                            @Body PurchaseBody purchaseBody);
 
+    // ---- QR Payment APIs ----
+    @POST("order/create-order")
+    Call<ServerResponse> createOrderQR(@Header("Authorization") String authorization,
+                                       @Body PurchaseBody purchaseBody);
+
+    @DELETE("order/qr/cancel/{orderId}")
+    Call<ServerResponse> cancelOrderQR(@Header("Authorization") String authorization,
+                                       @Path("orderId") String orderId);
+
+    @PUT("order/qr/confirm/{orderId}")
+    Call<ServerResponse> confirmOrderQR(@Header("Authorization") String authorization,
+                                        @Path("orderId") String orderId);
+
     @GET("order")
     Call<OrderResponse> getListOrder(@Header("Authorization") String authorization,
                                      @Query("status") String status);
