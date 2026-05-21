@@ -91,16 +91,17 @@
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
-                        <!-- CODE CONG COPY SECTION -->
+                        <!-- CODE SECTION -->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:layout_marginTop="16dp"
                             android:background="#FFF0F0"
-                            android:paddingHorizontal="16dp"
+                            android:paddingHorizontal="24dp"
                             android:paddingVertical="8dp"
-                            android:gravity="center_vertical">
+                            android:layout_gravity="center"
+                            android:gravity="center">
 
                             <TextView
                                 android:id="@+id/tvDetailCode"
@@ -110,15 +111,6 @@
                                 android:textColor="@color/color_chudao"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
-
-                            <ImageView
-                                android:id="@+id/btnCopy"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginStart="8dp"
-                                android:src="@drawable/baseline_format_list_bulleted_24"
-                                app:tint="@color/color_chudao"
-                                android:contentDescription="Copy code" />
 
                         </LinearLayout>
 

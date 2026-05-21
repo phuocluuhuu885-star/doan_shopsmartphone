@@ -23,7 +23,7 @@ import java.util.Locale;
 
 public class VoucherDetailActivity extends AppCompatActivity {
 
-    private ImageView btnBack, btnCopy;
+    private ImageView btnBack;
     private TextView tvDetailDiscountDisplay, tvDetailTitle, tvDetailCode;
     private TextView tvDetailMinOrder, tvDetailMaxDiscount, tvDetailQuantity, tvDetailExpiry, tvDetailProducts;
     private LinearLayout layoutMaxDiscount;
@@ -48,7 +48,6 @@ public class VoucherDetailActivity extends AppCompatActivity {
 
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
-        btnCopy = findViewById(R.id.btnCopy);
         tvDetailDiscountDisplay = findViewById(R.id.tvDetailDiscountDisplay);
         tvDetailTitle = findViewById(R.id.tvDetailTitle);
         tvDetailCode = findViewById(R.id.tvDetailCode);
@@ -62,17 +61,8 @@ public class VoucherDetailActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> finish());
 
-        btnCopy.setOnClickListener(v -> {
-            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("Voucher Code", voucher.getCode());
-            if (clipboard != null) {
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(this, "Đã sao chép mã giảm giá: " + voucher.getCode(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
         btnApply.setOnClickListener(v -> {
-            Toast.makeText(this, "Đã áp dụng mã giảm giá!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Chưa chọn sản phẩm áp dụng", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, com.example.doan_shopsmartphone.MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
