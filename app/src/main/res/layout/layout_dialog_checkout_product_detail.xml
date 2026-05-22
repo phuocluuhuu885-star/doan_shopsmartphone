@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/bg_bottom_sheet">
+
+    <!-- Top Drag Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:background="#D1D1D6"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Dialog Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thông tin sản phẩm đã chọn"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Product General Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/imgDialogOption"
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:scaleType="centerInside"
+                    android:background="@drawable/bg_border_gray"
+                    android:padding="4dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvDialogProductName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tên sản phẩm"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
+
+                    <TextView
+                        android:id="@+id/tvDialogProductColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Phân loại: --"
+                        android:textColor="@color/gray99"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvDialogQuantity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:background="#FFF3E0"
+                        android:textColor="#E65100"
+                        android:text="Số lượng: x1"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="6dp"
+                        android:gravity="bottom">
+
+                        <TextView
+                            android:id="@+id/tvDialogPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_chudao"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:text="0 đ" />
+
+                        <TextView
+                            android:id="@+id/tvDialogOriginalPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@color/gray99"
+                            android:textSize="13sp"
+                            android:text="0 đ"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Option Detail Specs Box -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F9F9F9"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:id="@+id/tvSummaryTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chi tiết tùy chọn cấu hình:"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:alignmentMode="alignMargins"
+                    android:columnOrderPreserved="false">
+
+                    <TextView
+                        android:id="@+id/tvSummaryRam"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:drawablePadding="8dp"
+                        android:padding="4dp"
+                        android:text="RAM: --"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvSummaryIntegrity"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:drawablePadding="8dp"
+                        android:padding="4dp"
+                        android:text="Tình trạng: --"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvSummaryStorage"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:drawablePadding="8dp"
+                        android:padding="4dp"
+                        android:text="Bộ nhớ: --"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvSummaryCondition"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:drawablePadding="8dp"
+                        android:padding="4dp"
+                        android:text="Ngoại hình: --"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvSummaryBattery"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:drawablePadding="8dp"
+                        android:padding="4dp"
+                        android:text="Pin: --"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+                </GridLayout>
+
+                <TextView
+                    android:id="@+id/btnMoreSpecs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xem thêm thông số kỹ thuật ▾"
+                    android:textColor="@color/color_chudao"
+                    android:textSize="14sp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:padding="8dp" />
+
+                <!-- Expandable General Specs Table -->
+                <TableLayout
+                    android:id="@+id/tableGeneralSpecs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:stretchColumns="1"
+                    android:visibility="gone">
+
+                    <TableRow android:background="@color/white" android:layout_marginBottom="1dp">
+                        <TextView android:text="Màn hình" android:padding="8dp" android:textStyle="bold" android:background="#EEEEEE" android:textColor="@color/black" android:layout_width="100dp" android:textSize="12sp"/>
+                        <TextView android:id="@+id/tvDialogSpecScreen" android:padding="8dp" android:textColor="@color/black" android:textSize="12sp" />
+                    </TableRow>
+                    <TableRow android:background="@color/white" android:layout_marginBottom="1dp">
+                        <TextView android:text="Camera" android:padding="8dp" android:textStyle="bold" android:background="#EEEEEE" android:textColor="@color/black" android:layout_width="100dp" android:textSize="12sp"/>
+                        <TextView android:id="@+id/tvDialogSpecCamera" android:padding="8dp" android:textColor="@color/black" android:textSize="12sp" />
+                    </TableRow>
+                    <TableRow android:background="@color/white" android:layout_marginBottom="1dp">
+                        <TextView android:text="Vi xử lý" android:padding="8dp" android:textStyle="bold" android:background="#EEEEEE" android:textColor="@color/black" android:layout_width="100dp" android:textSize="12sp"/>
+                        <TextView android:id="@+id/tvDialogSpecChipset" android:padding="8dp" android:textColor="@color/black" android:textSize="12sp" />
+                    </TableRow>
+                    <TableRow android:background="@color/white" android:layout_marginBottom="1dp">
+                        <TextView android:text="Hệ điều hành" android:padding="8dp" android:textStyle="bold" android:background="#EEEEEE" android:textColor="@color/black" android:layout_width="100dp" android:textSize="12sp"/>
+                        <TextView android:id="@+id/tvDialogSpecOS" android:padding="8dp" android:textColor="@color/black" android:textSize="12sp" />
+                    </TableRow>
+                    <TableRow android:background="@color/white" android:layout_marginBottom="1dp">
+                        <TextView android:text="Dung lượng Pin" android:padding="8dp" android:textStyle="bold" android:background="#EEEEEE" android:textColor="@color/black" android:layout_width="100dp" android:textSize="12sp"/>
+                        <TextView android:id="@+id/tvDialogSpecBattery" android:padding="8dp" android:textColor="@color/black" android:textSize="12sp" />
+                    </TableRow>
+                    <TableRow android:background="@color/white" android:layout_marginBottom="1dp">
+                        <TextView android:text="SIM &amp; Kết nối" android:padding="8dp" android:textStyle="bold" android:background="#EEEEEE" android:textColor="@color/black" android:layout_width="100dp" android:textSize="12sp"/>
+                        <TextView android:id="@+id/tvDialogSpecConnection" android:padding="8dp" android:textColor="@color/black" android:textSize="12sp" />
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+
+            <!-- Warranty Policy Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:background="#E8F5E9"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chính sách bảo hành &amp; đổi trả:"
+                    android:textColor="#2E7D32"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓ Bảo hành: "
+                        android:textColor="#1B5E20"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvDialogWarranty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bảo hành chính hãng"
+                        android:textColor="#1B5E20"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓ Đổi trả: "
+                        android:textColor="#1B5E20"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1 đổi 1 trong vòng 7 ngày đầu nếu có lỗi phần cứng"
+                        android:textColor="#1B5E20"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Close Button -->
+            <Button
+                android:id="@+id/btnCloseDialog"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_button_primary"
+                android:text="Đóng"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
