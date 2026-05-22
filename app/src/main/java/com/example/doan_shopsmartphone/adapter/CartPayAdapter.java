@@ -181,7 +181,11 @@ public class CartPayAdapter extends RecyclerView.Adapter<CartPayAdapter.CartPayV
         // General specs
         String optionScreen = selectedOption.getScreen();
         if (optionScreen != null && !optionScreen.trim().isEmpty()) {
-            tvSpecScreen.setText(optionScreen);
+            if (optionScreen.toLowerCase().contains("thay màn")) {
+                tvSpecScreen.setText(optionScreen);
+            } else {
+                tvSpecScreen.setText(optionScreen + " (đã thay màn)");
+            }
         } else {
             tvSpecScreen.setText(productDetail.getScreen() != null ? productDetail.getScreen() : "N/A");
         }

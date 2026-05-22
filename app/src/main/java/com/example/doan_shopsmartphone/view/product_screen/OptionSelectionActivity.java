@@ -301,7 +301,11 @@ public class OptionSelectionActivity extends AppCompatActivity {
         // ngược lại dùng màn hình chung của sản phẩm
         String optionScreen = selectedOptionMatch.getScreen();
         if (optionScreen != null && !optionScreen.trim().isEmpty()) {
-            tvSpecScreen.setText(optionScreen);
+            if (optionScreen.toLowerCase().contains("thay màn")) {
+                tvSpecScreen.setText(optionScreen);
+            } else {
+                tvSpecScreen.setText(optionScreen + " (đã thay màn)");
+            }
         } else {
             tvSpecScreen.setText(product.getScreen() != null ? product.getScreen() : "N/A");
         }
