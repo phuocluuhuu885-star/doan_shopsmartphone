@@ -7,7 +7,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.doan_shopsmartphone.view.profile_screen.history_screen.FragmentPageCancelled;
 import com.example.doan_shopsmartphone.view.profile_screen.history_screen.FragmentPageDeliveried;
-import com.example.doan_shopsmartphone.view.profile_screen.history_screen.FragmentPageDelivering;
 import com.example.doan_shopsmartphone.view.profile_screen.history_screen.FragmentPageWaitConfirm;
 import com.example.doan_shopsmartphone.view.profile_screen.history_screen.FragmentPageWaitingDelivery;
 
@@ -25,10 +24,8 @@ public class ViewPageOrderAdapter extends FragmentStateAdapter {
             case 1:
                 return new FragmentPageWaitingDelivery();
             case 2:
-                return new FragmentPageDelivering();
-            case 3:
                 return new FragmentPageDeliveried();
-            case 4:
+            case 3:
                 return new FragmentPageCancelled();
             default:
                 return null;
@@ -37,6 +34,6 @@ public class ViewPageOrderAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 5;
+        return 4;
     }
 }

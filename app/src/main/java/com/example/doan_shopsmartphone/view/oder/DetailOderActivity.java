@@ -24,6 +24,7 @@ import com.example.doan_shopsmartphone.model.Order;
 import com.example.doan_shopsmartphone.model.response.store.DetailBills;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.CartUtil;
+import com.example.doan_shopsmartphone.ultil.TAG;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -122,7 +123,7 @@ public class DetailOderActivity extends AppCompatActivity {
         tvTime.setText("Thời gian đặt hàng: " + order.getCreatedAt());
 
         // 5. Xử lý trạng thái (Giống màu Shopee)
-        tvStatusHeader.setText(order.getStatus());
+        tvStatusHeader.setText(TAG.formatOrderStatus(order.getStatus()));
         Log.e( "iiii: ",order.getStatus() );
     }
 

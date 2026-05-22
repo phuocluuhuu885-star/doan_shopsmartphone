@@ -78,7 +78,7 @@ public class FragmentPageDeliveried extends Fragment implements ObjectUtil {
     }
     private void initView() {
         orderList = new ArrayList<>();
-        orderAdapter = new OrderAdapter(getActivity(), orderList, this, 3);
+        orderAdapter = new OrderAdapter(getActivity(), orderList, this, 2);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         binding.rcvOrder.setLayoutManager(layoutManager);
         binding.rcvOrder.setAdapter(orderAdapter);

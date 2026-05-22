@@ -101,7 +101,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.binding.tvOrderId.setText("Đơn hàng: " + (order.getId() != null ? order.getId() : "N/A"));
         DecimalFormat df = new DecimalFormat("###,###,###");
         holder.binding.tvTotalPrice.setText(df.format(order.getTotalPrice()) + "đ");
-        holder.binding.tvStatus.setText(order.getStatus());
+        holder.binding.tvStatus.setText(TAG.formatOrderStatus(order.getStatus()));
         holder.binding.tvQuantityTypeProduct.setText((order.getProductsOrder() != null ? order.getProductsOrder().size() : 0) + " loại sản phẩm");
 
         String statusText = order.getStatus();
@@ -131,13 +131,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             holder.binding.btnreview.setVisibility(View.GONE);
 
         } else if (status == 2) {
-            holder.binding.btnItem.setVisibility(View.GONE);
-            holder.binding.btnreview.setVisibility(View.GONE);
-
-        } else if (status == 3) {
             holder.binding.btnreview.setVisibility(View.VISIBLE);
+            holder.binding.btnItem.setVisibility(View.VISIBLE);
             holder.binding.btnItem.setText("Mua lại");
-        } else if (status == 4) {
+        } else if (status == 3) {
+            holder.binding.btnItem.setVisibility(View.VISIBLE);
             holder.binding.btnItem.setText("Mua lại");
             holder.binding.btnreview.setVisibility(View.GONE);
 

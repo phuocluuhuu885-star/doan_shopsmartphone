@@ -85,7 +85,7 @@ public class FragmentPageWaitingDelivery extends Fragment implements ObjectUtil 
         String token = AccountUltil.BEARER + AccountUltil.getToken(requireContext());
 
         binding.progressBar.setVisibility(View.VISIBLE);
-        BaseApi.API.getListOrder(token, TAG.WAIT_DELIVERY).enqueue(new Callback<OrderResponse>() {
+        BaseApi.API.getListOrder(token, TAG.WAIT_DELIVERING_COMBINED).enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(@NonNull Call<OrderResponse> call, @NonNull Response<OrderResponse> response) {
                 if(response.isSuccessful()){ // chỉ nhận đầu status 200

@@ -26,6 +26,7 @@ import com.example.doan_shopsmartphone.model.Order;
 import com.example.doan_shopsmartphone.model.response.UpdateStatusResponse;
 import com.example.doan_shopsmartphone.model.response.store.DetailBills;
 import com.example.doan_shopsmartphone.ultil.AccountUltil;
+import com.example.doan_shopsmartphone.ultil.TAG;
 import com.example.doan_shopsmartphone.view.oder.DetailOderActivity;
 import com.example.doan_shopsmartphone.view.product_screen.DetailProduct;
 
@@ -211,7 +212,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         DecimalFormat df = new DecimalFormat("###,###,###");
         tvTotalPrice.setText(df.format(order.getTotalPrice()));
         tvOrderId.setText("Đơn hàng: " + order.getId());
-        tvStatus.setText(order.getStatus());
+        tvStatus.setText(TAG.formatOrderStatus(order.getStatus()));
         OrderProductAdapter   orderProductAdapter = new OrderProductAdapter(context, order.getProductsOrder());
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         rcvOrderDetail.setLayoutManager(layoutManager);

@@ -77,7 +77,7 @@ public class FragmentPageCancelled extends Fragment implements ObjectUtil {
 
     private void initView() {
         orderList = new ArrayList<>();
-        orderAdapter = new OrderAdapter(getActivity(), orderList, this, 4);
+        orderAdapter = new OrderAdapter(getActivity(), orderList, this, 3);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         binding.rcvOrder.setLayoutManager(layoutManager);
         binding.rcvOrder.setAdapter(orderAdapter);

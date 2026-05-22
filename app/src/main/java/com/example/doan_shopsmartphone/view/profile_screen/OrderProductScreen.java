@@ -40,15 +40,12 @@ public class OrderProductScreen extends AppCompatActivity {
                         tab.setText("Chờ xử lý");
                         break;
                     case 1:
-                        tab.setText("Chờ giao hàng");
+                        tab.setText("Chờ lấy/Đang giao hàng");
                         break;
                     case 2:
-                        tab.setText("Đang giao hàng");
-                        break;
-                    case 3:
                         tab.setText("Đã giao hàng");
                         break;
-                    case 4:
+                    case 3:
                         tab.setText("Đã hủy");
                         break;
                 }
