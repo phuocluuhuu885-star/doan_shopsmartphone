@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -49,8 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            app:cardElevation="2dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_menu_recent_history"
-                    android:tint="#E65100" />
+                    app:tint="#E65100" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -91,8 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -125,7 +124,6 @@
                     android:contentDescription="Mã QR thanh toán"
                     android:scaleType="fitCenter" />
 
-                <!-- Nút Lưu QR -->
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_save_qr"
                     android:layout_width="wrap_content"
@@ -155,7 +153,6 @@
                     android:text="Chủ tài khoản: Nguyen Quang Thang"
                     android:textColor="#212121"
                     android:textSize="14sp"
-                    android:textIsSelectable="false"
                     android:textStyle="bold" />
 
                 <TextView
@@ -164,17 +161,17 @@
                     android:layout_marginTop="4dp"
                     android:text="Số tài khoản: 0911193469 (MB Bank)"
                     android:textColor="#757575"
-                    android:textSize="14sp"
-                    android:textIsSelectable="false" />
+                    android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/tvOrderContent1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Nội dung: THANH TOAN DON HANG"
+                    android:textAlignment="center"
                     android:textColor="#757575"
-                    android:textSize="14sp"
-                    android:textIsSelectable="false" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -184,8 +181,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -235,6 +231,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
@@ -270,9 +267,15 @@
                         android:textSize="14sp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tvOrderContent2"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:maxLines="2"
+                        android:ellipsize="end"
                         android:text="THANH TOAN DON HANG"
+                        android:textAlignment="viewEnd"
                         android:textColor="#212121"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -284,7 +287,6 @@
                     android:layout_marginTop="12dp"
                     android:background="#EEEEEE" />
 
-                <!-- Danh sách sản phẩm -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -334,7 +336,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

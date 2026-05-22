@@ -53,6 +53,7 @@ public class QRCodePaymentActivity extends AppCompatActivity {
 
     private ImageView imgBack, imgQrCode;
     private TextView tvCountdown, tvOrderId, tvTotalPrice, tvOrderStatus;
+    private TextView tvOrderContent1, tvOrderContent2;
     private AppCompatButton btnCancel, btnContinue, btnSaveQr;
     private LinearLayout layoutProducts;
 
@@ -82,6 +83,8 @@ public class QRCodePaymentActivity extends AppCompatActivity {
         tvOrderId = findViewById(R.id.tv_order_id);
         tvTotalPrice = findViewById(R.id.tv_total_price);
         tvOrderStatus = findViewById(R.id.tv_order_status);
+        tvOrderContent1 = findViewById(R.id.tvOrderContent1);
+        tvOrderContent2 = findViewById(R.id.tvOrderContent2);
         btnCancel = findViewById(R.id.btn_cancel);
         btnContinue = findViewById(R.id.btn_continue);
         btnSaveQr = findViewById(R.id.btn_save_qr);
@@ -98,6 +101,16 @@ public class QRCodePaymentActivity extends AppCompatActivity {
         // Hiển thị thông tin
         DecimalFormat formatter = new DecimalFormat("###,###,###");
         tvTotalPrice.setText(formatter.format(totalPrice) + " đ");
+        
+        // Hiển thị nội dung chuyển khoản
+        String transferContent = "THANH TOAN DON HANG " + (orderId != null ? orderId.toUpperCase() : "");
+        if (tvOrderContent1 != null) {
+            tvOrderContent1.setText("Nội dung: " + transferContent);
+        }
+        if (tvOrderContent2 != null) {
+            tvOrderContent2.setText(transferContent);
+        }
+
         if (orderId != null && orderId.length() > 8) {
             tvOrderId.setText("..." + orderId.substring(orderId.length() - 8));
         } else {
@@ -146,12 +159,22 @@ public class QRCodePaymentActivity extends AppCompatActivity {
             }
         }
 
-        // Load QR Code
-        String qrUrl = "https://api.vietqr.io/image/971025-0911193469-lUyQ2FF.jpg"
-                + "?accountName=NGUYEN%20QUANG%20THANG"
+//        // Load QR Code
+//        String qrUrl = "https://api.vietqr.io/image/971025-0911193469-lUyQ2FF.jpg"
+//                + "?accountName=NGUYEN%20QUANG%20THANG"
+//                + "&amount=" + totalPrice
+//                + "&addInfo=" + Uri.encode(transferContent); // Sử dụng Uri.encode để tránh lỗi ký tự đặc biệt
+//        Glide.with(this).load(qrUrl).into(imgQrCode);
+
+        String qrUrl = "https://qr.sepay.vn/img"
+                + "?acc=0911193469"
+                + "&bank=MBBank"
                 + "&amount=" + totalPrice
-                + "&addInfo=THANH%20TOAN%20DON%20HANG";
-        Glide.with(this).load(qrUrl).into(imgQrCode);
+                + "&des=" + Uri.encode(transferContent);
+
+        Glide.with(this)
+                .load(qrUrl)
+                .into(imgQrCode);
 
         // Bắt đầu đếm ngược
         startCountdown();
