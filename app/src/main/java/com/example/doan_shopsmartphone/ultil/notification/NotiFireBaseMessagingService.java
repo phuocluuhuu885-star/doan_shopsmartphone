@@ -65,6 +65,7 @@ public class NotiFireBaseMessagingService extends FirebaseMessagingService {
         if (isPromotion && !hasProductId) {
             // Đây chắc chắn là Voucher hoặc thông báo hệ thống -> Về trang chủ
             intent = new Intent(this, MainActivity.class);
+            intent.putExtra("action", "open_voucher");
         } else if (hasOrderId) {
             // Chỉ mở đơn hàng nếu thực sự có ID đơn hàng hợp lệ
             intent = new Intent(this, DetailOderActivity.class);

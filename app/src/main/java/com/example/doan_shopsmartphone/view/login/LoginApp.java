@@ -121,6 +121,9 @@ public class LoginApp extends AppCompatActivity {
 
     private void screenSwitch(Context context, Class<?> cls) {
         Intent intent = new Intent(context,cls);
+        if (getIntent().getExtras() != null) {
+            intent.putExtras(getIntent().getExtras());
+        }
         startActivity(intent);
     }
 

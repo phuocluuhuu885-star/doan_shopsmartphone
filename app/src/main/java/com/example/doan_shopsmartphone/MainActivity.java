@@ -1,5 +1,6 @@
 package com.example.doan_shopsmartphone;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -42,6 +43,23 @@ public class MainActivity extends AppCompatActivity {
                 fetchUnreadCount();
             }
         }, 3000);
+        handleNotificationIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleNotificationIntent(intent);
+    }
+
+    private void handleNotificationIntent(Intent intent) {
+        if (intent != null && "open_voucher".equals(intent.getStringExtra("action"))) {
+            intent.removeExtra("action");
+            Intent voucherIntent = new Intent(MainActivity.this, com.example.doan_shopsmartphone.view.voucher.MyVoucherActivity.class);
+            startActivity(voucherIntent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+        }
     }
 
     private void onClickBottomNav() {
