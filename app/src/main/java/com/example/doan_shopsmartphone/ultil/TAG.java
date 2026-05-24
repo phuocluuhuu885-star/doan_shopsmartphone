@@ -15,6 +15,9 @@ public class TAG {
         if ("Chờ giao hàng".equals(status)) {
             return "Chờ lấy hàng";
         }
+        if ("shipping".equals(status)) {
+            return "Đang giao hàng";
+        }
         return status;
     }
 }

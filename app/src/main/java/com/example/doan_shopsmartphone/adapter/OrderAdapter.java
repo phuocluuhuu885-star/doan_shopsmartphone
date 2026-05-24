@@ -127,7 +127,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             holder.binding.btnreview.setVisibility(View.GONE);
 
         } else if (status == 1) {
-            holder.binding.btnItem.setVisibility(View.GONE);
+            if ("Chờ giao hàng".equals(statusText) || "shipping".equals(statusText)) {
+                holder.binding.btnItem.setText("Hủy hàng");
+                holder.binding.btnItem.setVisibility(View.VISIBLE);
+            } else {
+                holder.binding.btnItem.setVisibility(View.GONE);
+            }
             holder.binding.btnreview.setVisibility(View.GONE);
 
         } else if (status == 2) {
@@ -143,7 +148,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
 
         holder.binding.btnItem.setOnClickListener(view -> {
-            if (status == 0) { // chỉ tab chờ xác nhận mới cho huỷ
+            if (status == 0 || status == 1) { // Cho phép hủy ở cả tab 0 và tab 1
                 showCancelDialog(order, position);
             } else {
                 objectUtil.onclickObject(order);
