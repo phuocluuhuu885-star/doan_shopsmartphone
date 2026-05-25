@@ -24,6 +24,7 @@ public class User implements Serializable {
     private String role_id;
     private String createdAt;
     private String updatedAt;
+    private int wallet_balance;
 
     public User() {
     }
@@ -191,5 +192,13 @@ public class User implements Serializable {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public int getWallet_balance() {
+        return wallet_balance;
+    }
+
+    public void setWallet_balance(int wallet_balance) {
+        this.wallet_balance = wallet_balance;
     }
 }

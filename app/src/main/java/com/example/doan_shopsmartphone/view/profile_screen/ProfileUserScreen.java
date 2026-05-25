@@ -107,6 +107,14 @@ public class ProfileUserScreen extends AppCompatActivity {
                 }
             }
         });
+
+        binding.btnOpenWallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileUserScreen.this, FWalletActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void openCalander() {
@@ -228,12 +236,41 @@ public class ProfileUserScreen extends AppCompatActivity {
             binding.edtUserName.setText(AccountUltil.USER.getUsername());
             binding.edtBirthday.setText(AccountUltil.USER.getBirthday());
             binding.email.setText(AccountUltil.USER.getEmail());
+            java.text.DecimalFormat formatter = new java.text.DecimalFormat("###,###,###");
+            binding.tvProfileWalletBalance.setText(formatter.format(AccountUltil.USER.getWallet_balance()) + "đ");
             Glide.with(this)
                     .load(AccountUltil.USER.getAvatar())
                     .placeholder(R.drawable.loading)
                     .error(R.drawable.avatar1)
                     .into(binding.imgAvartar);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchWalletBalance();
+    }
+
+    private void fetchWalletBalance() {
+        String token = AccountUltil.BEARER + AccountUltil.getToken(this);
+        BaseApi.API.getWalletInfo(token).enqueue(new Callback<com.example.doan_shopsmartphone.model.response.WalletResponse>() {
+            @Override
+            public void onResponse(Call<com.example.doan_shopsmartphone.model.response.WalletResponse> call, Response<com.example.doan_shopsmartphone.model.response.WalletResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
+                    int balance = response.body().getData().getBalance();
+                    if (AccountUltil.USER != null) {
+                        AccountUltil.USER.setWallet_balance(balance);
+                    }
+                    java.text.DecimalFormat formatter = new java.text.DecimalFormat("###,###,###");
+                    binding.tvProfileWalletBalance.setText(formatter.format(balance) + "đ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<com.example.doan_shopsmartphone.model.response.WalletResponse> call, Throwable t) {
+            }
+        });
     }
 
     @Override

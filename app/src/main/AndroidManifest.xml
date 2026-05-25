@@ -42,6 +42,9 @@
             android:name=".view.profile_screen.ProfileUserScreen"
             android:exported="false" />
         <activity
+            android:name=".view.profile_screen.FWalletActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.success_screen.OrderSuccessActivity"
             android:exported="false" />
         <activity

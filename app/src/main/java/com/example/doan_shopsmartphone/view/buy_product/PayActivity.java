@@ -40,6 +40,7 @@ import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.adapter.CartPayAdapter;
 import com.example.doan_shopsmartphone.api.BaseApi;
 import com.example.doan_shopsmartphone.databinding.ActivityPayBinding;
+import com.example.doan_shopsmartphone.model.response.WalletResponse;
 import com.example.doan_shopsmartphone.model.CreateOrder;
 import com.example.doan_shopsmartphone.model.Info;
 import com.example.doan_shopsmartphone.model.OptionAndQuantity;
@@ -123,6 +124,8 @@ public class PayActivity extends AppCompatActivity {
             binding.txtPaymentMethods.setText("Chuyển khoản ngân hàng");
         } else if (paymentMethods == 3) {
             binding.txtPaymentMethods.setText("Thanh toán bằng cách tạo mã QR");
+        } else if (paymentMethods == 4) {
+            binding.txtPaymentMethods.setText("Ví F (F-Wallet)");
         }
     }
 
@@ -147,11 +150,7 @@ public class PayActivity extends AppCompatActivity {
 
         //Take paymentMethods
         paymentMethods = getIntent().getIntExtra("paymentMethods", 0);
-        if (paymentMethods == 1){
-            updatePaymentMethodsUI();
-
-        }
-        if (paymentMethods == 2){
+        if (paymentMethods >= 1 && paymentMethods <= 4) {
             updatePaymentMethodsUI();
         }
 
@@ -288,6 +287,11 @@ public class PayActivity extends AppCompatActivity {
                     Log.d("thanhtoan", "phuong thuc: QR code");
                     urlCreateOrderForQR();
                 }
+                //-----------------Ví F (F-Wallet)-----------------
+                else if (paymentMethods == 4) {
+                    Log.d("thanhtoan", "phuong thuc: F-Wallet");
+                    showWalletPaymentConfirmationDialog();
+                }
             }
         });
 
@@ -337,6 +341,7 @@ public class PayActivity extends AppCompatActivity {
             purchaseBody.setInfoId(info.getId());
             purchaseBody.setUserId(AccountUltil.USER.getId());
             purchaseBody.setProductsOrder(CartUtil.listCartCheck);
+            purchaseBody.setPayment_method(paymentMethods);
 
             List<String> voucherIds = new ArrayList<>();
             if (selectedVouchersList != null) {
@@ -1083,5 +1088,55 @@ public class PayActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         ZaloPaySDK.getInstance().onResult(intent);
+    }
+
+    private void showWalletPaymentConfirmationDialog() {
+        if (!validatePurchare()) return;
+        String token = AccountUltil.BEARER + AccountUltil.getToken(this);
+        loadingDialog.show();
+        BaseApi.API.getWalletInfo(token).enqueue(new Callback<WalletResponse>() {
+            @Override
+            public void onResponse(Call<WalletResponse> call, Response<WalletResponse> response) {
+                loadingDialog.dismiss();
+                if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
+                    int balance = response.body().getData().getBalance();
+                    showWalletConfirmationUI(balance);
+                } else {
+                    Toast.makeText(PayActivity.this, "Không thể lấy số dư ví, vui lòng thử lại", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WalletResponse> call, Throwable t) {
+                loadingDialog.dismiss();
+                Toast.makeText(PayActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showWalletConfirmationUI(int balance) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Xác nhận thanh toán");
+        
+        DecimalFormat formatter = new DecimalFormat("###,###,###");
+        String msg = "Tổng tiền hàng: " + formatter.format(totalPrice) + "đ\n" +
+                     "Số dư ví hiện tại: " + formatter.format(balance) + "đ\n";
+                     
+        if (balance >= totalPrice) {
+            msg += "Số dư dự kiến sau khi trừ: " + formatter.format(balance - totalPrice) + "đ\n\n" +
+                   "Bạn có xác nhận muốn thanh toán đơn hàng này bằng ví F không?";
+            builder.setMessage(msg);
+            builder.setPositiveButton("Đồng ý", (dialog, which) -> urlCreateOrder());
+            builder.setNegativeButton("Hủy", null);
+        } else {
+            msg += "\nSố dư ví không đủ, hãy nạp thêm để tiếp tục thanh toán!";
+            builder.setMessage(msg);
+            builder.setPositiveButton("Nạp tiền", (dialog, which) -> {
+                Intent intent = new Intent(PayActivity.this, com.example.doan_shopsmartphone.view.profile_screen.FWalletActivity.class);
+                startActivity(intent);
+            });
+            builder.setNegativeButton("Hủy", null);
+        }
+        builder.create().show();
     }
 }

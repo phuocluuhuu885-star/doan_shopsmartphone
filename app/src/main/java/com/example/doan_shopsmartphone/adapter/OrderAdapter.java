@@ -393,8 +393,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 Toast.makeText(context, "Lý do hủy phải từ 5 ký tự trở lên", Toast.LENGTH_SHORT).show();
                 return;
             }
-            btnConfirm.setEnabled(false);
-            callApiCancel(order, reason, position, dialog, btnConfirm);
+            if (order.isPayment_status()) {
+                new android.app.AlertDialog.Builder(context)
+                        .setTitle("Cảnh báo hủy đơn")
+                        .setMessage("Số tiền hoàn lại sẽ chuyển vào ví F, tạm thời chưa có chức năng rút tiền, bạn có xác nhận muốn hủy ko")
+                        .setPositiveButton("Xác nhận hủy", (dialogInterface, which) -> {
+                            btnConfirm.setEnabled(false);
+                            callApiCancel(order, reason, position, dialog, btnConfirm);
+                        })
+                        .setNegativeButton("Không", null)
+                        .show();
+            } else {
+                btnConfirm.setEnabled(false);
+                callApiCancel(order, reason, position, dialog, btnConfirm);
+            }
         });
 
         dialog.show();

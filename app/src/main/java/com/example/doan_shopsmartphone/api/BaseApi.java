@@ -23,6 +23,7 @@ import com.example.doan_shopsmartphone.model.response.VoucherDetaiResponse;
 import com.example.doan_shopsmartphone.model.response.VoucherRequest;
 import com.example.doan_shopsmartphone.model.response.ListVoucherResponse;
 import com.example.doan_shopsmartphone.model.response.VoucherResponse;
+import com.example.doan_shopsmartphone.model.response.WalletResponse;
 import com.example.doan_shopsmartphone.model.response.store.DetailBills;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -127,6 +128,9 @@ public interface BaseApi {
     @GET("user/detail-profile/{idUser}")
     Call<DetailUserReponse> detailProfile(@Header("Authorization") String authorization,
                                           @Path("idUser") String idUser);
+
+    @GET("user/wallet")
+    Call<WalletResponse> getWalletInfo(@Header("Authorization") String token);
 
     @POST("notifi/postnotifi")
         // Thay đổi đường dẫn theo server của bạn
