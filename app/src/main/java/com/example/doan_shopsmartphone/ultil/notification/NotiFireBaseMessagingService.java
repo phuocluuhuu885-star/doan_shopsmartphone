@@ -58,11 +58,15 @@ public class NotiFireBaseMessagingService extends FirebaseMessagingService {
         Intent intent;
         
         // Kiểm tra tính hợp lệ của ID và Loại
+        boolean isWithdraw = "withdraw".equalsIgnoreCase(type);
         boolean isPromotion = "promotion".equalsIgnoreCase(type) || "voucher".equalsIgnoreCase(type) || "system".equalsIgnoreCase(type);
         boolean hasOrderId = orderId != null && !orderId.trim().isEmpty() && !"null".equalsIgnoreCase(orderId) && !"undefined".equalsIgnoreCase(orderId);
         boolean hasProductId = productId != null && !productId.trim().isEmpty() && !"null".equalsIgnoreCase(productId) && !"undefined".equalsIgnoreCase(productId);
 
-        if (isPromotion && !hasProductId) {
+        if (isWithdraw) {
+            intent = new Intent(this, com.example.doan_shopsmartphone.view.profile_screen.WithdrawalActivity.class);
+            intent.putExtra("WITHDRAWAL_ID_KEY", orderId);
+        } else if (isPromotion && !hasProductId) {
             // Đây chắc chắn là Voucher hoặc thông báo hệ thống -> Về trang chủ
             intent = new Intent(this, MainActivity.class);
             intent.putExtra("action", "open_voucher");

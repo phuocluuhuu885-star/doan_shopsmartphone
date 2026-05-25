@@ -25,6 +25,9 @@ import com.example.doan_shopsmartphone.model.response.ListVoucherResponse;
 import com.example.doan_shopsmartphone.model.response.VoucherResponse;
 import com.example.doan_shopsmartphone.model.response.WalletResponse;
 import com.example.doan_shopsmartphone.model.response.store.DetailBills;
+import com.example.doan_shopsmartphone.model.Withdrawal;
+import com.example.doan_shopsmartphone.model.response.WithdrawalListResponse;
+import com.example.doan_shopsmartphone.model.response.WithdrawalDetailResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -293,4 +296,26 @@ public interface BaseApi {
 
     @GET("order/detail-order/{orderId}")
     Call<DetailBills> getDetailBill(@Header("Authorization") String authorization, @Path("orderId") String orderId);
+
+    @FormUrlEncoded
+    @POST("withdrawal/create")
+    Call<ServerResponse> createWithdrawal(
+            @Header("Authorization") String authorization,
+            @Field("name") String name,
+            @Field("bank") String bank,
+            @Field("account_number") String accountNumber,
+            @Field("amount") double amount
+    );
+
+    @GET("withdrawal/user")
+    Call<WithdrawalListResponse> getUserWithdrawals(
+            @Header("Authorization") String authorization,
+            @Query("status") String status
+    );
+
+    @GET("withdrawal/detail/{id}")
+    Call<WithdrawalDetailResponse> getWithdrawalDetail(
+            @Header("Authorization") String authorization,
+            @Path("id") String id
+    );
 }

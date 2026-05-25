@@ -272,26 +272,7 @@ public class PayActivity extends AppCompatActivity {
                     return;
                 }
 
-                //---------------Chuyển khoản ngân hàng (ZaloPay)----------------
-                if (paymentMethods == 2){
-                    zaloRequest();
-                    Log.d("thanhtoan", "phuong thuc: chuyen khoan ");
-                }
-                //-----------------Thanh toán khi nhận hàng-----------------
-                else if (paymentMethods == 1) {
-                    Log.d("thanhtoan", "phuong thuc: nhan hang ");
-                    urlCreateOrder();
-                }
-                //-----------------Thanh toán QR-----------------
-                else if (paymentMethods == 3) {
-                    Log.d("thanhtoan", "phuong thuc: QR code");
-                    urlCreateOrderForQR();
-                }
-                //-----------------Ví F (F-Wallet)-----------------
-                else if (paymentMethods == 4) {
-                    Log.d("thanhtoan", "phuong thuc: F-Wallet");
-                    showWalletPaymentConfirmationDialog();
-                }
+                showPurchaseConfirmationDialog();
             }
         });
 
@@ -1088,6 +1069,25 @@ public class PayActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         ZaloPaySDK.getInstance().onResult(intent);
+    }
+
+    private void showPurchaseConfirmationDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Xác nhận mua hàng");
+        builder.setMessage("Bạn có chắc chắn muốn đặt mua đơn hàng này không?");
+        builder.setPositiveButton("Đồng ý", (dialog, which) -> {
+            if (paymentMethods == 1) {
+                urlCreateOrder();
+            } else if (paymentMethods == 2) {
+                zaloRequest();
+            } else if (paymentMethods == 3) {
+                urlCreateOrderForQR();
+            } else if (paymentMethods == 4) {
+                showWalletPaymentConfirmationDialog();
+            }
+        });
+        builder.setNegativeButton("Hủy", null);
+        builder.create().show();
     }
 
     private void showWalletPaymentConfirmationDialog() {

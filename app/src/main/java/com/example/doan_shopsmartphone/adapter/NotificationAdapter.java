@@ -134,11 +134,15 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             @Override
             public void onClick(View v) {
                 Intent intent;
+                boolean isWithdraw = "withdraw".equalsIgnoreCase(notification.getType());
                 boolean isPromotion = "promotion".equalsIgnoreCase(notification.getType()) || "voucher".equalsIgnoreCase(notification.getType()) || "system".equalsIgnoreCase(notification.getType());
                 boolean hasProductId = notification.getProduct_id() != null && !notification.getProduct_id().trim().isEmpty() && !"null".equalsIgnoreCase(notification.getProduct_id()) && !"undefined".equalsIgnoreCase(notification.getProduct_id());
                 boolean hasOrderId = notification.getOrder_id() != null && !notification.getOrder_id().trim().isEmpty() && !"null".equalsIgnoreCase(notification.getOrder_id()) && !"undefined".equalsIgnoreCase(notification.getOrder_id());
 
-                if (isPromotion && !hasProductId) {
+                if (isWithdraw) {
+                    intent = new Intent(context, com.example.doan_shopsmartphone.view.profile_screen.WithdrawalActivity.class);
+                    intent.putExtra("WITHDRAWAL_ID_KEY", notification.getOrder_id());
+                } else if (isPromotion && !hasProductId) {
                     // Voucher mới hoặc khuyến mãi -> Về trang chủ
                     intent = new Intent(context, MainActivity.class);
                 } else if (hasProductId) {

@@ -140,6 +140,12 @@
         <activity
             android:name=".view.profile_screen.OrderProductScreen"
             android:exported="false" />
+        <activity
+            android:name=".view.profile_screen.WithdrawalActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.profile_screen.CreateWithdrawalActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

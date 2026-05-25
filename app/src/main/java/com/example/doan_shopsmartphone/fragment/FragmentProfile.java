@@ -149,6 +149,7 @@ public class FragmentProfile extends Fragment {
     private void initController() {
         profile();
         wallet();
+        withdrawal();
         HistoryDon();//theo dõi đơn hàng
         myVouchers(); // voucher của tôi
         phanHoiKhieuNai();//phan hoi khieu nai
@@ -173,6 +174,16 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), com.example.doan_shopsmartphone.view.profile_screen.FWalletActivity.class);
+                startActivity(intent);
+                requireActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            }
+        });
+    }
+    private void withdrawal() {
+        binding.layoutWithdrawal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), com.example.doan_shopsmartphone.view.profile_screen.WithdrawalActivity.class);
                 startActivity(intent);
                 requireActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
             }
