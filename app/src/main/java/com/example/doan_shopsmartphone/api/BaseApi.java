@@ -278,6 +278,19 @@ public interface BaseApi {
                                  @Field("phone_number") String phone_number,
                                  @Field("checked") Boolean checked);
 
+    @FormUrlEncoded
+    @PUT("info/edit-info/{infoId}")
+    Call<ServerResponse> editInfo(@Header("Authorization") String authorization,
+                                  @Path("infoId") String infoId,
+                                  @Field("name") String name,
+                                  @Field("address") String address,
+                                  @Field("phone_number") String phone_number,
+                                  @Field("checked") Boolean checked);
+
+    @DELETE("info/delete/{infoId}")
+    Call<ServerResponse> deleteInfo(@Header("Authorization") String authorization,
+                                    @Path("infoId") String infoId);
+
     @GET("order/detail-order/{orderId}")
     Call<DetailBills> getDetailBill(@Header("Authorization") String authorization, @Path("orderId") String orderId);
 }
