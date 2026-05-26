@@ -25,7 +25,39 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.widget.ArrayAdapter;
+
 public class CreateWithdrawalActivity extends AppCompatActivity {
+
+    public static class BankItem {
+        public String name;
+        public String code;
+
+        public BankItem(String name, String code) {
+            this.name = name;
+            this.code = code;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+    private static final BankItem[] POPULAR_BANKS = new BankItem[]{
+            new BankItem("Vietcombank", "vietcombank"),
+            new BankItem("Techcombank", "techcombank"),
+            new BankItem("MBBank", "mbbank"),
+            new BankItem("VietinBank", "vietinbank"),
+            new BankItem("BIDV", "bidv"),
+            new BankItem("Agribank", "agribank"),
+            new BankItem("ACB", "acb"),
+            new BankItem("VPBank", "vpbank"),
+            new BankItem("TPBank", "tpbank"),
+            new BankItem("Sacombank", "sacombank"),
+            new BankItem("VIB", "vib")
+    };
 
     private ActivityCreateWithdrawalBinding binding;
     private ProgressLoadingDialog loadingDialog;
@@ -40,6 +72,7 @@ public class CreateWithdrawalActivity extends AppCompatActivity {
         loadingDialog = new ProgressLoadingDialog(this);
 
         initController();
+        setupBankSpinner();
         fetchWalletBalance();
         checkIntentExtras();
     }
@@ -51,6 +84,13 @@ public class CreateWithdrawalActivity extends AppCompatActivity {
         });
 
         binding.btnWithdrawalSubmit.setOnClickListener(v -> submitWithdrawalRequest());
+    }
+
+    private void setupBankSpinner() {
+        ArrayAdapter<BankItem> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, POPULAR_BANKS);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spnWithdrawalBank.setAdapter(adapter);
     }
 
     private void fetchWalletBalance() {
@@ -80,14 +120,21 @@ public class CreateWithdrawalActivity extends AppCompatActivity {
         if (intent != null) {
             String name = intent.getStringExtra("name");
             String bank = intent.getStringExtra("bank");
+            String bankCode = intent.getStringExtra("bank_code");
             String accountNumber = intent.getStringExtra("account_number");
             double amount = intent.getDoubleExtra("amount", 0);
 
             if (!TextUtils.isEmpty(name)) {
                 binding.edtWithdrawalName.setText(name);
             }
-            if (!TextUtils.isEmpty(bank)) {
-                binding.edtWithdrawalBank.setText(bank);
+            if (!TextUtils.isEmpty(bankCode) || !TextUtils.isEmpty(bank)) {
+                String target = !TextUtils.isEmpty(bankCode) ? bankCode : bank;
+                for (int i = 0; i < POPULAR_BANKS.length; i++) {
+                    if (POPULAR_BANKS[i].code.equalsIgnoreCase(target) || POPULAR_BANKS[i].name.equalsIgnoreCase(target)) {
+                        binding.spnWithdrawalBank.setSelection(i);
+                        break;
+                    }
+                }
             }
             if (!TextUtils.isEmpty(accountNumber)) {
                 binding.edtWithdrawalAccountNumber.setText(accountNumber);
@@ -102,11 +149,17 @@ public class CreateWithdrawalActivity extends AppCompatActivity {
 
     private void submitWithdrawalRequest() {
         String name = binding.edtWithdrawalName.getText().toString().trim();
-        String bank = binding.edtWithdrawalBank.getText().toString().trim();
+        BankItem selectedBank = (BankItem) binding.spnWithdrawalBank.getSelectedItem();
+        if (selectedBank == null) {
+            Toast.makeText(this, "Vui lòng chọn ngân hàng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String bankName = selectedBank.name;
+        String bankCode = selectedBank.code;
         String accountNumber = binding.edtWithdrawalAccountNumber.getText().toString().trim();
         String amountStr = binding.edtWithdrawalAmount.getText().toString().trim();
 
-        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(bank) || TextUtils.isEmpty(accountNumber) || TextUtils.isEmpty(amountStr)) {
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(accountNumber) || TextUtils.isEmpty(amountStr)) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -132,7 +185,7 @@ public class CreateWithdrawalActivity extends AppCompatActivity {
         String token = AccountUltil.BEARER + AccountUltil.getToken(this);
         loadingDialog.show();
 
-        BaseApi.API.createWithdrawal(token, name, bank, accountNumber, amount).enqueue(new Callback<ServerResponse>() {
+        BaseApi.API.createWithdrawal(token, name, bankName, bankCode, accountNumber, amount).enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(@NonNull Call<ServerResponse> call, @NonNull Response<ServerResponse> response) {
                 loadingDialog.dismiss();

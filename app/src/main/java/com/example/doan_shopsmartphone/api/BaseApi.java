@@ -303,6 +303,7 @@ public interface BaseApi {
             @Header("Authorization") String authorization,
             @Field("name") String name,
             @Field("bank") String bank,
+            @Field("bank_code") String bankCode,
             @Field("account_number") String accountNumber,
             @Field("amount") double amount
     );

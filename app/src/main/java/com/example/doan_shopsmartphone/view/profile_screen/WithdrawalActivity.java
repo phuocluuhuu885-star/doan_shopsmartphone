@@ -267,6 +267,7 @@ public class WithdrawalActivity extends AppCompatActivity {
             Intent intent = new Intent(WithdrawalActivity.this, CreateWithdrawalActivity.class);
             intent.putExtra("name", withdrawal.getName());
             intent.putExtra("bank", withdrawal.getBank());
+            intent.putExtra("bank_code", withdrawal.getBank_code());
             intent.putExtra("account_number", withdrawal.getAccount_number());
             intent.putExtra("amount", withdrawal.getAmount());
             createWithdrawalLauncher.launch(intent);
