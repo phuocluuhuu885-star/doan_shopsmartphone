@@ -215,6 +215,10 @@ public interface BaseApi {
     @GET("logout")
     Call<ServerResponse> logout(@Header("Authorization") String authorization);
 
+    @FormUrlEncoded
+    @PUT("update-fcm-token")
+    Call<ServerResponse> updateFcmToken(@Header("Authorization") String authorization,
+                                        @Field("fcmToken") String fcmToken);
     @GET("verify/{idCode}")
     Call<ServerResponse> verify(@Path("idCode") String idCode);
 

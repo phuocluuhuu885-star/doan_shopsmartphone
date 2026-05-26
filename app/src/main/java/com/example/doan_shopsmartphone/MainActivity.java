@@ -1,12 +1,18 @@
 package com.example.doan_shopsmartphone;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -31,14 +37,37 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private int userRetryCount = 0;
 
+    // Launcher xin quyền POST_NOTIFICATIONS (Android 13+)
+    private final ActivityResultLauncher<String> requestNotificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Log.d("MainActivity", "Quyền POST_NOTIFICATIONS đã được cấp.");
+                } else {
+                    Log.w("MainActivity", "Quyền POST_NOTIFICATIONS bị từ chối. Thông báo sẽ không hiển thị.");
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        requestNotificationPermission();
         onClickBottomNav();
         handleNotificationIntent(getIntent());
+
+        // Khởi động lấy thông báo ngầm định kỳ và đẩy lên thanh trạng thái hệ thống
+        com.example.doan_shopsmartphone.ultil.notification.NotificationPollingManager.getInstance().startPolling(this);
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
     }
 
     @Override
@@ -46,6 +75,13 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         userRetryCount = 0;
         fetchUnreadCount();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Dừng lấy thông báo định kỳ khi thoát màn hình chính
+        com.example.doan_shopsmartphone.ultil.notification.NotificationPollingManager.getInstance().stopPolling();
     }
 
     @Override
