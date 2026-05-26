@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -51,6 +52,7 @@ import com.example.doan_shopsmartphone.ultil.AccountUltil;
 import com.example.doan_shopsmartphone.ultil.CartUtil;
 import com.example.doan_shopsmartphone.ultil.ProgressLoadingDialog;
 import com.example.doan_shopsmartphone.ultil.TAG;
+import com.example.doan_shopsmartphone.view.chat_message.ChatActivity;
 import com.example.doan_shopsmartphone.view.voucher.VoucherScreen;
 import com.example.doan_shopsmartphone.view.Cart.ChangePaymentMethodsActivity;
 import com.google.gson.Gson;
@@ -361,15 +363,21 @@ public class PayActivity extends AppCompatActivity {
                         }
                     } else { // nhận các đầu status #200
                         try {
-                            String errorBody = response.errorBody().string();
+                            String errorBody = response.errorBody() != null ? response.errorBody().string() : "";
                             JSONObject errorJson = new JSONObject(errorBody);
-                            String errorMessage = errorJson.getString("message");
+                            int code = errorJson.optInt("code", 0);
+                            String errorMessage = errorJson.optString("message", "Đặt hàng thất bại");
                             Log.d(TAG.toString, "onResponse-createOrder: " + errorMessage);
-                            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                        }catch (IOException e){
+                            if (code == 403 || response.code() == 403) {
+                                loadingDialog.dismiss();
+                                showRestrictBuyDialog();
+                            } else {
+                                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (IOException e) {
                             e.printStackTrace();
                         } catch (JSONException e) {
-                            throw new RuntimeException(e);
+                            e.printStackTrace();
                         }
                     }
                     loadingDialog.dismiss();
@@ -425,7 +433,12 @@ public class PayActivity extends AppCompatActivity {
                     try {
                         String errBody = response.errorBody() != null ? response.errorBody().string() : "";
                         JSONObject errJson = new JSONObject(errBody);
-                        Toast.makeText(PayActivity.this, errJson.getString("message"), Toast.LENGTH_SHORT).show();
+                        int code = errJson.optInt("code", 0);
+                        if (code == 403 || response.code() == 403) {
+                            showRestrictBuyDialog();
+                        } else {
+                            Toast.makeText(PayActivity.this, errJson.optString("message", "Có lỗi xảy ra"), Toast.LENGTH_SHORT).show();
+                        }
                     } catch (Exception e) {
                         Toast.makeText(PayActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                     }
@@ -631,9 +644,14 @@ public class PayActivity extends AppCompatActivity {
                         try {
                             String errorBody = response.errorBody() != null ? response.errorBody().string() : "";
                             JSONObject errorJson = new JSONObject(errorBody);
-                            String errorMessage = errorJson.getString("message");
-                            Log.d(TAG.toString, "onResponse-createOrder: " + errorMessage);
-                            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                            int code = errorJson.optInt("code", 0);
+                            String errorMessage = errorJson.optString("message", "Tạo đơn hàng thất bại");
+                            Log.d(TAG.toString, "onResponse-createOrderByZalo: " + errorMessage);
+                            if (code == 403 || response.code() == 403) {
+                                showRestrictBuyDialog();
+                            } else {
+                                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                            }
                         } catch (Exception e) {
                             Toast.makeText(getApplicationContext(), "Tạo đơn hàng thất bại", Toast.LENGTH_SHORT).show();
                         }
@@ -647,6 +665,26 @@ public class PayActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    /**
+     * Hiển thị dialog thông báo khi tài khoản bị hạn chế mua hàng (HTTP 403).
+     * Có 2 nút: Đóng (dismiss) và Liên hệ Admin (mở ChatActivity).
+     * Có guard isFinishing()/isDestroyed() để tránh crash khi Activity đã bị destroy.
+     */
+    private void showRestrictBuyDialog() {
+        if (isFinishing() || isDestroyed()) return;
+        new AlertDialog.Builder(PayActivity.this)
+                .setTitle("Tài khoản bị hạn chế")
+                .setMessage("Tài khoản của bạn đang bị hạn chế mua hàng.\nVui lòng liên hệ Admin để được hỗ trợ.")
+                .setCancelable(false)
+                .setNegativeButton("Đóng", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton("Liên hệ Admin", (dialog, which) -> {
+                    dialog.dismiss();
+                    Intent intent = new Intent(PayActivity.this, ChatActivity.class);
+                    startActivity(intent);
+                })
+                .show();
     }
     private void showVietQRDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
