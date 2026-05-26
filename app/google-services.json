@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "511125845737-tg7kpe5gmatlov08lrsqb2l9rt4idtch.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.doan_shopsmartphone",
+            "certificate_hash": "17901b018374cde856ca30822718712e278845e4"
+          }
+        },
+        {
           "client_id": "511125845737-i0frkihqr9dos93vee83m1kog0n7u20c.apps.googleusercontent.com",
           "client_type": 3
         }
