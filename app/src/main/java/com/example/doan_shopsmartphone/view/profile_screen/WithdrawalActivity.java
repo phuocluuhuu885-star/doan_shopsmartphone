@@ -220,12 +220,14 @@ public class WithdrawalActivity extends AppCompatActivity {
         if ("pending".equalsIgnoreCase(status)) {
             dialogBinding.tvDialogStatus.setText("Chờ duyệt");
             dialogBinding.tvDialogStatus.setTextColor(Color.parseColor("#F57C00"));
+            dialogBinding.tvDialogStatus.setBackgroundResource(R.drawable.bg_badge_pending);
             dialogBinding.layoutDialogBill.setVisibility(View.GONE);
             dialogBinding.layoutDialogRejection.setVisibility(View.GONE);
             dialogBinding.btnRecreateRequest.setVisibility(View.GONE);
         } else if ("approved".equalsIgnoreCase(status)) {
             dialogBinding.tvDialogStatus.setText("Thành công");
             dialogBinding.tvDialogStatus.setTextColor(Color.parseColor("#388E3C"));
+            dialogBinding.tvDialogStatus.setBackgroundResource(R.drawable.bg_badge_approved);
             dialogBinding.layoutDialogRejection.setVisibility(View.GONE);
             dialogBinding.btnRecreateRequest.setVisibility(View.GONE);
 
@@ -243,6 +245,7 @@ public class WithdrawalActivity extends AppCompatActivity {
         } else {
             dialogBinding.tvDialogStatus.setText("Bị từ chối");
             dialogBinding.tvDialogStatus.setTextColor(Color.parseColor("#D32F2F"));
+            dialogBinding.tvDialogStatus.setBackgroundResource(R.drawable.bg_badge_rejected);
             dialogBinding.layoutDialogBill.setVisibility(View.GONE);
 
             // Show rejection reason
@@ -258,6 +261,9 @@ public class WithdrawalActivity extends AppCompatActivity {
         }
 
         AlertDialog dialog = builder.create();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
         dialog.show();
 
         dialogBinding.btnDialogClose.setOnClickListener(v -> dialog.dismiss());
