@@ -116,7 +116,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             // Tab "Chờ xử lý" chứa cả "Chờ xác nhận" và "Đã thanh toán"
             holder.binding.btnItem.setText("Hủy hàng");
             holder.binding.btnItem.setVisibility(View.VISIBLE);
-            holder.binding.btnreview.setVisibility(View.GONE);
+         //   holder.binding.btnreview.setVisibility(View.GONE);
 
             if ("Đã thanh toán".equals(statusText)) {
                 holder.binding.tvStatus.setTextColor(Color.parseColor("#00897B")); // teal
@@ -132,16 +132,16 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             } else {
                 holder.binding.btnItem.setVisibility(View.GONE);
             }
-            holder.binding.btnreview.setVisibility(View.GONE);
+         //   holder.binding.btnreview.setVisibility(View.GONE);
 
         } else if (status == 2) {
-            holder.binding.btnreview.setVisibility(View.VISIBLE);
+         //   holder.binding.btnreview.setVisibility(View.VISIBLE);
             holder.binding.btnItem.setVisibility(View.VISIBLE);
             holder.binding.btnItem.setText("Mua lại");
         } else if (status == 3) {
             holder.binding.btnItem.setVisibility(View.VISIBLE);
             holder.binding.btnItem.setText("Mua lại");
-            holder.binding.btnreview.setVisibility(View.GONE);
+          //  holder.binding.btnreview.setVisibility(View.GONE);
 
             holder.binding.tvStatus.setTextColor(Color.GRAY);
         }
@@ -153,131 +153,131 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 objectUtil.onclickObject(order);
             }
                 });
-        holder.binding.btnreview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Tạo dialog
-                Dialog dialog = new Dialog(context, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
-                dialog.setContentView(R.layout.layout_modal_review);
-                Spinner spinner = dialog.findViewById(R.id.spinnerName);
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, listName);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinner.setAdapter(adapter);
-                RatingBar ratingBar = dialog.findViewById(R.id.ratingBar);
-                ImageView btn_back = dialog.findViewById(R.id.btn_back_review);
-                TextInputEditText commentEditText = dialog.findViewById(R.id.edt_commentReview);
-                TextInputEditText commentName = dialog.findViewById(R.id.edt_commentName);
-                Button postButton = dialog.findViewById(R.id.btnPost);
-
-                btn_back.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        commentName.setText("");
-                        commentEditText.setText("");
-                        ratingBar.setRating(5);
-                        String productid= listidProduct.get(position);
-                        Log.d("test gọi dữ liệu", "prduct"+productid+"order"+order.getId()+"user"+AccountUltil.USER.getId());
-                        BaseApi.API.getReview(productid,order.getId(),AccountUltil.USER.getId()).enqueue(new Callback<ListComment1Response>() {
-                            @Override
-                            public void onResponse(Call<ListComment1Response> call, Response<ListComment1Response> response) {
-                                if (response.isSuccessful() && response.body() != null) {
-                                    ListComment1Response listCommentResponse = response.body();
-                                    if (listCommentResponse.getData() != null) {
-                                        Toast.makeText(adapter.getContext(), "Bạn Đã Đánh Giá Sản Phẩm Này,Vui Lòng Sửa", Toast.LENGTH_SHORT).show();
-                                        ratingBar.setRating(listCommentResponse.getData().getRate());
-                                        commentName.setText(listCommentResponse.getData().getName());
-                                        commentEditText.setText(listCommentResponse.getData().getContent());
-                                        postButton.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                String token = AccountUltil.BEARER + AccountUltil.getToken(context);
-                                                String comment = commentEditText.getText().toString();
-                                                String name = commentName.getText().toString();
-                                                if (TextUtils.isEmpty(name)) {
-                                                    Toast.makeText(context, "Vui Lòng Nhập Tên", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    float rating = ratingBar.getRating();
-                                                    int selectedPosition = spinner.getSelectedItemPosition();
-                                                    String productid= listidProduct.get(selectedPosition);
-                                                    BaseApi.API.updateComment(token,listCommentResponse.getData().getId(),productid,order.getId(),AccountUltil.USER.getId(),comment, (int) rating).enqueue(new Callback<ServerResponse>() {
-                                                        @Override
-                                                        public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                                                            Toast.makeText(context, "Sửa Đánh Giá Thành Công", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                        @Override
-                                                        public void onFailure(Call<ServerResponse> call, Throwable t) {
-                                                        }
-                                                    });
-                                                    dialog.dismiss();
-                                                }
-
-                                            }
-
-                                        });
-                                    } else {
-
-
-                                    }
-                                } else {
-                                    Log.d("test gọi dữ liệu", "Response không thành công hoặc body là null");
-                                    Log.d("test gọi dữ liệu", "onItemSelected: + đã vào hàm thay đổi1");
-
-                                    postButton.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            String token = AccountUltil.BEARER + AccountUltil.getToken(context);
-                                            String comment = commentEditText.getText().toString();
-                                            String name = commentName.getText().toString();
-                                            float rating = ratingBar.getRating();
-                                            if (TextUtils.isEmpty(name)) {
-                                                Toast.makeText(context, "Vui Lòng Nhập Tên", Toast.LENGTH_SHORT).show();
-
-                                            }else{
-                                                BaseApi.API.createComment(token,productid,productid,order.getId(),AccountUltil.USER.getId(),comment,name, (int) rating).enqueue(new Callback<ServerResponse>() {
-                                                    @Override
-                                                    public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                                                        Toast.makeText(context, "Đánh Giá Thành Công", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    @Override
-                                                    public void onFailure(Call<ServerResponse> call, Throwable t) {
-                                                    }
-
-                                                });
-                                                dialog.dismiss();
-
-                                            }
-
-
-                                        }
-                                    });
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ListComment1Response> call, Throwable t) {
-                                Log.d("bugg get d", "onFailure: "+t);
-                            }
-                        });
-
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-
-
-                // Hiển thị dialog
-                dialog.show();
-            }
-        });
+//        holder.binding.btnreview.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Tạo dialog
+//                Dialog dialog = new Dialog(context, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
+//                dialog.setContentView(R.layout.layout_modal_review);
+//                Spinner spinner = dialog.findViewById(R.id.spinnerName);
+//                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, listName);
+//                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                spinner.setAdapter(adapter);
+//                RatingBar ratingBar = dialog.findViewById(R.id.ratingBar);
+//                ImageView btn_back = dialog.findViewById(R.id.btn_back_review);
+//                TextInputEditText commentEditText = dialog.findViewById(R.id.edt_commentReview);
+//                TextInputEditText commentName = dialog.findViewById(R.id.edt_commentName);
+//                Button postButton = dialog.findViewById(R.id.btnPost);
+//
+//                btn_back.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                    @Override
+//                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                        commentName.setText("");
+//                        commentEditText.setText("");
+//                        ratingBar.setRating(5);
+//                        String productid= listidProduct.get(position);
+//                        Log.d("test gọi dữ liệu", "prduct"+productid+"order"+order.getId()+"user"+AccountUltil.USER.getId());
+//                        BaseApi.API.getReview(productid,order.getId(),AccountUltil.USER.getId()).enqueue(new Callback<ListComment1Response>() {
+//                            @Override
+//                            public void onResponse(Call<ListComment1Response> call, Response<ListComment1Response> response) {
+//                                if (response.isSuccessful() && response.body() != null) {
+//                                    ListComment1Response listCommentResponse = response.body();
+//                                    if (listCommentResponse.getData() != null) {
+//                                        Toast.makeText(adapter.getContext(), "Bạn Đã Đánh Giá Sản Phẩm Này,Vui Lòng Sửa", Toast.LENGTH_SHORT).show();
+//                                        ratingBar.setRating(listCommentResponse.getData().getRate());
+//                                        commentName.setText(listCommentResponse.getData().getName());
+//                                        commentEditText.setText(listCommentResponse.getData().getContent());
+//                                        postButton.setOnClickListener(new View.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(View v) {
+//                                                String token = AccountUltil.BEARER + AccountUltil.getToken(context);
+//                                                String comment = commentEditText.getText().toString();
+//                                                String name = commentName.getText().toString();
+//                                                if (TextUtils.isEmpty(name)) {
+//                                                    Toast.makeText(context, "Vui Lòng Nhập Tên", Toast.LENGTH_SHORT).show();
+//                                                } else {
+//                                                    float rating = ratingBar.getRating();
+//                                                    int selectedPosition = spinner.getSelectedItemPosition();
+//                                                    String productid= listidProduct.get(selectedPosition);
+//                                                    BaseApi.API.updateComment(token,listCommentResponse.getData().getId(),productid,order.getId(),AccountUltil.USER.getId(),comment, (int) rating).enqueue(new Callback<ServerResponse>() {
+//                                                        @Override
+//                                                        public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+//                                                            Toast.makeText(context, "Sửa Đánh Giá Thành Công", Toast.LENGTH_SHORT).show();
+//                                                        }
+//                                                        @Override
+//                                                        public void onFailure(Call<ServerResponse> call, Throwable t) {
+//                                                        }
+//                                                    });
+//                                                    dialog.dismiss();
+//                                                }
+//
+//                                            }
+//
+//                                        });
+//                                    } else {
+//
+//
+//                                    }
+//                                } else {
+//                                    Log.d("test gọi dữ liệu", "Response không thành công hoặc body là null");
+//                                    Log.d("test gọi dữ liệu", "onItemSelected: + đã vào hàm thay đổi1");
+//
+//                                    postButton.setOnClickListener(new View.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(View v) {
+//                                            String token = AccountUltil.BEARER + AccountUltil.getToken(context);
+//                                            String comment = commentEditText.getText().toString();
+//                                            String name = commentName.getText().toString();
+//                                            float rating = ratingBar.getRating();
+//                                            if (TextUtils.isEmpty(name)) {
+//                                                Toast.makeText(context, "Vui Lòng Nhập Tên", Toast.LENGTH_SHORT).show();
+//
+//                                            }else{
+//                                                BaseApi.API.createComment(token,productid,productid,order.getId(),AccountUltil.USER.getId(),comment,name, (int) rating).enqueue(new Callback<ServerResponse>() {
+//                                                    @Override
+//                                                    public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+//                                                        Toast.makeText(context, "Đánh Giá Thành Công", Toast.LENGTH_SHORT).show();
+//                                                    }
+//                                                    @Override
+//                                                    public void onFailure(Call<ServerResponse> call, Throwable t) {
+//                                                    }
+//
+//                                                });
+//                                                dialog.dismiss();
+//
+//                                            }
+//
+//
+//                                        }
+//                                    });
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<ListComment1Response> call, Throwable t) {
+//                                Log.d("bugg get d", "onFailure: "+t);
+//                            }
+//                        });
+//
+//                    }
+//
+//                    @Override
+//                    public void onNothingSelected(AdapterView<?> parent) {
+//
+//                    }
+//                });
+//
+//
+//                // Hiển thị dialog
+//                dialog.show();
+//            }
+//        });
 
         if (order.getProductsOrder().size() > maxVisibleItems && !isExpanded) {
             // Hiển thị chỉ 2 mục đầu tiên

@@ -71,7 +71,7 @@
                 android:layout_weight="1"
                 android:text="Đăng xuất"
                 android:gravity="center"
-                android:textColor="@color/red"
+                android:textColor="@color/black"
                 android:background="@drawable/custom_bg_white_gray_ok"
                 />
         </LinearLayout>

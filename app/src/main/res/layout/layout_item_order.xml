@@ -119,23 +119,7 @@
         </LinearLayout>
 
 
-        <TextView
-            android:id="@+id/btnreview"
-            android:layout_width="0dp"
-            android:layout_weight="2.5"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Đánh Giá"
-            android:textSize="15dp"
-            android:layout_margin="0dp"
-            android:textColor="@color/color_chudao"
-            android:visibility="gone"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="|"/>
+
         <TextView
             android:id="@+id/btnItem"
             android:layout_width="0dp"
