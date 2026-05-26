@@ -19,6 +19,19 @@ public class OptionOfListCart {
     private int soldQuantity;
     private boolean hot_option;
 
+    private String ram;
+    @SerializedName("storage_capacity")
+    private String storageCapacity;
+    @SerializedName("condition_percent")
+    private String conditionPercent;
+    @SerializedName("battery_health")
+    private String batteryHealth;
+    @SerializedName("is_original")
+    private String isOriginal;
+    @SerializedName("warranty_time")
+    private String warrantyTime;
+    private String screen;
+
 
     private String createdAt;
 
@@ -153,5 +166,61 @@ public class OptionOfListCart {
 
     public void setHot_option(boolean hot_option) {
         this.hot_option = hot_option;
+    }
+
+    public String getRam() {
+        return ram;
+    }
+
+    public void setRam(String ram) {
+        this.ram = ram;
+    }
+
+    public String getStorageCapacity() {
+        return storageCapacity;
+    }
+
+    public void setStorageCapacity(String storageCapacity) {
+        this.storageCapacity = storageCapacity;
+    }
+
+    public String getConditionPercent() {
+        return conditionPercent;
+    }
+
+    public void setConditionPercent(String conditionPercent) {
+        this.conditionPercent = conditionPercent;
+    }
+
+    public String getBatteryHealth() {
+        return batteryHealth;
+    }
+
+    public void setBatteryHealth(String batteryHealth) {
+        this.batteryHealth = batteryHealth;
+    }
+
+    public String getIsOriginal() {
+        return isOriginal;
+    }
+
+    public void setIsOriginal(String isOriginal) {
+        this.isOriginal = isOriginal;
+    }
+
+    public String getWarrantyTime() {
+        return warrantyTime;
+    }
+
+    public void setWarrantyTime(String warrantyTime) {
+        this.warrantyTime = warrantyTime;
+    }
+
+    public String getScreen() {
+        return screen;
+    }
+
+    public void setScreen(String screen) {
+        this.screen = screen;
     }
 }

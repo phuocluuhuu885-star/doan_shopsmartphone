@@ -76,6 +76,10 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.error)
                 .into(holder.binding.imgProduct);
+
+        holder.itemView.setOnClickListener(v -> {
+            com.example.doan_shopsmartphone.ultil.ProductDetailDialogHelper.showProductDetailDialog(context, option.getOptionProduct());
+        });
     }
 
     @Override

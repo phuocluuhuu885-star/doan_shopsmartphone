@@ -51,6 +51,10 @@ public class DetailOderItemAdapter extends RecyclerView.Adapter<DetailOderItemAd
         Double gia1 = gia*checkgia;
         holder.binding.tvPrice.setText(df.format(gia1) + " đ");
         Glide.with(context).load(cart.getOptionProduct().getImage()).into(holder.binding.imgProduct);
+
+        holder.itemView.setOnClickListener(v -> {
+            com.example.doan_shopsmartphone.ultil.ProductDetailDialogHelper.showProductDetailDialog(context, cart.getOptionProduct());
+        });
     }
 
     @Override

@@ -25,6 +25,15 @@ public class Product implements Serializable {
     private String isOriginal;
     @SerializedName("warranty_time")
     private String warrantyTime;
+
+    private String screen;
+    private String camera;
+    private String chipset;
+    private String cpu;
+    private String gpu;
+    private String operatingSystem;
+    private String battery;
+    private String connection;
     public Product(String id, String name, String status, boolean discounted, String image, double minPrice, double averageRate, int review, int soldQuantity, int reviewcount) {
         this.id = id;
         this.name = name;
@@ -178,5 +187,69 @@ public class Product implements Serializable {
 
     public void setWarrantyTime(String warrantyTime) {
         this.warrantyTime = warrantyTime;
+    }
+
+    public String getScreen() {
+        return screen;
+    }
+
+    public void setScreen(String screen) {
+        this.screen = screen;
+    }
+
+    public String getCamera() {
+        return camera;
+    }
+
+    public void setCamera(String camera) {
+        this.camera = camera;
+    }
+
+    public String getChipset() {
+        return chipset;
+    }
+
+    public void setChipset(String chipset) {
+        this.chipset = chipset;
+    }
+
+    public String getCpu() {
+        return cpu;
+    }
+
+    public void setCpu(String cpu) {
+        this.cpu = cpu;
+    }
+
+    public String getGpu() {
+        return gpu;
+    }
+
+    public void setGpu(String gpu) {
+        this.gpu = gpu;
+    }
+
+    public String getOperatingSystem() {
+        return operatingSystem;
+    }
+
+    public void setOperatingSystem(String operatingSystem) {
+        this.operatingSystem = operatingSystem;
+    }
+
+    public String getBattery() {
+        return battery;
+    }
+
+    public void setBattery(String battery) {
+        this.battery = battery;
+    }
+
+    public String getConnection() {
+        return connection;
+    }
+
+    public void setConnection(String connection) {
+        this.connection = connection;
     }
 }
