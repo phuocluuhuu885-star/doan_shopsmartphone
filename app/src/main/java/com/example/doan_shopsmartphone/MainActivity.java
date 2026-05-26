@@ -29,6 +29,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
+    private int userRetryCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +38,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         onClickBottomNav();
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fetchUnreadCount();
-            }
-        }, 3000);
         handleNotificationIntent(getIntent());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        userRetryCount = 0;
+        fetchUnreadCount();
     }
 
     @Override
@@ -104,19 +106,29 @@ public class MainActivity extends AppCompatActivity {
             String displayCount = (count > 99) ? "99+" : String.valueOf(count);
             binding.bottomNavigation.setCount(3, displayCount);
         } else {
-            binding.bottomNavigation.setCount(3, "empty");
+            binding.bottomNavigation.clearCount(3);
         }
     }
 
     public void fetchUnreadCount() {
-        // Lấy ID người dùng hiện tại
-
         try {
             if (AccountUltil.USER == null) {
-                Log.e("MainActivity", "USER đang NULL, không thể gọi API!");
+                if (userRetryCount < 5) {
+                    userRetryCount++;
+                    Log.e("MainActivity", "USER đang NULL, sẽ thử lại sau 1 giây... (Lần " + userRetryCount + ")");
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            fetchUnreadCount();
+                        }
+                    }, 1000);
+                } else {
+                    Log.e("MainActivity", "Không thể lấy thông tin USER sau nhiều lần thử.");
+                }
                 return;
             }
 
+            userRetryCount = 0; // Reset count
             String userId = AccountUltil.USER.getId();
             Log.d("MainActivity", "Đang gọi API cho UserId: " + userId);
 
