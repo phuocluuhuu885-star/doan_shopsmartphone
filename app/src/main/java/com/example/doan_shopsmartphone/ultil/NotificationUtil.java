@@ -21,10 +21,10 @@ public class NotificationUtil {
     private static final String TAG = "NotificationUtil";
 
     public static void sendNotification(Context context, String content) {
-        showNotification(context, "Thông báo mới", content, null, null, null);
+        showNotification(context, "Thông báo mới", content, null, null, null, null);
     }
 
-    public static void showNotification(Context context, String title, String messageBody, String orderId, String type, String productId) {
+    public static void showNotification(Context context, String title, String messageBody, String orderId, String type, String productId, String voucherId) {
         String channelId = MyApplication.CHANNEL_ID;
 
         // 1. Tạo Intent thông minh: Ưu tiên theo Loại và ID thực tế
@@ -46,6 +46,7 @@ public class NotificationUtil {
             // Đây chắc chắn là Voucher hoặc thông báo hệ thống -> Về trang chủ
             intent = new Intent(context, MainActivity.class);
             intent.putExtra("action", "open_voucher");
+            intent.putExtra("VOUCHER_ID_KEY", voucherId);
         } else if (hasOrderId) {
             // Chỉ mở đơn hàng nếu thực sự có ID đơn hàng hợp lệ
             intent = new Intent(context, DetailOderActivity.class);

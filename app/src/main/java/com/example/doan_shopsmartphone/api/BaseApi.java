@@ -128,6 +128,9 @@ public interface BaseApi {
     @GET("voucher/get-list")
     Call<ListVoucherResponse> getListVoucher(@Header("Authorization") String token);
 
+    @GET("voucher/detail/{id}")
+    Call<SingleVoucherResponse> getVoucherDetail(@Path("id") String voucherId);
+
     @GET("user/detail-profile/{idUser}")
     Call<DetailUserReponse> detailProfile(@Header("Authorization") String authorization,
                                           @Path("idUser") String idUser);

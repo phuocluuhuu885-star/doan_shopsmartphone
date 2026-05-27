@@ -15,10 +15,12 @@ public class NotiFireBaseMessagingService extends FirebaseMessagingService {
         String orderId = "";
         String type = "";
         String productId = "";
+        String voucherId = "";
         if (remoteMessage.getData().size() > 0) {
             orderId = remoteMessage.getData().get("order_id");
             type = remoteMessage.getData().get("type");
             productId = remoteMessage.getData().get("product_id");
+            voucherId = remoteMessage.getData().get("voucher_id");
         }
 
         // Lấy tiêu đề và nội dung
@@ -39,6 +41,6 @@ public class NotiFireBaseMessagingService extends FirebaseMessagingService {
         }
 
         // Hiển thị thông báo qua NotificationUtil
-        NotificationUtil.showNotification(this, title, messageBody, orderId, type, productId);
+        NotificationUtil.showNotification(this, title, messageBody, orderId, type, productId, voucherId);
     }
 }

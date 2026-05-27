@@ -160,8 +160,9 @@ public class NotificationPollingManager {
 
                 Log.d(TAG, "Hiển thị thông báo lên Status Bar: " + title + " - " + content);
                 
+                String voucherId = ("promotion".equalsIgnoreCase(type) || "voucher".equalsIgnoreCase(type)) ? orderId : null;
                 // Gửi lên thanh thông báo hệ thống thông qua NotificationUtil
-                NotificationUtil.showNotification(appContext, title, content, orderId, type, productId);
+                NotificationUtil.showNotification(appContext, title, content, orderId, type, productId, voucherId);
             }
 
             // Cập nhật lại mốc thông báo mới nhất

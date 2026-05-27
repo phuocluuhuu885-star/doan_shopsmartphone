@@ -43,6 +43,7 @@ public class Splash extends AppCompatActivity {
                     } else if (extras != null && ("promotion".equals(extras.getString("type")) || "open_voucher".equals(extras.getString("action")))) {
                         intent = new Intent(Splash.this, MainActivity.class);
                         intent.putExtra("action", "open_voucher");
+                        intent.putExtra("VOUCHER_ID_KEY", extras.getString("voucher_id"));
                     } else {
                         intent = new Intent(Splash.this, MainActivity.class);
                     }

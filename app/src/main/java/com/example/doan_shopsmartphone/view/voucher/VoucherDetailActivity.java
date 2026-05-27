@@ -15,6 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.doan_shopsmartphone.R;
 import com.example.doan_shopsmartphone.model.Voucher;
+import com.example.doan_shopsmartphone.api.BaseApi;
+import com.example.doan_shopsmartphone.model.response.SingleVoucherResponse;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -37,13 +42,51 @@ public class VoucherDetailActivity extends AppCompatActivity {
 
         voucher = (Voucher) getIntent().getSerializableExtra("VOUCHER_OBJECT");
         if (voucher == null) {
-            Toast.makeText(this, "Không tìm thấy thông tin voucher", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+            String voucherId = getIntent().getStringExtra("VOUCHER_ID_KEY");
+            if (voucherId != null && !voucherId.trim().isEmpty()) {
+                fetchVoucherDetail(voucherId);
+            } else {
+                Toast.makeText(this, "Không tìm thấy thông tin voucher", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else {
+            initViews();
+            displayVoucherDetails();
         }
+    }
 
-        initViews();
-        displayVoucherDetails();
+    private void fetchVoucherDetail(String voucherId) {
+        android.app.ProgressDialog progressDialog = new android.app.ProgressDialog(this);
+        progressDialog.setMessage("Đang tải chi tiết voucher...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        BaseApi.API.getVoucherDetail(voucherId).enqueue(new Callback<SingleVoucherResponse>() {
+            @Override
+            public void onResponse(Call<SingleVoucherResponse> call, Response<SingleVoucherResponse> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
+                    voucher = response.body().getData();
+                    if (voucher != null) {
+                        initViews();
+                        displayVoucherDetails();
+                    } else {
+                        Toast.makeText(VoucherDetailActivity.this, "Không thể tải thông tin chi tiết voucher", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                } else {
+                    Toast.makeText(VoucherDetailActivity.this, "Không tìm thấy voucher này", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SingleVoucherResponse> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(VoucherDetailActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 
     private void initViews() {

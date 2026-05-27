@@ -146,8 +146,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 } else if (isWallet) {
                     intent = new Intent(context, com.example.doan_shopsmartphone.view.profile_screen.FWalletActivity.class);
                 } else if (isPromotion && !hasProductId) {
-                    // Voucher mới hoặc khuyến mãi -> Về trang chủ
+                    // Voucher mới hoặc khuyến mãi -> Vào thẳng chi tiết voucher
                     intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("action", "open_voucher");
+                    if (hasOrderId) {
+                        intent.putExtra("VOUCHER_ID_KEY", notification.getOrder_id());
+                    }
                 } else if (hasProductId) {
                     intent = new Intent(context, DetailProduct.class);
                     intent.putExtra("id_product", notification.getProduct_id());

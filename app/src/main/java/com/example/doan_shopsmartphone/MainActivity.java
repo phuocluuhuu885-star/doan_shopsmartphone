@@ -93,9 +93,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleNotificationIntent(Intent intent) {
         if (intent != null && "open_voucher".equals(intent.getStringExtra("action"))) {
+            String voucherId = intent.getStringExtra("VOUCHER_ID_KEY");
             intent.removeExtra("action");
+            intent.removeExtra("VOUCHER_ID_KEY");
+
+            // Open MyVoucherActivity first to build the back stack
             Intent voucherIntent = new Intent(MainActivity.this, com.example.doan_shopsmartphone.view.voucher.MyVoucherActivity.class);
             startActivity(voucherIntent);
+
+            // Open VoucherDetailActivity immediately on top
+            if (voucherId != null && !voucherId.trim().isEmpty() && !"null".equalsIgnoreCase(voucherId)) {
+                Intent detailIntent = new Intent(MainActivity.this, com.example.doan_shopsmartphone.view.voucher.VoucherDetailActivity.class);
+                detailIntent.putExtra("VOUCHER_ID_KEY", voucherId);
+                startActivity(detailIntent);
+            }
+
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
     }
